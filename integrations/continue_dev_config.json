@@ -1,0 +1,171 @@
+{
+  "_readme": [
+    "Continue.dev config — wired through your AI Router",
+    "",
+    "SETUP (one time):",
+    "  1. Install Continue in VS Code:",
+    "     Extensions panel → search 'Continue' → Install (by Continue.dev)",
+    "  2. Open the Continue config:",
+    "     Cmd+Shift+P → 'Continue: Open config.json'   (or Ctrl+Shift+P on Windows)",
+    "  3. Replace the entire file contents with this JSON (remove this _readme key first).",
+    "  4. Make sure your router is running:  cd ai-router && python3 main.py",
+    "",
+    "PROFILES:",
+    "  'Auto Route'     — router decides based on your rules (recommended for daily use)",
+    "  'Local (Ollama)' — always uses local Ollama, zero API cost, fast for small tasks",
+    "  'Cloud GPT-4o'   — always uses cloud OpenAI gpt-4o, best quality",
+    "  'Cloud GPT-4o-mini' — cloud but cheap, good for chat/explain tasks",
+    "",
+    "TAB AUTOCOMPLETE:",
+    "  Always goes to local (Ollama) — keeps autocomplete instant and free.",
+    "  Change model to 'codellama' or 'qwen2.5-coder' for better code completion:",
+    "    ollama pull qwen2.5-coder:7b"
+  ],
+
+  "models": [
+    {
+      "title": "Auto Route",
+      "provider": "openai",
+      "model": "auto",
+      "apiBase": "http://localhost:8080/v1",
+      "apiKey": "router",
+      "systemMessage": "You are an expert software engineer. Be concise, precise, and always show working code.",
+      "contextLength": 16000,
+      "_comment": "No X-Route-To header — router applies your rules: keywords, token length, time-of-day"
+    },
+    {
+      "title": "Local — Ollama (llama3.2)",
+      "provider": "openai",
+      "model": "llama3.2",
+      "apiBase": "http://localhost:8080/v1",
+      "apiKey": "router",
+      "contextLength": 8192,
+      "requestOptions": {
+        "headers": { "X-Route-To": "local" }
+      }
+    },
+    {
+      "title": "Cloud — GPT-4o",
+      "provider": "openai",
+      "model": "gpt-4o",
+      "apiBase": "http://localhost:8080/v1",
+      "apiKey": "router",
+      "contextLength": 128000,
+      "requestOptions": {
+        "headers": { "X-Route-To": "cloud" }
+      }
+    },
+    {
+      "title": "Cloud — GPT-4o-mini",
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "apiBase": "http://localhost:8080/v1",
+      "apiKey": "router",
+      "contextLength": 128000,
+      "requestOptions": {
+        "headers": { "X-Route-To": "cloud" }
+      }
+    }
+  ],
+
+  "tabAutocompleteModel": {
+    "title": "Autocomplete — Local (Ollama)",
+    "provider": "openai",
+    "model": "llama3.2",
+    "apiBase": "http://localhost:8080/v1",
+    "apiKey": "router",
+    "requestOptions": {
+      "headers": { "X-Route-To": "local" }
+    }
+  },
+
+  "tabAutocompleteOptions": {
+    "useCopyBuffer": false,
+    "maxPromptTokens": 1024,
+    "debounceDelay": 500
+  },
+
+  "contextProviders": [
+    {
+      "name": "code",
+      "params": {}
+    },
+    {
+      "name": "docs",
+      "params": {}
+    },
+    {
+      "name": "diff",
+      "params": {}
+    },
+    {
+      "name": "terminal",
+      "params": {}
+    },
+    {
+      "name": "problems",
+      "params": {}
+    },
+    {
+      "name": "folder",
+      "params": {}
+    },
+    {
+      "name": "codebase",
+      "params": {}
+    }
+  ],
+
+  "slashCommands": [
+    {
+      "name": "edit",
+      "description": "Edit highlighted code"
+    },
+    {
+      "name": "comment",
+      "description": "Add comments to the highlighted code"
+    },
+    {
+      "name": "share",
+      "description": "Export this session as markdown"
+    },
+    {
+      "name": "cmd",
+      "description": "Generate a shell command"
+    },
+    {
+      "name": "commit",
+      "description": "Generate a git commit message"
+    }
+  ],
+
+  "customCommands": [
+    {
+      "name": "review",
+      "prompt": "Review this code for correctness, performance, and security issues. Be specific about line numbers. Use cloud for this.",
+      "description": "Code review (always routes to cloud)"
+    },
+    {
+      "name": "test",
+      "prompt": "Write comprehensive unit tests for this code. Cover edge cases, error paths, and happy paths. Use pytest if Python, Jest if JavaScript.",
+      "description": "Generate unit tests"
+    },
+    {
+      "name": "docstring",
+      "prompt": "Add clear docstrings/JSDoc to this code. Match the existing style. Keep it concise.",
+      "description": "Add docstrings (routes local)"
+    },
+    {
+      "name": "explain",
+      "prompt": "Explain what this code does in plain English. Start with a one-line summary, then give details.",
+      "description": "Explain code"
+    },
+    {
+      "name": "fix",
+      "prompt": "Find and fix the bug in this code. Show the fixed version and explain what was wrong.",
+      "description": "Find and fix bugs"
+    }
+  ],
+
+  "allowAnonymousTelemetry": false
+}

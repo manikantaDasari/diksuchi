@@ -1,0 +1,275 @@
+observability:
+  log_routing_decisions: true
+  request_log_size: 200
+  stats_enabled: true
+providers:
+  cloud:
+    active: openai
+    list:
+    - api_key_env: OPENAI_API_KEY
+      base_url: https://api.openai.com/v1
+      default_model: gpt-4o-mini
+      models:
+      - gpt-4o-mini
+      - gpt-4o
+      - o1-mini
+      - o1
+      name: openai
+      timeout_seconds: 60
+      type: openai
+    - api_key_env: ANTHROPIC_API_KEY
+      base_url: https://api.anthropic.com
+      default_model: claude-3-5-haiku-20241022
+      enabled: false
+      models:
+      - claude-3-5-haiku-20241022
+      - claude-3-5-sonnet-20241022
+      - claude-opus-4-6
+      - claude-sonnet-4-6
+      name: anthropic
+      timeout_seconds: 60
+      type: anthropic
+    - api_key_env: GROQ_API_KEY
+      base_url: https://api.groq.com/openai/v1
+      default_model: llama-3.1-8b-instant
+      enabled: false
+      models:
+      - llama-3.1-8b-instant
+      - llama-3.3-70b-versatile
+      - mixtral-8x7b-32768
+      - gemma2-9b-it
+      name: groq
+      timeout_seconds: 30
+      type: openai_compatible
+    - api_key_env: GOOGLE_API_KEY
+      base_url: https://generativelanguage.googleapis.com/v1beta/openai
+      default_model: gemini-1.5-flash
+      enabled: false
+      models:
+      - gemini-1.5-flash
+      - gemini-1.5-pro
+      - gemini-2.0-flash
+      - gemini-2.0-flash-thinking-exp
+      name: gemini
+      timeout_seconds: 60
+      type: openai_compatible
+    - api_key_env: TOGETHER_API_KEY
+      base_url: https://api.together.xyz/v1
+      default_model: meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo
+      enabled: false
+      models:
+      - meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo
+      - meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo
+      - mistralai/Mixtral-8x22B-Instruct-v0.1
+      name: together
+      timeout_seconds: 60
+      type: openai_compatible
+    - api_key_env: MISTRAL_API_KEY
+      base_url: https://api.mistral.ai/v1
+      default_model: mistral-small-latest
+      enabled: false
+      models:
+      - mistral-small-latest
+      - mistral-medium-latest
+      - mistral-large-latest
+      - codestral-latest
+      name: mistral
+      timeout_seconds: 60
+      type: openai_compatible
+  local:
+    active: ollama
+    list:
+    - base_url: http://localhost:11434
+      default_model: llama3.2
+      models:
+      - llama3.2
+      - llama3.1:8b
+      - mistral
+      - phi4
+      - gemma2
+      - qwen2.5
+      - deepseek-r1
+      - codellama
+      name: ollama
+      timeout_seconds: 120
+      type: ollama
+    - base_url: http://localhost:1234/v1
+      default_model: local-model
+      enabled: false
+      models: []
+      name: lmstudio
+      timeout_seconds: 120
+      type: openai_compatible
+    - base_url: http://localhost:8080/v1
+      default_model: mlx-community/Mistral-7B-Instruct-v0.3-4bit
+      enabled: false
+      models:
+      - mlx-community/Mistral-7B-Instruct-v0.3-4bit
+      - mlx-community/Llama-3.2-3B-Instruct-4bit
+      - mlx-community/Phi-3.5-mini-instruct-4bit
+      name: mlx
+      timeout_seconds: 120
+      type: openai_compatible
+    - base_url: http://localhost:8000/v1
+      default_model: local
+      enabled: false
+      models: []
+      name: llamacpp
+      timeout_seconds: 180
+      type: openai_compatible
+routing:
+  default_backend: local
+  rules:
+  - condition: header_equals
+    header: X-Route-To
+    name: force_local_header
+    reason: Caller explicitly requested local backend
+    route_to: local
+    value: local
+  - condition: header_equals
+    header: X-Route-To
+    name: force_cloud_header
+    reason: Caller explicitly requested cloud backend
+    route_to: cloud
+    value: cloud
+  - condition: model_name_contains
+    name: model_hint_cloud
+    reason: Model name suggests a cloud-hosted model
+    route_to: cloud
+    values:
+    - gpt-
+    - o1
+    - claude-
+    - gemini
+    - mistral-large
+    - mixtral
+  - condition: model_name_contains
+    name: model_hint_local
+    reason: Model name suggests a locally-available model
+    route_to: local
+    values:
+    - llama
+    - mistral
+    - phi
+    - gemma
+    - qwen
+    - deepseek
+    - tinyllama
+    - orca
+    - codellama
+  # ── Regex rules (run before keyword rules) ───────────────────────────────
+  - condition: prompt_matches_regex
+    name: stack_trace_cloud
+    pattern: "Traceback \\(most recent call last\\)|^\\s+File \".+\", line \\d+|Error: .+\\n\\s+at |Exception in thread|\\bNullPointerException\\b|\\bSegmentation fault\\b|\\bundefined is not a function\\b|Cannot read propert"
+    reason: Stack trace or runtime exception detected — routing to cloud for deeper debug reasoning
+    route_to: cloud
+  - condition: prompt_matches_regex
+    name: credentials_in_prompt_cloud
+    pattern: "(?i)((api[_-]?key|secret[_-]?key|private[_-]?key|access[_-]?token|bearer[_-]?token|password)[\"']?\\s*[=:]\\s*[\"']?[A-Za-z0-9+/=_\\-]{8,}|bearer\\s+[A-Za-z0-9+/=_\\-.]{20,})"
+    reason: Prompt contains credential-like patterns — routing to cloud (never cache locally)
+    route_to: cloud
+  - condition: prompt_matches_regex
+    name: git_diff_local
+    pattern: "^(diff --git|@@.*@@|\\+\\+\\+ |--- )"
+    reason: Git diff / patch content detected — local model handles structural edits well
+    route_to: local
+  # ── Keyword rules ────────────────────────────────────────────────────────
+  - condition: prompt_contains_any
+    keywords:
+    - step by step analysis
+    - detailed research
+    - compare and contrast
+    - write a full
+    - comprehensive
+    - in-depth
+    - legal advice
+    - medical diagnosis
+    - financial model
+    - write unit tests for
+    - write tests for
+    - debug this entire
+    - refactor this
+    - refactor the
+    - code review
+    - security audit
+    - explain this error
+    - design a system
+    - system design
+    - design pattern
+    - implement a full
+    - optimize this function
+    - performance bottleneck
+    - architecture
+    name: complexity_keywords_cloud
+    reason: Prompt signals a complex task — routing to cloud
+    route_to: cloud
+  - condition: prompt_contains_any
+    keywords:
+    - quick question
+    - tldr
+    - summarize briefly
+    - one sentence
+    - short answer
+    - simple
+    - translate
+    - what is
+    - define
+    - rephrase
+    - add a comment
+    - add docstring
+    - add type hints
+    - rename this
+    - fix typo
+    - fix indentation
+    - format this
+    - what does this function do
+    - what does this do
+    - autocomplete
+    name: simple_keywords_local
+    reason: Prompt signals a simple/quick task — routing to local
+    route_to: local
+  - condition: time_of_day
+    days:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    end: '23:59'
+    name: off_hours_cloud
+    reason: Off-hours / evening — routing to cloud for batch throughput
+    route_to: cloud
+    start: '18:00'
+    timezone: Asia/Kolkata
+  - condition: time_of_day
+    days:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    end: '18:00'
+    name: business_hours_local
+    reason: Business hours (09:00–18:00 IST Mon–Fri) — routing to local to save API
+      costs
+    route_to: local
+    start: 09:00
+    timezone: Asia/Kolkata
+  - condition: token_count_gte
+    name: long_prompt_cloud
+    reason: Prompt is long (≥800 tokens) — routing to cloud for capacity
+    route_to: cloud
+    threshold: 800
+  - condition: token_count_lte
+    name: short_prompt_local
+    reason: Prompt is short (≤300 tokens) — routing to local for speed & privacy
+    route_to: local
+    threshold: 300
+server:
+  cors_origins:
+  - '*'
+  host: 0.0.0.0
+  log_level: info
+  port: 8080

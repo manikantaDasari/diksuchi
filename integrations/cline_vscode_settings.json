@@ -1,0 +1,16 @@
+{
+  "_comment": "Cline (formerly Claude Dev) — VS Code AI coding agent. VS Code settings.json snippet.",
+  "_instructions": [
+    "1. Install Cline extension: https://marketplace.visualstudio.com/items?itemName=saoudrizwan.claude-dev",
+    "2. Open VS Code Settings (Cmd+,) → click '{}' (Open Settings JSON)",
+    "3. Merge the cline settings below into your settings.json",
+    "4. In the Cline sidebar, select 'OpenAI Compatible' as provider"
+  ],
+
+  "cline.apiProvider":        "openai",
+  "cline.openAiBaseUrl":      "http://localhost:8080/v1",
+  "cline.openAiApiKey":       "router",
+  "cline.openAiModelId":      "llama3.2",
+
+  "_note": "Switch model to 'gpt-4o' to force cloud, or 'llama3.2' to force local via model-name routing rule."
+}

@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Router — Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ─── Design tokens ──────────────────────────────────────────────────────── */
+:root {
+  --bg:        #111110;
+  --surface:   #1A1A1A;
+  --surface2:  #222220;
+  --surface3:  #2A2A28;
+  --border:    #2E2E2C;
+  --border-hi: #3E3E3C;
+
+  /* Brand palette */
+  --lime:      #E1F64A;   /* LOCAL — electric lime */
+  --green:     #13BD7C;   /* CLOUD — emerald */
+  --red:       #C22C0A;   /* ERROR — deep red */
+  --white:     #FAFAFA;
+  --charcoal:  #262625;
+
+  /* Typography */
+  --text:      #FAFAFA;
+  --text-2:    #A8A8A4;
+  --text-3:    #626260;
+
+  --radius:    6px;
+  --radius-lg: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  /* Subtle grid pattern */
+  background-image:
+    linear-gradient(rgba(225,246,74,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(225,246,74,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+header {
+  background: rgba(26,26,26,0.95);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+
+.logo { display: flex; align-items: center; gap: 14px; }
+
+.logo-mark {
+  width: 34px; height: 34px;
+  background: var(--lime);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.logo-mark svg { width: 18px; height: 18px; }
+
+.logo-text h1 {
+  font-size: 15px; font-weight: 700; letter-spacing: -.3px;
+  color: var(--white);
+}
+.logo-text p {
+  font-size: 10px; color: var(--text-3); letter-spacing: .3px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.header-center {
+  display: flex; gap: 2px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px;
+}
+.h-tab {
+  padding: 6px 16px; border-radius: 5px;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  color: var(--text-3); transition: all .15s;
+  user-select: none;
+}
+.h-tab.active { background: var(--surface3); color: var(--white); }
+.h-tab:hover:not(.active) { color: var(--text-2); }
+
+.header-right { display: flex; align-items: center; gap: 10px; }
+
+.endpoint-tag {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  padding: 5px 11px;
+  border-radius: var(--radius);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-3);
+}
+
+.status-pill {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  background: rgba(19,189,124,.08);
+  border: 1px solid rgba(19,189,124,.25);
+  color: var(--green);
+  transition: all .3s;
+}
+.status-pill.offline {
+  background: rgba(194,44,10,.08);
+  border-color: rgba(194,44,10,.25);
+  color: var(--red);
+}
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor;
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ─── Layout ─────────────────────────────────────────────────────────────── */
+.main { max-width: 1440px; margin: 0 auto; padding: 24px 28px; }
+.page { display: none; flex-direction: column; gap: 18px; }
+.page.active { display: flex; }
+
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: 2fr 1fr 1.2fr; gap: 14px; }
+
+/* ─── Stat cards ─────────────────────────────────────────────────────────── */
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.stat-card.s-total::after  { background: var(--white); }
+.stat-card.s-local::after  { background: var(--lime); }
+.stat-card.s-cloud::after  { background: var(--green); }
+.stat-card.s-errors::after { background: var(--red); }
+
+.stat-card.s-local:hover  { border-color: rgba(225,246,74,.3); box-shadow: 0 0 24px rgba(225,246,74,.06); }
+.stat-card.s-cloud:hover  { border-color: rgba(19,189,124,.3); box-shadow: 0 0 24px rgba(19,189,124,.06); }
+.stat-card.s-errors:hover { border-color: rgba(194,44,10,.3); box-shadow: 0 0 24px rgba(194,44,10,.06); }
+
+.stat-icon {
+  width: 32px; height: 32px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; margin-bottom: 14px;
+}
+.s-local  .stat-icon { background: rgba(225,246,74,.1); }
+.s-cloud  .stat-icon { background: rgba(19,189,124,.1); }
+.s-errors .stat-icon { background: rgba(194,44,10,.1); }
+.s-total  .stat-icon { background: rgba(250,250,250,.06); }
+
+.stat-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--text-3); margin-bottom: 8px; font-weight: 600;
+}
+.stat-value {
+  font-size: 36px; font-weight: 800; line-height: 1;
+  letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
+}
+.s-total  .stat-value { color: var(--white); }
+.s-local  .stat-value { color: var(--lime); }
+.s-cloud  .stat-value { color: var(--green); }
+.s-errors .stat-value { color: var(--red); }
+.stat-sub { font-size: 11px; color: var(--text-3); margin-top: 6px; font-family: monospace; }
+
+/* ─── Panel ──────────────────────────────────────────────────────────────── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.panel-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface2);
+}
+.panel-title {
+  font-size: 12px; font-weight: 700; letter-spacing: .5px;
+  text-transform: uppercase; color: var(--text-2);
+  display: flex; align-items: center; gap: 8px;
+}
+.panel-title-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.dot-lime  { background: var(--lime); }
+.dot-green { background: var(--green); }
+.dot-red   { background: var(--red); }
+.dot-white { background: var(--text-3); }
+
+.panel-body { padding: 18px; }
+
+.refresh-btn {
+  font-size: 10px; font-family: monospace; letter-spacing: .5px;
+  padding: 4px 10px; border-radius: 4px;
+  background: var(--surface3); border: 1px solid var(--border);
+  color: var(--text-3); cursor: pointer; transition: all .15s;
+}
+.refresh-btn:hover { color: var(--text-2); border-color: var(--border-hi); }
+
+/* ─── Charts ─────────────────────────────────────────────────────────────── */
+.chart-wrap { position: relative; height: 200px; }
+.donut-wrap {
+  position: relative; height: 170px;
+  display: flex; align-items: center; justify-content: center;
+}
+.donut-center { position: absolute; text-align: center; pointer-events: none; }
+.donut-pct { font-size: 28px; font-weight: 800; color: var(--lime); letter-spacing: -1px; }
+.donut-sub { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; }
+
+/* ─── Rules list ─────────────────────────────────────────────────────────── */
+.rules-list { display: flex; flex-direction: column; gap: 10px; }
+.rule-row { display: flex; align-items: center; gap: 10px; }
+.rule-name {
+  font-family: 'SF Mono','Fira Code', monospace;
+  font-size: 10px; color: var(--text-3);
+  flex: 0 0 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.rule-bar {
+  flex: 1; height: 3px; border-radius: 2px;
+  background: var(--surface3); overflow: hidden;
+}
+.rule-bar-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--lime), var(--green));
+  transition: width .5s ease;
+}
+.rule-count {
+  font-size: 11px; font-weight: 700; color: var(--text-2);
+  min-width: 28px; text-align: right; font-family: monospace;
+}
+
+/* ─── Log table ──────────────────────────────────────────────────────────── */
+.log-scroll { max-height: 460px; overflow-y: auto; }
+.log-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.log-table thead tr { background: var(--surface2); }
+.log-table th {
+  padding: 10px 12px; text-align: left;
+  font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-3); font-weight: 700; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--surface2);
+}
+.log-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(46,46,44,.6);
+  vertical-align: middle;
+}
+.log-table tr:last-child td { border-bottom: none; }
+.log-table tr:hover td { background: rgba(42,42,40,.6); }
+
+/* badges */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 3px;
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px;
+}
+.badge.local  { background: rgba(225,246,74,.08);  color: var(--lime);  border: 1px solid rgba(225,246,74,.2); }
+.badge.cloud  { background: rgba(19,189,124,.08);  color: var(--green); border: 1px solid rgba(19,189,124,.2); }
+.badge.error  { background: rgba(194,44,10,.08);   color: var(--red);   border: 1px solid rgba(194,44,10,.2); }
+
+.provider-pill {
+  font-family: monospace; font-size: 9px;
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: 3px; padding: 1px 6px; color: var(--text-3);
+}
+.rule-tag {
+  font-family: monospace; font-size: 9px;
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: 3px; padding: 2px 7px; color: var(--text-3);
+}
+.dur { font-family: monospace; font-size: 10px; color: var(--text-3); }
+.preview-text {
+  color: var(--text-3); font-size: 11px;
+  max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.time-text { font-family: monospace; font-size: 10px; color: var(--text-3); }
+.token-bar { display: flex; align-items: center; gap: 6px; }
+.token-pill {
+  font-family: monospace; font-size: 10px;
+  background: var(--surface3); border-radius: 3px;
+  padding: 1px 5px; color: var(--text-3); min-width: 36px; text-align: right;
+}
+.micro-bar { height: 3px; border-radius: 2px; background: var(--border); flex: 1; max-width: 48px; overflow: hidden; }
+.micro-bar-fill { height: 100%; border-radius: 2px; transition: width .3s; }
+
+/* ─── Fallback banner ────────────────────────────────────────────────────── */
+.fallback-banner {
+  background: rgba(194,44,10,.06);
+  border: 1px solid rgba(194,44,10,.25);
+  border-radius: var(--radius-lg);
+  padding: 14px 20px;
+  display: none; align-items: center; gap: 14px;
+}
+.fb-icon { font-size: 22px; flex-shrink: 0; }
+.fb-count { font-size: 28px; font-weight: 800; color: var(--red); margin-left: auto; font-family: monospace; }
+
+/* ─── Route Preview / Test ───────────────────────────────────────────────── */
+.test-form { display: flex; flex-direction: column; gap: 12px; }
+.form-row { display: flex; gap: 8px; }
+
+textarea, input, select {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius);
+  padding: 10px 13px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .2s;
+  resize: vertical;
+}
+textarea:focus, input:focus, select:focus { border-color: var(--lime); }
+textarea { width: 100%; min-height: 90px; }
+input { flex: 1; }
+
+.btn {
+  padding: 9px 20px; border-radius: var(--radius); font-size: 12px; font-weight: 700;
+  border: none; cursor: pointer; transition: all .2s;
+  display: inline-flex; align-items: center; gap: 6px;
+  letter-spacing: .3px; text-transform: uppercase;
+}
+.btn-primary {
+  background: var(--lime); color: #111110;
+}
+.btn-primary:hover { background: #d4e83e; transform: translateY(-1px); }
+
+.btn-outline {
+  background: transparent; color: var(--text-3);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--border-hi); color: var(--text-2); }
+
+.quick-examples-label {
+  font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-3); margin-bottom: 8px; font-weight: 600;
+}
+.quick-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-size: 10px; padding: 4px 11px; border-radius: 20px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text-3); cursor: pointer; transition: all .15s;
+  font-family: monospace;
+}
+.chip:hover { border-color: var(--lime); color: var(--lime); }
+
+.decision-result {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  display: none;
+}
+.decision-result.show { display: block; }
+.decision-result.local { border-color: rgba(225,246,74,.3); }
+.decision-result.cloud { border-color: rgba(19,189,124,.3); }
+
+.dec-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.dec-backend-label {
+  font-size: 22px; font-weight: 800; letter-spacing: -1px;
+}
+.dec-backend-label.local { color: var(--lime); }
+.dec-backend-label.cloud { color: var(--green); }
+.dec-arrow { color: var(--text-3); font-size: 16px; }
+.dec-provider {
+  font-family: monospace; font-size: 12px;
+  padding: 3px 10px; border-radius: 4px;
+  background: var(--surface3); border: 1px solid var(--border);
+  color: var(--text-2);
+}
+.dec-meta {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.dec-item { display: flex; flex-direction: column; gap: 2px; }
+.dec-item-label { font-size: 9px; text-transform: uppercase; letter-spacing: .8px; color: var(--text-3); font-weight: 600; }
+.dec-item-value { font-size: 11px; color: var(--text-2); font-family: monospace; }
+
+/* ─── Providers ──────────────────────────────────────────────────────────── */
+.active-indicator {
+  display: flex; gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.ai-item {
+  flex: 1;
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.ai-item + .ai-item { border-left: 1px solid var(--border); }
+.ai-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-3); font-weight: 600; }
+.ai-value { font-size: 14px; font-weight: 700; font-family: monospace; margin-top: 2px; }
+.ai-value.local { color: var(--lime); }
+.ai-value.cloud { color: var(--green); }
+.ai-hint { flex: 2; padding: 14px 20px; display: flex; align-items: center; justify-content: flex-end; }
+.ai-hint p { font-size: 11px; color: var(--text-3); text-align: right; }
+
+.section-heading {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.2px; color: var(--text-3);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-heading::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+.provider-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.provider-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+.provider-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+}
+.provider-card.local-card::before  { background: var(--lime); }
+.provider-card.cloud-card::before  { background: var(--green); }
+.provider-card.active-card { border-color: rgba(225,246,74,.25); background: rgba(225,246,74,.02); }
+.provider-card.cloud-card.active-card { border-color: rgba(19,189,124,.25); background: rgba(19,189,124,.02); }
+.provider-card:hover { border-color: var(--border-hi); transform: translateY(-1px); }
+
+.pc-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+.pc-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--surface2); display: flex; align-items: center;
+  justify-content: center; font-size: 20px;
+}
+.pc-badges { display: flex; gap: 5px; flex-wrap: wrap; }
+.pc-badge {
+  padding: 2px 7px; border-radius: 3px;
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+}
+.pc-badge.active   { background: rgba(225,246,74,.1); color: var(--lime);  border: 1px solid rgba(225,246,74,.25); }
+.pc-badge.disabled { background: rgba(99,99,97,.1);   color: var(--text-3); border: 1px solid var(--border); }
+.pc-badge.type     { background: var(--surface2);      color: var(--text-3); border: 1px solid var(--border); font-family: monospace; }
+.cloud-card .pc-badge.active { background: rgba(19,189,124,.1); color: var(--green); border-color: rgba(19,189,124,.25); }
+
+.pc-name  { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.pc-url   { font-size: 9px; font-family: monospace; color: var(--text-3); margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pc-model { font-size: 10px; color: var(--text-3); }
+.model-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.model-chip {
+  font-size: 9px; font-family: monospace;
+  padding: 2px 6px; border-radius: 3px;
+  background: var(--surface2); color: var(--text-3); border: 1px solid var(--border);
+}
+
+.activate-btn {
+  width: 100%; margin-top: 14px; padding: 8px;
+  border-radius: var(--radius); font-size: 11px; font-weight: 700;
+  letter-spacing: .3px; text-transform: uppercase;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text-3);
+  cursor: pointer; transition: all .2s;
+}
+.activate-btn:hover:not(:disabled) {
+  background: var(--surface2); border-color: var(--border-hi); color: var(--text);
+}
+.activate-btn.is-active {
+  background: rgba(225,246,74,.06); color: var(--lime);
+  border-color: rgba(225,246,74,.25); cursor: default;
+}
+.cloud-card .activate-btn.is-active {
+  background: rgba(19,189,124,.06); color: var(--green);
+  border-color: rgba(19,189,124,.25);
+}
+
+/* ─── Empty state ────────────────────────────────────────────────────────── */
+.empty { text-align: center; color: var(--text-3); padding: 40px 20px; font-size: 12px; }
+.empty-icon { font-size: 26px; margin-bottom: 8px; opacity: .5; }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media(max-width:1100px) {
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+  .grid-4 { grid-template-columns: repeat(2,1fr); }
+  .header-center { display: none; }
+}
+@media(max-width:700px) {
+  .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; }
+  header { padding: 0 16px; }
+  .main { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── Header ──────────────────────────────────────────────────────────── -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 2L15.5 6V12L9 16L2.5 12V6L9 2Z" stroke="#111110" stroke-width="1.5" fill="none"/>
+        <path d="M9 5L9 13M5 7.5L13 10.5M5 10.5L13 7.5" stroke="#111110" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <h1>AI Router</h1>
+      <p>LOCAL-FIRST INFERENCE PROXY</p>
+    </div>
+  </div>
+
+  <div class="header-center">
+    <div class="h-tab active" onclick="showPage('overview', this)">Overview</div>
+    <div class="h-tab" onclick="showPage('providers', this)">Providers</div>
+    <div class="h-tab" onclick="showPage('log', this)">Request Log</div>
+    <div class="h-tab" onclick="showPage('test', this)">Route Preview</div>
+  </div>
+
+  <div class="header-right">
+    <span class="endpoint-tag" id="base-url">localhost:8080</span>
+    <div class="status-pill offline" id="status-pill">
+      <div class="dot"></div>
+      <span id="status-text">Connecting</span>
+    </div>
+  </div>
+</header>
+
+<!-- ─── Main ────────────────────────────────────────────────────────────── -->
+<div class="main">
+
+<!-- ════ OVERVIEW ════ -->
+<div class="page active" id="page-overview">
+
+  <div class="grid-4">
+    <div class="stat-card s-total">
+      <div class="stat-icon">⬡</div>
+      <div class="stat-label">Total Requests</div>
+      <div class="stat-value" id="s-total">—</div>
+      <div class="stat-sub" id="s-uptime">Waiting…</div>
+    </div>
+    <div class="stat-card s-local">
+      <div class="stat-icon">◈</div>
+      <div class="stat-label">Local</div>
+      <div class="stat-value" id="s-local">—</div>
+      <div class="stat-sub" id="s-local-detail">—</div>
+    </div>
+    <div class="stat-card s-cloud">
+      <div class="stat-icon">◉</div>
+      <div class="stat-label">Cloud</div>
+      <div class="stat-value" id="s-cloud">—</div>
+      <div class="stat-sub" id="s-cloud-detail">—</div>
+    </div>
+    <div class="stat-card s-errors">
+      <div class="stat-icon">⚠</div>
+      <div class="stat-label">Errors</div>
+      <div class="stat-value" id="s-errors">—</div>
+      <div class="stat-sub" id="s-fallback-sub">0 fallbacks</div>
+    </div>
+  </div>
+
+  <div class="fallback-banner" id="fallback-banner">
+    <div class="fb-icon">⚡</div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--red)">Auto-Fallback Active</div>
+      <div style="font-size:11px;color:var(--text-3);margin-top:2px" id="fallback-detail"></div>
+    </div>
+    <div class="fb-count" id="s-fallbacks">0</div>
+    <div style="font-size:10px;color:var(--text-3)">fallbacks</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="panel-title-dot dot-white"></span>
+          Request Volume
+        </div>
+        <span style="font-size:9px;font-family:monospace;color:var(--text-3);padding:3px 8px;background:var(--surface3);border:1px solid var(--border);border-radius:3px;">LIVE 5s</span>
+      </div>
+      <div class="panel-body">
+        <div class="chart-wrap"><canvas id="lineChart"></canvas></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="panel-title-dot dot-lime"></span>
+          Backend Split
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="donut-wrap">
+          <canvas id="donutChart"></canvas>
+          <div class="donut-center">
+            <div class="donut-pct" id="donut-pct">—</div>
+            <div class="donut-sub">local</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="panel-title-dot dot-lime"></span>
+        Rules Hit
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="rules-list" id="rules-list">
+        <div class="empty"><div class="empty-icon">⚙</div>No routing data yet</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PROVIDERS ════ -->
+<div class="page" id="page-providers">
+
+  <div class="active-indicator" id="active-indicator">
+    <div class="ai-item">
+      <div>
+        <div class="ai-label">Active Local</div>
+        <div class="ai-value local" id="active-local-name">—</div>
+      </div>
+    </div>
+    <div class="ai-item">
+      <div>
+        <div class="ai-label">Active Cloud</div>
+        <div class="ai-value cloud" id="active-cloud-name">—</div>
+      </div>
+    </div>
+    <div class="ai-hint">
+      <p>Click a card below to switch the active provider.<br>Changes take effect immediately.</p>
+    </div>
+  </div>
+
+  <div id="local-providers-section">
+    <div class="section-heading">Local Providers</div>
+    <div class="provider-cards" id="local-provider-cards">
+      <div class="empty"><div class="empty-icon">◈</div>Loading…</div>
+    </div>
+  </div>
+
+  <div id="cloud-providers-section" style="margin-top:8px;">
+    <div class="section-heading">Cloud Providers</div>
+    <div class="provider-cards" id="cloud-provider-cards">
+      <div class="empty"><div class="empty-icon">◉</div>Loading…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ LOG ════ -->
+<div class="page" id="page-log">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="panel-title-dot dot-white"></span>
+        Request Log
+      </div>
+      <button class="refresh-btn" onclick="fetchAll()">↻ REFRESH</button>
+    </div>
+    <div class="log-scroll">
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>TIME</th><th>BACKEND</th><th>PROVIDER</th>
+            <th>TOKENS</th><th>RULE</th><th>DUR</th><th>PREVIEW</th>
+          </tr>
+        </thead>
+        <tbody id="log-body">
+          <tr><td colspan="7"><div class="empty"><div class="empty-icon">—</div>No requests yet</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════ TEST ════ -->
+<div class="page" id="page-test">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="panel-title-dot dot-lime"></span>
+        Route Preview — dry-run without sending
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="test-form">
+        <textarea id="test-prompt"
+          placeholder='Type a prompt to preview routing…&#10;e.g. "What is 2+2?" vs "Write a comprehensive financial model for a SaaS startup"'></textarea>
+        <div class="form-row">
+          <input id="test-model" placeholder="Model hint — e.g. gpt-4o, llama3.2 (optional)" />
+          <button class="btn btn-primary" onclick="previewRoute()">▶ &nbsp;Preview Route</button>
+        </div>
+
+        <div class="decision-result" id="decision-result">
+          <div class="dec-header">
+            <div class="dec-backend-label" id="dec-backend">—</div>
+            <div class="dec-arrow">→</div>
+            <div class="dec-provider" id="dec-prov">—</div>
+          </div>
+          <div class="dec-meta" id="dec-meta"></div>
+        </div>
+
+        <div>
+          <div class="quick-examples-label">Quick examples</div>
+          <div class="quick-chips">
+            <span class="chip" onclick="setPrompt('What is the capital of France?')">Simple question</span>
+            <span class="chip" onclick="setPrompt('Write a comprehensive financial model for a SaaS startup with 5-year projections')">Complex task</span>
+            <span class="chip" onclick="setPrompt('Quick question: summarize this briefly')">Quick keyword</span>
+            <span class="chip" onclick="setPrompt('Translate to Spanish: Hello world')">Translate</span>
+            <span class="chip" onclick="setPromptModel('Write some code', 'gpt-4o')">GPT-4o hint</span>
+            <span class="chip" onclick="setPromptModel('Write some code', 'llama3.2')">llama3.2 hint</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+const BASE = 'http://localhost:8080';
+let lineChart, donutChart;
+let lineData = { labels: [], local: [], cloud: [] };
+let prevTotal = 0;
+
+const ICONS = {
+  ollama:'🦙', lmstudio:'🖥', mlx:'🍎', llamacpp:'⚙',
+  openai:'◎', anthropic:'◆', groq:'⚡', gemini:'◇', together:'◈', mistral:'◉',
+};
+
+/* ── Nav ──────────────────────────────────────────────────────────────────── */
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.h-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  if (id === 'providers') fetchProviders();
+}
+
+/* ── Charts ───────────────────────────────────────────────────────────────── */
+function initCharts() {
+  const gridColor = 'rgba(255,255,255,.04)';
+  const tickColor = '#626260';
+
+  lineChart = new Chart(document.getElementById('lineChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: lineData.labels,
+      datasets: [
+        { label: 'Local', data: lineData.local,
+          borderColor: '#E1F64A', backgroundColor: 'rgba(225,246,74,.05)',
+          tension: .4, fill: true, pointRadius: 2, borderWidth: 1.5 },
+        { label: 'Cloud', data: lineData.cloud,
+          borderColor: '#13BD7C', backgroundColor: 'rgba(19,189,124,.05)',
+          tension: .4, fill: true, pointRadius: 2, borderWidth: 1.5 },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#A8A8A4', font: { size: 10 }, boxWidth: 10 } } },
+      scales: {
+        x: { ticks: { color: tickColor, font: { size: 9 } }, grid: { color: gridColor } },
+        y: { ticks: { color: tickColor, font: { size: 9 } }, grid: { color: gridColor }, beginAtZero: true },
+      },
+    },
+  });
+
+  donutChart = new Chart(document.getElementById('donutChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Local', 'Cloud'],
+      datasets: [{
+        data: [0, 0],
+        backgroundColor: ['rgba(225,246,74,.6)', 'rgba(19,189,124,.6)'],
+        borderColor: ['#E1F64A', '#13BD7C'],
+        borderWidth: 1.5,
+        hoverOffset: 4,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '74%',
+      plugins: { legend: { display: false } },
+    },
+  });
+}
+
+/* ── Stats ────────────────────────────────────────────────────────────────── */
+function updateStats(d) {
+  document.getElementById('s-total').textContent  = d.total.toLocaleString();
+  document.getElementById('s-local').textContent  = d.local.toLocaleString();
+  document.getElementById('s-cloud').textContent  = d.cloud.toLocaleString();
+  document.getElementById('s-errors').textContent = d.errors.toLocaleString();
+  document.getElementById('s-local-detail').textContent = `${d.local_pct}% · ${d.active_local || '—'}`;
+  document.getElementById('s-cloud-detail').textContent = `${d.cloud_pct}% · ${d.active_cloud || '—'}`;
+  document.getElementById('s-uptime').textContent = `since ${new Date(d.started_at).toLocaleTimeString()}`;
+
+  const fb = d.fallbacks || 0;
+  document.getElementById('s-fallback-sub').textContent = `${fb} fallback${fb !== 1 ? 's' : ''}`;
+  const banner = document.getElementById('fallback-banner');
+  banner.style.display = fb > 0 ? 'flex' : 'none';
+  if (fb > 0) {
+    document.getElementById('s-fallbacks').textContent = fb;
+    document.getElementById('fallback-detail').textContent =
+      `${fb} request${fb > 1 ? 's' : ''} auto-rerouted to cloud (${d.fallback_pct}% of total)`;
+  }
+
+  donutChart.data.datasets[0].data = [d.local, d.cloud];
+  donutChart.update('none');
+  document.getElementById('donut-pct').textContent = `${d.local_pct}%`;
+
+  if (d.total !== prevTotal) {
+    const t = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    lineData.labels.push(t); lineData.local.push(d.local); lineData.cloud.push(d.cloud);
+    if (lineData.labels.length > 20) { lineData.labels.shift(); lineData.local.shift(); lineData.cloud.shift(); }
+    lineChart.update();
+    prevTotal = d.total;
+  }
+
+  const entries = Object.entries(d.rules_hit || {}).sort((a, b) => b[1] - a[1]);
+  if (entries.length) {
+    const max = entries[0][1];
+    document.getElementById('rules-list').innerHTML = entries.slice(0, 8).map(([name, count]) => `
+      <div class="rule-row">
+        <div class="rule-name">${name}</div>
+        <div class="rule-bar"><div class="rule-bar-fill" style="width:${Math.round(count/max*100)}%"></div></div>
+        <div class="rule-count">${count}</div>
+      </div>`).join('');
+  }
+}
+
+/* ── Log ──────────────────────────────────────────────────────────────────── */
+function updateLog(entries) {
+  const tbody = document.getElementById('log-body');
+  if (!entries.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">—</div>No requests logged yet</div></td></tr>';
+    return;
+  }
+  const maxT = Math.max(...entries.map(e => e.tokens || 0), 1);
+  tbody.innerHTML = entries.map(e => {
+    const ts = new Date(e.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const bCls   = e.error ? 'error' : e.backend;
+    const bLabel = e.error ? 'ERR' : e.backend === 'local' ? 'LOCAL' : 'CLOUD';
+    const fbTag  = e.fallback ? ' <span style="font-size:8px;color:var(--red);font-family:monospace">FB</span>' : '';
+    const pct    = Math.round((e.tokens || 0) / maxT * 100);
+    const barCol = e.backend === 'local' ? '#E1F64A' : '#13BD7C';
+    return `<tr>
+      <td><span class="time-text">${ts}</span></td>
+      <td><span class="badge ${bCls}">${bLabel}</span>${fbTag}</td>
+      <td><span class="provider-pill">${e.provider || '—'}</span></td>
+      <td><div class="token-bar">
+            <span class="token-pill">${e.tokens || 0}</span>
+            <div class="micro-bar"><div class="micro-bar-fill" style="width:${pct}%;background:${barCol}"></div></div>
+          </div></td>
+      <td><span class="rule-tag">${e.rule || '—'}</span></td>
+      <td><span class="dur">${e.duration_ms}ms</span></td>
+      <td><span class="preview-text" title="${(e.preview || '').replace(/"/g, '&quot;')}">${e.preview || '—'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── Providers ────────────────────────────────────────────────────────────── */
+async function fetchProviders() {
+  try {
+    const r = await fetch(`${BASE}/v1/providers`);
+    const d = await r.json();
+    renderProviderCards('local', d.local.providers, d.local.active);
+    renderProviderCards('cloud', d.cloud.providers, d.cloud.active);
+    document.getElementById('active-local-name').textContent = d.local.active;
+    document.getElementById('active-cloud-name').textContent = d.cloud.active;
+  } catch {}
+}
+
+function renderProviderCards(side, providers, activeNow) {
+  const container = document.getElementById(`${side}-provider-cards`);
+  container.innerHTML = providers.map(p => {
+    const isActive   = p.name === activeNow;
+    const isDisabled = p.enabled === false;
+    const icon = ICONS[p.name] || (side === 'local' ? '◈' : '◉');
+    const models    = (p.models || []).slice(0, 4);
+    const extraMods = (p.models || []).length - 4;
+    return `<div class="provider-card ${side}-card ${isActive ? 'active-card' : ''}" id="pc-${side}-${p.name}">
+      <div class="pc-top">
+        <div class="pc-icon">${icon}</div>
+        <div class="pc-badges">
+          ${isActive   ? '<span class="pc-badge active">● ACTIVE</span>' : ''}
+          ${isDisabled ? '<span class="pc-badge disabled">DISABLED</span>' : ''}
+          <span class="pc-badge type">${p.type}</span>
+        </div>
+      </div>
+      <div class="pc-name">${p.name}</div>
+      <div class="pc-url">${p.base_url}</div>
+      <div class="pc-model">Default: <b style="color:var(--text-2)">${p.default_model || '—'}</b></div>
+      ${models.length ? `<div class="model-chips">${models.map(m => `<span class="model-chip">${m}</span>`).join('')}${extraMods > 0 ? `<span class="model-chip">+${extraMods}</span>` : ''}</div>` : ''}
+      <button class="activate-btn ${isActive ? 'is-active' : ''}"
+              onclick="activateProvider('${side}','${p.name}')" ${isActive ? 'disabled' : ''}>
+        ${isActive ? '✓ CURRENTLY ACTIVE' : `SWITCH TO ${p.name.toUpperCase()}`}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+async function activateProvider(side, name) {
+  try {
+    const r = await fetch(`${BASE}/v1/providers/${side}/activate/${name}`, { method: 'POST' });
+    if (r.ok) { await fetchProviders(); await fetchAll(); }
+  } catch(e) { alert(`Could not activate provider: ${e.message}`); }
+}
+
+/* ── Route Preview ────────────────────────────────────────────────────────── */
+async function previewRoute() {
+  const prompt = document.getElementById('test-prompt').value.trim();
+  const model  = document.getElementById('test-model').value.trim();
+  const box    = document.getElementById('decision-result');
+  if (!prompt) { document.getElementById('test-prompt').focus(); return; }
+  try {
+    const r = await fetch(`${BASE}/v1/route/preview`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', content: prompt }], model }),
+    });
+    const d = await r.json();
+    const isLocal = d.backend === 'local';
+
+    document.getElementById('dec-backend').textContent = isLocal ? 'LOCAL' : 'CLOUD';
+    document.getElementById('dec-backend').className   = 'dec-backend-label ' + d.backend;
+    document.getElementById('dec-prov').textContent    = d.provider || '—';
+
+    document.getElementById('dec-meta').innerHTML = `
+      <div class="dec-item"><div class="dec-item-label">Rule</div><div class="dec-item-value">${d.rule_name}</div></div>
+      <div class="dec-item"><div class="dec-item-label">Tokens</div><div class="dec-item-value">${d.token_count}</div></div>
+      <div class="dec-item" style="grid-column:1/-1"><div class="dec-item-label">Reason</div><div class="dec-item-value">${d.reason}</div></div>
+    `;
+    box.className = `decision-result show ${d.backend}`;
+  } catch {
+    document.getElementById('dec-backend').textContent = 'OFFLINE';
+    document.getElementById('dec-backend').className   = 'dec-backend-label';
+    document.getElementById('dec-prov').textContent    = '—';
+    document.getElementById('dec-meta').innerHTML      = `<div class="dec-item" style="grid-column:1/-1"><div class="dec-item-label">Error</div><div class="dec-item-value">Router not reachable — run: python main.py</div></div>`;
+    box.className = 'decision-result show';
+  }
+}
+function setPrompt(t) { document.getElementById('test-prompt').value = t; previewRoute(); }
+function setPromptModel(t, m) { document.getElementById('test-prompt').value = t; document.getElementById('test-model').value = m; previewRoute(); }
+
+/* ── Status ───────────────────────────────────────────────────────────────── */
+async function checkStatus() {
+  try {
+    const r = await fetch(`${BASE}/health`, { signal: AbortSignal.timeout(3000) });
+    const ok = r.ok;
+    const pill = document.getElementById('status-pill');
+    pill.className = 'status-pill' + (ok ? '' : ' offline');
+    document.getElementById('status-text').textContent = ok ? 'Online' : 'Offline';
+    if (ok) {
+      const d = await r.json();
+      document.getElementById('active-local-name').textContent = d.active_local || '—';
+      document.getElementById('active-cloud-name').textContent = d.active_cloud || '—';
+    }
+    return ok;
+  } catch {
+    document.getElementById('status-pill').className = 'status-pill offline';
+    document.getElementById('status-text').textContent = 'Offline';
+    return false;
+  }
+}
+
+async function fetchAll() {
+  const alive = await checkStatus();
+  if (!alive) return;
+  try {
+    const [stats, logData] = await Promise.all([
+      fetch(`${BASE}/v1/stats`).then(r => r.json()),
+      fetch(`${BASE}/v1/log?limit=50`).then(r => r.json()),
+    ]);
+    updateStats(stats);
+    updateLog(logData.entries || []);
+  } catch(e) { console.warn(e); }
+}
+
+/* ── Boot ─────────────────────────────────────────────────────────────────── */
+initCharts();
+fetchAll();
+setInterval(fetchAll, 5000);
+</script>
+</body>
+</html>

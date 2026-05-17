@@ -1,0 +1,96 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  Local-First AI API Router — Docker Compose (CPU / Apple Silicon)
+#
+#  Quick start:
+#    cp .env.example .env          # add your OPENAI_API_KEY (optional)
+#    docker compose up -d          # start Ollama + pull model + router
+#    docker compose logs -f router # tail logs
+#    docker compose down           # stop everything
+#
+#  NVIDIA GPU:
+#    docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
+#
+#  Cloud-only mode (no Ollama):
+#    Comment out the ollama and ollama-pull services, remove the depends_on
+#    block from the router service, then set default_backend: cloud in config.yaml
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Ollama — local LLM server ───────────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ai-router-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama           # persist downloaded models across restarts
+    environment:
+      OLLAMA_KEEP_ALIVE: 24h               # keep model resident in memory
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:11434/api/tags"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── Model pull — runs once, downloads the default model, then exits ─────────
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: ai-router-ollama-pull
+    depends_on:
+      ollama:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "
+        echo '▶ Pulling model: ${OLLAMA_MODEL:-llama3.2} …' &&
+        ollama pull ${OLLAMA_MODEL:-llama3.2} &&
+        echo '✓ Model ready.'
+      "
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    restart: "no"
+
+  # ── AI Router — the OpenAI-compatible proxy ─────────────────────────────────
+  router:
+    image: ${ROUTER_IMAGE:-ai-router:latest}   # use pre-built image if set, else build
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-router
+    restart: unless-stopped
+    ports:
+      - "${ROUTER_PORT:-8080}:8080"
+    env_file:
+      - path: .env
+        required: false                        # .env is optional; keys can be passed via -e
+    environment:
+      # Point the local backend at the Ollama container (overrides config.yaml URL)
+      AI_ROUTER_OLLAMA_URL: http://ollama:11434
+      # Forward cloud API keys from .env or host environment
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro     # hot-reload routing rules without rebuild
+    depends_on:
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+# ── Named volumes ───────────────────────────────────────────────────────────
+volumes:
+  ollama_data:
+    name: ai-router-ollama-models            # survives docker compose down
+
+# ── Network ─────────────────────────────────────────────────────────────────
+networks:
+  default:
+    name: ai-router-net

@@ -1,0 +1,16 @@
+# OpenHands (formerly OpenDevin) — Autonomous AI coding agent
+# https://github.com/All-Hands-AI/OpenHands
+#
+# Place this in: ~/.openhands/config.toml
+# or pass as env vars: LLM_BASE_URL, LLM_API_KEY, LLM_MODEL
+
+[llm]
+base_url = "http://localhost:8080/v1"
+api_key  = "router"
+model    = "openai/llama3.2"   # prefix openai/ so OpenHands uses OpenAI compat client
+# model    = "openai/gpt-4o"   # uncomment to force cloud
+
+[agent]
+# OpenHands works best with a capable model for complex multi-step tasks.
+# The router will route based on your rules — consider adding a rule that
+# always sends system messages containing "CodeActAgent" to cloud.

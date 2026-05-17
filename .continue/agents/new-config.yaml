@@ -1,0 +1,198 @@
+name: AI Router
+version: 1.0.0
+schema: v1
+
+# ─── Models ──────────────────────────────────────────────────────────────────
+# All four profiles point at your local AI Router (http://localhost:8080).
+# The router then forwards to Ollama (local) or OpenAI/cloud based on your rules.
+#
+# INSTALL:  Copy this file to  ~/.continue/config.yaml
+#           (Cmd+Shift+P → "Continue: Open config.yaml")
+# REQUIRES: Router running → cd ai-router && python3 main.py
+
+models:
+  # ── Auto-route: let your routing rules decide ─────────────────────────────
+  # Best for daily use — keywords, stack traces, token length all apply.
+  - name: Auto Route
+    provider: openai
+    model: auto
+    apiBase: http://localhost:8080/v1
+    apiKey: router
+    roles:
+      - chat
+      - edit
+      - apply
+    chatOptions:
+      baseSystemMessage: >
+        You are an expert software engineer. Write clean, idiomatic code.
+        Be concise and precise. Always show working examples.
+    defaultCompletionOptions:
+      contextLength: 16000
+      temperature: 0.1
+
+  # ── Force local: always Ollama, zero API cost ─────────────────────────────
+  - name: Local — Ollama (llama3.2)
+    provider: openai
+    model: llama3.2
+    apiBase: http://localhost:8080/v1
+    apiKey: router
+    roles:
+      - chat
+      - edit
+      - apply
+    requestOptions:
+      headers:
+        X-Route-To: local
+    defaultCompletionOptions:
+      contextLength: 8192
+      temperature: 0.1
+
+  # ── Force cloud: OpenAI GPT-4o ────────────────────────────────────────────
+  - name: Cloud — GPT-4o
+    provider: openai
+    model: gpt-4o
+    apiBase: http://localhost:8080/v1
+    apiKey: router
+    roles:
+      - chat
+      - edit
+      - apply
+    requestOptions:
+      headers:
+        X-Route-To: cloud
+    defaultCompletionOptions:
+      contextLength: 128000
+      temperature: 0.1
+
+  # ── Cloud mini: cheaper, still great for chat/explain ────────────────────
+  - name: Cloud — GPT-4o-mini
+    provider: openai
+    model: gpt-4o-mini
+    apiBase: http://localhost:8080/v1
+    apiKey: router
+    roles:
+      - chat
+      - edit
+      - apply
+    requestOptions:
+      headers:
+        X-Route-To: cloud
+    defaultCompletionOptions:
+      contextLength: 128000
+      temperature: 0.1
+
+  # ── Autocomplete: always local, keeps Tab instant and free ───────────────
+  # Upgrade: ollama pull qwen2.5-coder:7b  → change model below
+  - name: Autocomplete — Local
+    provider: openai
+    model: llama3.2
+    apiBase: http://localhost:8080/v1
+    apiKey: router
+    roles:
+      - autocomplete
+    requestOptions:
+      headers:
+        X-Route-To: local
+    autocompleteOptions:
+      debounceDelay: 400
+      maxPromptTokens: 1024
+      onlyMyCode: true
+      useCache: true
+      useImports: true
+      useRecentlyEdited: true
+
+
+# ─── Rules ───────────────────────────────────────────────────────────────────
+# These are appended to the system message for every Chat, Edit, and Agent call.
+rules:
+  - Write clean, well-documented, production-ready code
+  - Prefer explicit over implicit — avoid magic values and side effects
+  - When fixing bugs, explain the root cause before showing the fix
+  - Match the style and conventions already present in the file
+  - If unsure about intent, ask one clarifying question before proceeding
+
+
+# ─── Context providers ───────────────────────────────────────────────────────
+# Available via @ in the chat input (e.g. @diff, @terminal, @problems)
+context:
+  - provider: code
+  - provider: diff
+  - provider: terminal
+  - provider: problems
+  - provider: folder
+  - provider: codebase
+
+
+# ─── Prompts ─────────────────────────────────────────────────────────────────
+# Invoked with /name in the chat input.
+# These match your router's keyword rules — review/test/fix → cloud,
+# docstring/explain → local (short task, routes by token length).
+prompts:
+  - name: review
+    description: Code review — correctness, performance, security
+    prompt: |
+      Review this code for correctness, performance, and security issues.
+      Structure your response as:
+      1. Summary (one sentence)
+      2. Critical issues (must fix)
+      3. Warnings (should fix)
+      4. Suggestions (nice to have)
+      Reference specific line numbers for each item.
+
+  - name: test
+    description: Generate comprehensive unit tests
+    prompt: |
+      Write comprehensive unit tests for this code.
+      - Use pytest for Python, Jest/Vitest for JavaScript/TypeScript
+      - Cover: happy path, edge cases, error paths, boundary values
+      - Add a docstring/comment describing what each test validates
+      - Mock external dependencies (DB, HTTP, filesystem)
+
+  - name: fix
+    description: Find and fix the bug
+    prompt: |
+      Find and fix the bug in this code.
+      Structure your response as:
+      1. Root cause — what is wrong and why
+      2. Fixed code — complete, runnable version
+      3. Prevention — how to avoid this class of bug in future
+
+  - name: explain
+    description: Explain this code in plain English
+    prompt: |
+      Explain what this code does in plain English.
+      Structure: one-line summary → inputs/outputs → key logic → gotchas or side effects.
+      Assume the reader is a competent developer but unfamiliar with this codebase.
+
+  - name: docstring
+    description: Add docstrings / JSDoc comments
+    prompt: |
+      Add clear docstrings or JSDoc comments to this code.
+      Match the existing documentation style.
+      Include: purpose, params (name, type, description), return value, raises/throws if relevant.
+      Keep each docstring concise — avoid restating what the code obviously does.
+
+  - name: refactor
+    description: Refactor for clarity and maintainability
+    prompt: |
+      Refactor this code for improved clarity, maintainability, and testability.
+      Preserve existing behaviour exactly. Show:
+      1. What you changed and why
+      2. The refactored code
+      3. Any follow-up refactors worth considering
+
+  - name: commit
+    description: Generate a git commit message
+    prompt: |
+      Write a git commit message for these changes.
+      Format: <type>(<scope>): <short summary>  (50 chars max)
+      Followed by a blank line and a brief body explaining WHY (not what).
+      Types: feat, fix, refactor, test, docs, chore, perf, style.
+
+
+# ─── Docs ────────────────────────────────────────────────────────────────────
+# Index these URLs so @docs context works in chat.
+docs:
+  - name: Continue.dev Docs
+    startUrl: https://docs.continue.dev/intro
+    favicon: https://docs.continue.dev/favicon.ico

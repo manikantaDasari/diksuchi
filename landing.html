@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Diksuchi — Always pointing to the right model.</title>
+<meta name="description" content="Open source AI routing proxy. Routes every prompt to the best model automatically — local Ollama or cloud — based on complexity, cost, and context."/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --needle:#E1F64A;
+  --cloud:#13BD7C;
+  --alert:#C22C0A;
+  --ground:#111110;
+  --surface:#1A1A1A;
+  --s2:#222220;
+  --s3:#2A2A28;
+  --border:#2E2E2C;
+  --bhi:#3E3E3C;
+  --north:#FAFAFA;
+  --text2:#A8A8A4;
+  --text3:#626260;
+  --r:8px;
+  --rl:14px;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--ground);
+  color:var(--north);
+  font-family:'Inter',system-ui,sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* grid */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(225,246,74,.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(225,246,74,.022) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+/* top glow */
+body::after{
+  content:'';position:fixed;top:-300px;left:50%;transform:translateX(-50%);
+  width:900px;height:600px;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(225,246,74,.07) 0%,transparent 65%);
+}
+*{position:relative;z-index:1}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--ground)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+.container{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ── Animate on scroll ─────────────────────────────────────────── */
+.anim{opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s ease}
+.anim.visible{opacity:1;transform:translateY(0)}
+.anim-d1{transition-delay:.1s}
+.anim-d2{transition-delay:.2s}
+.anim-d3{transition-delay:.3s}
+.anim-d4{transition-delay:.4s}
+.anim-d5{transition-delay:.5s}
+
+/* ── NAV ──────────────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(17,17,16,.9);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  transition:border-color .3s;
+}
+.nav-inner{
+  max-width:1120px;margin:0 auto;padding:0 24px;
+  height:62px;display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{display:flex;align-items:center;gap:11px;text-decoration:none}
+.nav-mark{
+  width:34px;height:34px;background:var(--needle);border-radius:7px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.nav-name{font-size:16px;font-weight:900;color:var(--north);letter-spacing:-.4px}
+.nav-center{display:flex;align-items:center;gap:4px}
+.nav-link{
+  font-size:13px;font-weight:500;color:var(--text3);
+  text-decoration:none;padding:6px 13px;border-radius:6px;
+  transition:color .15s,background .15s;
+}
+.nav-link:hover{color:var(--north);background:var(--s2)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-gh{
+  display:flex;align-items:center;gap:6px;
+  font-size:12px;font-weight:600;color:var(--text2);
+  text-decoration:none;padding:6px 12px;border-radius:6px;
+  border:1px solid var(--border);transition:all .15s;
+}
+.nav-gh:hover{color:var(--north);border-color:var(--bhi)}
+.nav-cta{
+  font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  background:var(--needle);color:var(--ground);
+  padding:8px 18px;border-radius:6px;text-decoration:none;
+  transition:opacity .15s,transform .15s;white-space:nowrap;
+}
+.nav-cta:hover{opacity:.9;transform:translateY(-1px)}
+
+/* Hamburger */
+.hamburger{
+  display:none;flex-direction:column;justify-content:center;gap:5px;
+  width:36px;height:36px;background:none;border:1px solid var(--border);
+  border-radius:6px;cursor:pointer;padding:8px;
+}
+.hamburger span{display:block;width:100%;height:1.5px;background:var(--text2);transition:all .25s}
+.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* Mobile drawer */
+.mobile-nav{
+  display:none;position:fixed;top:62px;left:0;right:0;bottom:0;z-index:190;
+  background:rgba(17,17,16,.98);backdrop-filter:blur(20px);
+  flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  transform:translateX(100%);transition:transform .3s ease;
+}
+.mobile-nav.open{transform:translateX(0)}
+.mobile-nav a{
+  font-size:22px;font-weight:700;color:var(--north);
+  text-decoration:none;padding:12px 24px;width:100%;text-align:center;
+  transition:color .15s;
+}
+.mobile-nav a:hover{color:var(--needle)}
+.mobile-nav .m-cta{
+  margin-top:16px;background:var(--needle);color:var(--ground);
+  border-radius:var(--r);font-size:16px;
+}
+
+/* ── HERO ─────────────────────────────────────────────────────── */
+.hero{padding:150px 0 80px;text-align:center}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(225,246,74,.08);border:1px solid rgba(225,246,74,.22);
+  color:var(--needle);border-radius:20px;
+  padding:5px 16px;font-size:10px;font-weight:800;
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:32px;
+}
+.hero-badge-dot{width:5px;height:5px;border-radius:50%;background:var(--needle);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+.hero h1{
+  font-size:clamp(42px,6.5vw,80px);
+  font-weight:900;letter-spacing:-2.5px;line-height:1.0;
+  margin-bottom:22px;
+}
+.hero h1 .line2{color:var(--needle)}
+
+.hero-sub{
+  font-size:clamp(15px,2vw,18px);color:var(--text2);
+  max-width:540px;margin:0 auto 40px;line-height:1.75;
+}
+
+.hero-actions{
+  display:flex;align-items:center;justify-content:center;
+  gap:12px;flex-wrap:wrap;margin-bottom:64px;
+}
+
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--needle);color:var(--ground);
+  font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  padding:13px 26px;border-radius:var(--r);text-decoration:none;
+  transition:all .2s;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(225,246,74,.25)}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;color:var(--text2);
+  font-size:13px;font-weight:600;
+  padding:13px 24px;border-radius:var(--r);border:1px solid var(--border);
+  text-decoration:none;transition:all .2s;
+}
+.btn-secondary:hover{border-color:var(--bhi);color:var(--north)}
+
+/* Terminal */
+.hero-terminal{
+  max-width:760px;margin:0 auto;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--rl);overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 1px rgba(225,246,74,.06);
+}
+.term-bar{
+  background:var(--s2);padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+}
+.term-dots{display:flex;gap:6px}
+.term-dot{width:10px;height:10px;border-radius:50%}
+.term-title{font-size:11px;color:var(--text3);margin:0 auto;font-family:monospace}
+.term-body{padding:22px 24px;text-align:left;min-height:140px}
+.term-line{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:2;display:block}
+.tc{color:var(--text3)}
+.tk{color:var(--needle)}
+.ts{color:var(--cloud)}
+.tw{color:var(--north)}
+.ta{color:#A78BFA}
+.tr{color:var(--alert)}
+.cursor{display:inline-block;width:8px;height:14px;background:var(--needle);vertical-align:middle;animation:cur .9s step-end infinite}
+@keyframes cur{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── STATS ────────────────────────────────────────────────────── */
+.stats{padding:52px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat-item{text-align:center;padding:24px 16px;border-right:1px solid var(--border)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-size:36px;font-weight:900;letter-spacing:-1.5px;color:var(--needle)}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-top:6px}
+
+/* ── HOW IT WORKS ─────────────────────────────────────────────── */
+.section{padding:104px 0}
+.section-header{margin-bottom:64px}
+.section-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  color:var(--needle);margin-bottom:18px;
+}
+.section-tag::before{content:'';width:20px;height:2px;background:var(--needle);border-radius:1px}
+.section-title{font-size:clamp(28px,4vw,46px);font-weight:900;letter-spacing:-1.5px;margin-bottom:16px;line-height:1.08}
+.section-sub{font-size:15px;color:var(--text2);max-width:500px;line-height:1.75}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.step{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);
+  padding:30px;transition:border-color .2s,transform .2s,box-shadow .2s;
+}
+.step:hover{border-color:rgba(225,246,74,.2);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.3)}
+.step-num{
+  font-size:10px;font-weight:800;font-family:'JetBrains Mono',monospace;
+  color:var(--needle);margin-bottom:18px;
+  display:flex;align-items:center;gap:10px;
+}
+.step-num::after{content:'';flex:1;height:1px;background:rgba(225,246,74,.12)}
+.step h3{font-size:16px;font-weight:800;margin-bottom:10px;letter-spacing:-.3px}
+.step p{font-size:13px;color:var(--text2);line-height:1.7}
+
+/* ── ROUTING ANIMATION ──────────────────────────────────────────*/
+.routing-demo{
+  margin-top:64px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--rl);overflow:hidden;
+}
+.routing-demo-header{
+  background:var(--s2);padding:14px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.routing-demo-header span{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text2)}
+.routing-inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:40px 32px;gap:0}
+.route-box{border-radius:var(--r);padding:18px 20px;border:1px solid var(--border)}
+.route-prompt{background:var(--s2)}
+.route-prompt-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px}
+.route-prompt-items{display:flex;flex-direction:column;gap:7px}
+.rp-item{
+  font-size:12px;font-family:'JetBrains Mono',monospace;
+  padding:6px 10px;border-radius:5px;border:1px solid var(--border);
+  cursor:pointer;transition:all .2s;color:var(--text2);
+}
+.rp-item:hover{border-color:var(--needle);color:var(--north)}
+.rp-item.active{border-color:var(--needle);color:var(--north);background:rgba(225,246,74,.06)}
+
+.route-arrow{padding:0 28px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.route-arrow-line{
+  width:80px;height:2px;background:var(--border);position:relative;overflow:visible;
+}
+.route-arrow-line::after{
+  content:'';position:absolute;left:-4px;top:50%;transform:translateY(-50%);
+  width:0;height:2px;background:var(--needle);
+  animation:flowArrow 2s ease-in-out infinite;border-radius:1px;
+}
+.route-arrow-line.cloud-line::after{background:var(--cloud);animation-delay:.5s}
+@keyframes flowArrow{0%{width:0;left:0}50%{width:100%;left:0}100%{width:0;left:100%}}
+
+.arrow-head{font-size:18px;color:var(--border)}
+.route-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.route-label.local{color:var(--needle)}
+.route-label.cloud{color:var(--cloud)}
+
+.route-outcomes{display:flex;flex-direction:column;gap:10px}
+.route-outcome{
+  padding:12px 16px;border-radius:var(--r);border:1px solid var(--border);
+  transition:all .3s;
+}
+.route-outcome.local-out{border-color:rgba(225,246,74,.15);background:rgba(225,246,74,.04)}
+.route-outcome.cloud-out{border-color:rgba(19,189,124,.15);background:rgba(19,189,124,.04)}
+.outcome-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.outcome-label.local{color:var(--needle)}
+.outcome-label.cloud{color:var(--cloud)}
+.outcome-meta{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text2);line-height:1.6}
+
+/* ── FEATURES ─────────────────────────────────────────────────── */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.feature{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);
+  padding:26px;transition:all .25s;position:relative;overflow:hidden;
+}
+.feature::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--needle),rgba(225,246,74,0));
+  transform:scaleX(0);transform-origin:left;transition:transform .35s;
+}
+.feature:hover::before{transform:scaleX(1)}
+.feature:hover{border-color:rgba(225,246,74,.18);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.3)}
+.feature-icon{
+  width:44px;height:44px;border-radius:var(--r);
+  background:rgba(225,246,74,.07);border:1px solid rgba(225,246,74,.14);
+  display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+}
+.feature h3{font-size:14px;font-weight:800;margin-bottom:8px;letter-spacing:-.2px}
+.feature p{font-size:12.5px;color:var(--text2);line-height:1.7}
+
+/* ── PROVIDERS ────────────────────────────────────────────────── */
+.providers-section{padding:80px 0;border-top:1px solid var(--border)}
+.providers-title{text-align:center;font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:36px}
+.providers-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.provider-chip{
+  background:var(--surface);border:1px solid var(--border);border-radius:24px;
+  padding:8px 20px;font-size:12px;font-weight:600;color:var(--text2);
+  display:flex;align-items:center;gap:8px;transition:all .2s;
+}
+.provider-chip:hover{border-color:var(--bhi);color:var(--north)}
+.provider-chip.local-chip{border-color:rgba(225,246,74,.25);color:var(--needle);background:rgba(225,246,74,.04)}
+.provider-chip.local-chip:hover{border-color:var(--needle);background:rgba(225,246,74,.08)}
+.chip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* ── QUICKSTART ───────────────────────────────────────────────── */
+.quickstart{padding:104px 0;border-top:1px solid var(--border)}
+.qs-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:64px;align-items:start}
+
+/* Tabs */
+.qs-tabs{display:flex;gap:6px;margin-bottom:16px}
+.qs-tab{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  padding:6px 14px;border-radius:5px;border:1px solid var(--border);
+  background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;
+}
+.qs-tab.active{background:var(--needle);color:var(--ground);border-color:var(--needle)}
+
+.qs-steps{display:flex;flex-direction:column;gap:14px}
+.qs-step{
+  display:flex;gap:16px;align-items:flex-start;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px 18px;transition:border-color .2s;
+}
+.qs-step:hover{border-color:var(--bhi)}
+.qs-num{
+  width:26px;height:26px;border-radius:50%;background:var(--needle);
+  color:var(--ground);font-size:11px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.qs-step h4{font-size:13px;font-weight:800;margin-bottom:4px;letter-spacing:-.2px}
+.qs-step p{font-size:11.5px;color:var(--text2);line-height:1.65}
+.qs-step code{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--needle);background:rgba(225,246,74,.08);padding:1px 6px;border-radius:3px}
+
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.code-bar{
+  background:var(--s2);padding:10px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.code-lang{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3)}
+.copy-btn{
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  padding:4px 10px;border-radius:4px;background:var(--s3);border:1px solid var(--border);
+  color:var(--text3);cursor:pointer;transition:all .15s;
+}
+.copy-btn:hover{color:var(--north);border-color:var(--bhi)}
+.copy-btn.copied{color:var(--cloud);border-color:var(--cloud)}
+.code-body{padding:20px 22px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.95;overflow-x:auto}
+
+/* ── CTA ──────────────────────────────────────────────────────── */
+.cta-section{padding:104px 0}
+.cta-box{
+  background:var(--needle);border-radius:20px;padding:72px 48px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.cta-bg1{position:absolute;top:-80px;right:-80px;width:280px;height:280px;border-radius:50%;background:rgba(0,0,0,.07)}
+.cta-bg2{position:absolute;bottom:-100px;left:-60px;width:320px;height:320px;border-radius:50%;background:rgba(0,0,0,.05)}
+.cta-logo{
+  width:60px;height:60px;background:var(--ground);border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 28px;position:relative;z-index:2;
+}
+.cta-box h2{font-size:clamp(26px,4vw,42px);font-weight:900;color:var(--ground);letter-spacing:-1.5px;margin-bottom:14px;position:relative;z-index:2}
+.cta-box p{font-size:15px;color:rgba(17,17,16,.62);margin-bottom:36px;position:relative;z-index:2}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:2}
+.btn-dark{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ground);color:var(--needle);
+  font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  padding:14px 28px;border-radius:var(--r);text-decoration:none;
+  transition:all .2s;
+}
+.btn-dark:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,.35)}
+.btn-ghost-dark{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;color:var(--ground);
+  font-size:13px;font-weight:700;
+  padding:14px 24px;border-radius:var(--r);
+  border:1.5px solid rgba(17,17,16,.22);
+  text-decoration:none;transition:all .2s;
+}
+.btn-ghost-dark:hover{background:rgba(17,17,16,.07)}
+
+/* ── FOOTER ───────────────────────────────────────────────────── */
+footer{border-top:1px solid var(--border);padding:44px 0}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.footer-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.footer-mark{width:28px;height:28px;background:var(--needle);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.footer-name{font-size:14px;font-weight:900;color:var(--north)}
+.footer-tagline{font-size:10px;color:var(--text3);margin-top:2px}
+.footer-links{display:flex;gap:22px}
+.footer-link{font-size:12px;color:var(--text3);text-decoration:none;transition:color .15s}
+.footer-link:hover{color:var(--north)}
+.footer-right{font-size:11px;color:var(--text3)}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media(max-width:900px){
+  .steps,.features-grid{grid-template-columns:1fr 1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .stat-item:nth-child(2){border-right:none}
+  .qs-grid{grid-template-columns:1fr}
+  .routing-inner{grid-template-columns:1fr;gap:20px}
+  .route-arrow{flex-direction:row;padding:16px 0}
+  .nav-center{display:none}
+  .hamburger{display:flex}
+  .mobile-nav{display:flex}
+}
+@media(max-width:560px){
+  .steps,.features-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .cta-box{padding:44px 24px}
+  .hero-actions{flex-direction:column;align-items:center}
+  .footer-inner{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-mark">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="8" stroke="#111110" stroke-width="1.2" fill="none"/>
+          <polygon points="10,3 11.5,10 10,9 8.5,10" fill="#111110"/>
+          <polygon points="10,17 8.5,10 10,11 11.5,10" fill="#111110" opacity=".28"/>
+          <circle cx="10" cy="10" r="1.8" fill="#111110"/>
+        </svg>
+      </div>
+      <span class="nav-name">Diksuchi</span>
+    </a>
+    <div class="nav-center">
+      <a href="#how-it-works" class="nav-link">How it works</a>
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#quickstart" class="nav-link">Quick start</a>
+      <a href="#" class="nav-link">Docs</a>
+    </div>
+    <div class="nav-right">
+      <a href="https://github.com" class="nav-gh">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+      <a href="#quickstart" class="nav-cta">Get started →</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobile-nav">
+  <a href="#how-it-works" class="nav-link" onclick="closeMobileNav()">How it works</a>
+  <a href="#features" class="nav-link" onclick="closeMobileNav()">Features</a>
+  <a href="#quickstart" class="nav-link" onclick="closeMobileNav()">Quick start</a>
+  <a href="https://github.com" class="nav-link">GitHub</a>
+  <a href="#quickstart" class="m-cta" onclick="closeMobileNav()">Get started →</a>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge anim">
+      <span class="hero-badge-dot"></span>
+      Open Source · v1.0 · Free forever
+    </div>
+    <h1 class="anim anim-d1">
+      Always pointing to<br>
+      <span class="line2">the right model.</span>
+    </h1>
+    <p class="hero-sub anim anim-d2">
+      Diksuchi is a local-first AI routing proxy. Drop it between your app and your AI providers — it automatically sends every prompt to the best model, based on complexity, cost, and context.
+    </p>
+    <div class="hero-actions anim anim-d3">
+      <a href="#quickstart" class="btn-primary">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 1.5L11 6.5L2 11.5V1.5Z" fill="currentColor"/></svg>
+        Get started free
+      </a>
+      <a href="https://github.com" class="btn-secondary">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        Star on GitHub
+      </a>
+    </div>
+
+    <!-- Animated terminal -->
+    <div class="hero-terminal anim anim-d4">
+      <div class="term-bar">
+        <div class="term-dots">
+          <div class="term-dot" style="background:#C22C0A"></div>
+          <div class="term-dot" style="background:#E1F64A"></div>
+          <div class="term-dot" style="background:#13BD7C"></div>
+        </div>
+        <span class="term-title">diksuchi — router</span>
+      </div>
+      <div class="term-body" id="term-body"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<section class="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item anim">
+        <div class="stat-num" data-target="10" data-suffix="+">0</div>
+        <div class="stat-label">Providers supported</div>
+      </div>
+      <div class="stat-item anim anim-d1">
+        <div class="stat-num" data-target="13">0</div>
+        <div class="stat-label">Routing rules</div>
+      </div>
+      <div class="stat-item anim anim-d2">
+        <div class="stat-num" data-prefix="$" data-target="0">—</div>
+        <div class="stat-label">Cost to run locally</div>
+      </div>
+      <div class="stat-item anim anim-d3">
+        <div class="stat-num" data-target="1">0</div>
+        <div class="stat-label">Line to get started</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="section" id="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag anim">How it works</div>
+      <h2 class="section-title anim anim-d1">One proxy. Every model.<br>Zero code changes.</h2>
+      <p class="section-sub anim anim-d2">Point your existing OpenAI SDK at Diksuchi. It handles the routing — no rewrites, no vendor lock-in, no surprises.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step anim">
+        <div class="step-num">01</div>
+        <h3>Point your SDK at Diksuchi</h3>
+        <p>Change one line — <code style="font-family:'JetBrains Mono',monospace;color:var(--needle);font-size:11px">base_url</code> — to <code style="font-family:'JetBrains Mono',monospace;color:var(--needle);font-size:11px">localhost:8080</code>. Works with any OpenAI-compatible SDK, tool, or framework.</p>
+      </div>
+      <div class="step anim anim-d1">
+        <div class="step-num">02</div>
+        <h3>Diksuchi reads the prompt</h3>
+        <p>Analyses your request against 13 rules — complexity keywords, token count, regex patterns, time of day — in under 1ms. Fully local.</p>
+      </div>
+      <div class="step anim anim-d2">
+        <div class="step-num">03</div>
+        <h3>Routed to the best model</h3>
+        <p>Simple questions stay local — free, private, instant. Complex tasks go to GPT-4o, Claude, or Gemini. Automatically, every time.</p>
+      </div>
+    </div>
+
+    <!-- Live routing demo -->
+    <div class="routing-demo anim anim-d3">
+      <div class="routing-demo-header">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#E1F64A" stroke-width="1.2"/><polygon points="7,2 8.2,7 7,6.2 5.8,7" fill="#E1F64A"/></svg>
+        <span>Interactive routing preview — click a prompt to see where it routes</span>
+      </div>
+      <div class="routing-inner">
+        <div class="route-box route-prompt">
+          <div class="route-prompt-label">Incoming prompt</div>
+          <div class="route-prompt-items" id="route-prompts">
+            <div class="rp-item active" data-route="local" data-rule="short_prompt" data-model="llama3.2" data-cost="$0.00" data-ms="34">"What is 2 + 2?"</div>
+            <div class="rp-item" data-route="local" data-rule="time_of_day_ist" data-model="llama3.2" data-cost="$0.00" data-ms="41">"Summarise this paragraph"</div>
+            <div class="rp-item" data-route="cloud" data-rule="keyword_complex" data-model="gpt-4o" data-cost="$0.004" data-ms="820">"Refactor this auth middleware..."</div>
+            <div class="rp-item" data-route="cloud" data-rule="stack_trace_detected" data-model="gpt-4o" data-cost="$0.006" data-ms="1140">"TypeError: cannot read..."</div>
+            <div class="rp-item" data-route="local" data-rule="credential_detected" data-model="llama3.2" data-cost="$0.00" data-ms="29">"Review my .env file..."</div>
+          </div>
+        </div>
+        <div class="route-arrow">
+          <div class="route-arrow-line" id="arrow-local"></div>
+          <div class="route-arrow-line cloud-line" id="arrow-cloud"></div>
+        </div>
+        <div class="route-outcomes">
+          <div class="route-outcome local-out" id="out-local">
+            <div class="outcome-label local">→ LOCAL</div>
+            <div class="outcome-meta" id="meta-local">
+              Model: ollama/llama3.2<br>Rule: short_prompt<br>Latency: 34ms · Cost: $0.00
+            </div>
+          </div>
+          <div class="route-outcome cloud-out" id="out-cloud" style="opacity:.3">
+            <div class="outcome-label cloud">→ CLOUD</div>
+            <div class="outcome-meta" id="meta-cloud">
+              Model: openai/gpt-4o<br>Rule: —<br>Latency: — · Cost: —
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section class="section" id="features" style="padding-top:0">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag anim">Features</div>
+      <h2 class="section-title anim anim-d1">Everything you need.<br>Nothing you don't.</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature anim">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#E1F64A" stroke-width="1.5" stroke-linecap="round">
+            <rect x="2" y="5" width="16" height="12" rx="2"/><path d="M6 5V3.5A1.5 1.5 0 017.5 2h5A1.5 1.5 0 0114 3.5V5"/><path d="M10 10v3M8.5 11.5L10 10l1.5 1.5"/>
+          </svg>
+        </div>
+        <h3>OpenAI-compatible</h3>
+        <p>Drop-in replacement. Works with any SDK or tool that speaks the OpenAI API — LangChain, Continue.dev, Cursor, your own code.</p>
+      </div>
+      <div class="feature anim anim-d1">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#E1F64A" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="10" cy="10" r="7.5"/><path d="M10 6v4l2.5 2.5"/>
+          </svg>
+        </div>
+        <h3>Local-first by default</h3>
+        <p>Routes to your local Ollama models whenever possible. Save up to 90% on API costs without changing how you work.</p>
+      </div>
+      <div class="feature anim anim-d2">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#E1F64A" stroke-width="1.5" stroke-linecap="round">
+            <polyline points="4,7 2,10 4,13"/><polyline points="16,7 18,10 16,13"/><line x1="8" y1="4" x2="12" y2="16"/>
+          </svg>
+        </div>
+        <h3>Zero code changes</h3>
+        <p>Change one URL. That's it. No SDK wrappers, no middleware to maintain, no provider-specific logic scattered in your app.</p>
+      </div>
+      <div class="feature anim anim-d1">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#E1F64A" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="10" cy="10" r="2"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41"/>
+          </svg>
+        </div>
+        <h3>10+ providers</h3>
+        <p>OpenAI, Anthropic, Groq, Gemini, Together, Mistral, Ollama, LM Studio — all configured from a single YAML file.</p>
+      </div>
+      <div class="feature anim anim-d2">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#E1F64A" stroke-width="1.5" stroke-linecap="round">
+            <rect x="3" y="11" width="14" height="7" rx="1.5"/><path d="M7 11V7a3 3 0 016 0v4"/><circle cx="10" cy="15" r="1" fill="#E1F64A" stroke="none"/>
+          </svg>
+        </div>
+        <h3>Privacy by design</h3>
+        <p>Sensitive prompts stay local. Credential patterns are detected and never forwarded to a third-party provider.</p>
+      </div>
+      <div class="feature anim anim-d3">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#E1F64A" stroke-width="1.5" stroke-linecap="round">
+            <polyline points="2,14 6,8 9,11 13,5 18,10"/><line x1="2" y1="17" x2="18" y2="17"/>
+          </svg>
+        </div>
+        <h3>Live dashboard</h3>
+        <p>Real-time routing decisions, request log, provider switcher, and cost visibility — built in, zero setup required.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROVIDERS ── -->
+<section class="providers-section">
+  <div class="container">
+    <div class="providers-title anim">Works with every provider you already use</div>
+    <div class="providers-grid anim anim-d1">
+      <div class="provider-chip local-chip"><span class="chip-dot" style="background:var(--needle)"></span>Ollama (local)</div>
+      <div class="provider-chip local-chip"><span class="chip-dot" style="background:var(--needle)"></span>LM Studio (local)</div>
+      <div class="provider-chip local-chip"><span class="chip-dot" style="background:var(--needle)"></span>llama.cpp (local)</div>
+      <div class="provider-chip"><span class="chip-dot" style="background:#74AA9C"></span>OpenAI</div>
+      <div class="provider-chip"><span class="chip-dot" style="background:#D4A27F"></span>Anthropic</div>
+      <div class="provider-chip"><span class="chip-dot" style="background:#F97316"></span>Groq</div>
+      <div class="provider-chip"><span class="chip-dot" style="background:#4285F4"></span>Gemini</div>
+      <div class="provider-chip"><span class="chip-dot" style="background:#A855F7"></span>Together AI</div>
+      <div class="provider-chip"><span class="chip-dot" style="background:#EF4444"></span>Mistral</div>
+      <div class="provider-chip"><span class="chip-dot" style="background:#6366F1"></span>OpenRouter</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── QUICKSTART ── -->
+<section class="quickstart" id="quickstart">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag anim">Quick start</div>
+      <h2 class="section-title anim anim-d1">Up in 60 seconds.</h2>
+      <p class="section-sub anim anim-d2">Docker is the fastest path. No Python, no pip, no environment setup.</p>
+    </div>
+
+    <div class="qs-tabs anim anim-d2">
+      <button class="qs-tab active" onclick="switchTab('docker')">Docker</button>
+      <button class="qs-tab" onclick="switchTab('python')">Python</button>
+      <button class="qs-tab" onclick="switchTab('sdk')">SDK</button>
+    </div>
+
+    <div class="qs-grid">
+      <div class="qs-steps" id="qs-steps-docker">
+        <div class="qs-step anim">
+          <div class="qs-num">1</div>
+          <div><h4>Clone and configure</h4><p>Copy <code>.env.example</code> → <code>.env</code> and add your <code>OPENAI_API_KEY</code>. All other providers are optional.</p></div>
+        </div>
+        <div class="qs-step anim anim-d1">
+          <div class="qs-num">2</div>
+          <div><h4>Start the full stack</h4><p>Pulls Ollama, downloads <code>llama3.2</code>, starts the router. One command — everything wires up automatically.</p></div>
+        </div>
+        <div class="qs-step anim anim-d2">
+          <div class="qs-num">3</div>
+          <div><h4>Point your SDK at Diksuchi</h4><p>Set <code>base_url</code> to <code>http://localhost:8080/v1</code>. Use <code>api_key="diksuchi"</code> — any string works.</p></div>
+        </div>
+        <div class="qs-step anim anim-d3">
+          <div class="qs-num">4</div>
+          <div><h4>Open the dashboard</h4><p>Visit <code>localhost:8080</code> to watch every routing decision happen in real time.</p></div>
+        </div>
+      </div>
+
+      <div class="code-block anim anim-d2">
+        <div class="code-bar">
+          <span class="code-lang" id="code-lang">Shell</span>
+          <button class="copy-btn" id="copy-btn" onclick="copyCode()">Copy</button>
+        </div>
+        <div class="code-body" id="code-body" style="color:var(--text2)"><span style="color:var(--text3)"># Clone and configure</span>
+<span style="color:var(--north)">git clone https://github.com/manikantaDasari/diksuchi</span>
+<span style="color:var(--north)">cd diksuchi &amp;&amp; cp .env.example .env</span>
+<span style="color:var(--text3)"># → add OPENAI_API_KEY to .env</span>
+
+<span style="color:var(--text3)"># Launch everything</span>
+<span style="color:var(--needle)">docker compose up -d</span>
+
+<span style="color:var(--cloud)">✓ Ollama running     → localhost:11434</span>
+<span style="color:var(--cloud)">✓ Diksuchi running   → localhost:8080</span>
+<span style="color:var(--cloud)">✓ llama3.2 ready     → pulled &amp; loaded</span>
+
+<span style="color:var(--text3)"># Verify</span>
+<span style="color:var(--north)">curl http://localhost:8080/health</span>
+<span style="color:var(--cloud)">{"status":"ok","providers":{"local":"ollama","cloud":"openai"}}</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box anim">
+      <div class="cta-bg1"></div>
+      <div class="cta-bg2"></div>
+      <div class="cta-logo">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+          <circle cx="15" cy="15" r="12" stroke="#E1F64A" stroke-width="1.5" fill="none"/>
+          <polygon points="15,5 17,15 15,13 13,15" fill="#E1F64A"/>
+          <polygon points="15,25 13,15 15,17 17,15" fill="#E1F64A" opacity=".3"/>
+          <circle cx="15" cy="15" r="2.5" fill="#E1F64A"/>
+        </svg>
+      </div>
+      <h2>Start routing smarter today.</h2>
+      <p>Free. Open source. One command to get started.</p>
+      <div class="cta-btns">
+        <a href="#quickstart" class="btn-dark">Get started →</a>
+        <a href="https://github.com" class="btn-ghost-dark">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          Star on GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <div class="footer-mark">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="6.5" stroke="#111110" stroke-width="1" fill="none"/>
+            <polygon points="8,2.5 9.2,8 8,7 6.8,8" fill="#111110"/>
+            <polygon points="8,13.5 6.8,8 8,9 9.2,8" fill="#111110" opacity=".28"/>
+            <circle cx="8" cy="8" r="1.4" fill="#111110"/>
+          </svg>
+        </div>
+        <div>
+          <div class="footer-name">Diksuchi</div>
+          <div class="footer-tagline">Always pointing to the right model.</div>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Docs</a>
+        <a href="https://github.com" class="footer-link">GitHub</a>
+        <a href="#" class="footer-link">Changelog</a>
+        <a href="#" class="footer-link">License</a>
+      </div>
+      <div class="footer-right">Open source · MIT · दिक्सूची</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── Scroll animations ─────────────────────────────────────────── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }
+  });
+},{threshold:0.12});
+document.querySelectorAll('.anim').forEach(el => observer.observe(el));
+
+/* ── Animated stat counters ────────────────────────────────────── */
+const statObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseInt(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const prefix = el.dataset.prefix || '';
+    if(target === 0){ el.textContent = prefix + '0' + suffix; statObserver.unobserve(el); return; }
+    let start = 0; const dur = 1200;
+    const step = timestamp => {
+      if(!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      el.textContent = prefix + Math.floor(ease * target) + suffix;
+      if(progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    statObserver.unobserve(el);
+  });
+},{threshold:0.5});
+document.querySelectorAll('[data-target]').forEach(el => statObserver.observe(el));
+
+/* ── Typewriter terminal ───────────────────────────────────────── */
+const lines = [
+  {t:'c', v:'# Start Diksuchi with Docker'},
+  {t:'w', v:'$ docker compose up -d'},
+  {t:'s', v:'✓ Ollama running  → localhost:11434'},
+  {t:'s', v:'✓ Router running  → localhost:8080'},
+  {t:'', v:''},
+  {t:'c', v:'# Route your first request'},
+  {t:'k', v:'$ curl http://localhost:8080/v1/chat/completions \\'},
+  {t:'w', v:'  -d \'{"model":"auto","messages":[{"role":"user","content":"What is 2+2?"}]}\''},
+  {t:'', v:''},
+  {t:'s', v:'✓ Routed LOCAL → ollama/llama3.2 · rule: short_prompt · 34ms · $0.00'},
+  {t:'k', v:'$ '},
+];
+const colors = {c:'var(--text3)',w:'var(--north)',s:'var(--cloud)',k:'var(--needle)',''  :'var(--north)'};
+const termBody = document.getElementById('term-body');
+
+async function typeTerminal(){
+  await new Promise(r => setTimeout(r,800));
+  for(const line of lines){
+    const el = document.createElement('span');
+    el.className = 'term-line';
+    el.style.color = colors[line.t];
+    termBody.appendChild(el);
+    if(line.v === ''){el.innerHTML='&nbsp;'; await new Promise(r=>setTimeout(r,80)); continue;}
+    for(let i=0;i<=line.v.length;i++){
+      el.textContent = line.v.slice(0,i);
+      await new Promise(r=>setTimeout(r, i===line.v.length ? 60 : 18));
+    }
+    await new Promise(r=>setTimeout(r,120));
+  }
+  // cursor
+  const cur = document.createElement('span');
+  cur.className='cursor'; termBody.appendChild(cur);
+}
+typeTerminal();
+
+/* ── Routing demo ──────────────────────────────────────────────── */
+document.querySelectorAll('.rp-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.rp-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    const route = item.dataset.route;
+    const rule  = item.dataset.rule;
+    const model = item.dataset.model;
+    const cost  = item.dataset.cost;
+    const ms    = item.dataset.ms;
+
+    const localOut  = document.getElementById('out-local');
+    const cloudOut  = document.getElementById('out-cloud');
+    const metaLocal = document.getElementById('meta-local');
+    const metaCloud = document.getElementById('meta-cloud');
+
+    if(route === 'local'){
+      localOut.style.opacity = '1';
+      cloudOut.style.opacity = '.25';
+      metaLocal.innerHTML = `Model: ollama/${model}<br>Rule: ${rule}<br>Latency: ${ms}ms · Cost: ${cost}`;
+      metaCloud.innerHTML = `Model: openai/gpt-4o<br>Rule: —<br>Latency: — · Cost: —`;
+    } else {
+      localOut.style.opacity = '.25';
+      cloudOut.style.opacity = '1';
+      metaCloud.innerHTML = `Model: openai/${model}<br>Rule: ${rule}<br>Latency: ${ms}ms · Cost: ${cost}`;
+      metaLocal.innerHTML = `Model: ollama/llama3.2<br>Rule: —<br>Latency: — · Cost: —`;
+    }
+  });
+});
+
+/* ── Quickstart tabs ───────────────────────────────────────────── */
+const codes = {
+  docker:{lang:'Shell', body:`<span style="color:var(--text3)"># Clone and configure</span>
+<span style="color:var(--north)">git clone https://github.com/manikantaDasari/diksuchi</span>
+<span style="color:var(--north)">cd diksuchi &amp;&amp; cp .env.example .env</span>
+<span style="color:var(--text3)"># → add OPENAI_API_KEY to .env</span>
+
+<span style="color:var(--text3)"># Launch everything</span>
+<span style="color:var(--needle)">docker compose up -d</span>
+
+<span style="color:var(--cloud)">✓ Ollama running     → localhost:11434</span>
+<span style="color:var(--cloud)">✓ Diksuchi running   → localhost:8080</span>
+<span style="color:var(--cloud)">✓ llama3.2 ready     → pulled &amp; loaded</span>
+
+<span style="color:var(--text3)"># Verify</span>
+<span style="color:var(--north)">curl http://localhost:8080/health</span>
+<span style="color:var(--cloud)">{"status":"ok","providers":{"local":"ollama","cloud":"openai"}}</span>`},
+
+  python:{lang:'Python', body:`<span style="color:var(--text3)"># Install dependencies</span>
+<span style="color:var(--north)">pip install -r requirements.txt</span>
+<span style="color:var(--north)">cp .env.example .env</span>
+
+<span style="color:var(--text3)"># Start the router</span>
+<span style="color:var(--needle)">python main.py</span>
+
+<span style="color:var(--cloud)">INFO:     Diksuchi router starting...</span>
+<span style="color:var(--cloud)">INFO:     Providers: ollama (local), openai (cloud)</span>
+<span style="color:var(--cloud)">INFO:     Listening on http://0.0.0.0:8080</span>
+<span style="color:var(--cloud)">INFO:     Rules loaded: 13</span>`},
+
+  sdk:{lang:'Python (SDK)', body:`<span style="color:var(--ta)">from</span> <span style="color:var(--north)">openai</span> <span style="color:var(--ta)">import</span> <span style="color:var(--north)">OpenAI</span>
+
+<span style="color:var(--text3)"># Point SDK at Diksuchi — that's the only change</span>
+<span style="color:var(--north)">client</span> <span style="color:var(--text3)">=</span> <span style="color:var(--north)">OpenAI(</span>
+  <span style="color:var(--north)">base_url</span><span style="color:var(--text3)">=</span><span style="color:var(--ts)">"http://localhost:8080/v1"</span><span style="color:var(--north)">,</span>
+  <span style="color:var(--north)">api_key</span><span style="color:var(--text3)">=</span><span style="color:var(--ts)">"diksuchi"</span>
+<span style="color:var(--north)">)</span>
+
+<span style="color:var(--north)">response</span> <span style="color:var(--text3)">=</span> <span style="color:var(--north)">client.chat.completions.create(</span>
+  <span style="color:var(--north)">model</span><span style="color:var(--text3)">=</span><span style="color:var(--ts)">"auto"</span><span style="color:var(--north)">,</span>  <span style="color:var(--text3)"># Diksuchi picks</span>
+  <span style="color:var(--north)">messages</span><span style="color:var(--text3)">=</span><span style="color:var(--north)">[{"role": "user", "content": "Hello!"}]</span>
+<span style="color:var(--north)">)</span>
+<span style="color:var(--cloud)">✓ Routed LOCAL → llama3.2 · 41ms · $0.00</span>`}
+};
+
+function switchTab(tab){
+  document.querySelectorAll('.qs-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('code-lang').textContent = codes[tab].lang;
+  document.getElementById('code-body').innerHTML = codes[tab].body;
+}
+
+function copyCode(){
+  const text = document.getElementById('code-body').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+/* ── Hamburger ─────────────────────────────────────────────────── */
+const ham = document.getElementById('hamburger');
+const mNav = document.getElementById('mobile-nav');
+ham.addEventListener('click', () => {
+  ham.classList.toggle('open');
+  mNav.classList.toggle('open');
+});
+function closeMobileNav(){
+  ham.classList.remove('open');
+  mNav.classList.remove('open');
+}
+</script>
+</body>
+</html>
