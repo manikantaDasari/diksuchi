@@ -4,28 +4,95 @@ observability:
   stats_enabled: true
 providers:
   cloud:
-    active: openai
+    active: openrouter_free
     list:
+    # ── Tier 1: Free cloud (OpenRouter) ─────────────────────────────────────
+    - api_key_env: OPENROUTER_API_KEY
+      base_url: https://openrouter.ai/api/v1
+      default_model: meta-llama/llama-3.1-8b-instruct:free
+      name: openrouter_free
+      timeout_seconds: 60
+      type: openrouter            # special type — injects HTTP-Referer + X-Title headers
+      models:
+      # ── Best free models on OpenRouter (2025) ────────────────────────────────
+      - deepseek/deepseek-r1:free            # top free reasoning model
+      - deepseek/deepseek-v3:free            # excellent general + coding
+      - meta-llama/llama-4-scout:free        # Meta's 2025 flagship (free)
+      - meta-llama/llama-3.3-70b-instruct:free  # strong 70B, great quality
+      - meta-llama/llama-3.1-8b-instruct:free   # fast + reliable fallback
+      - google/gemma-3-27b-it:free           # Google's best free model
+      - google/gemma-2-9b-it:free            # compact, fast
+      - qwen/qwen3-8b:free                   # Alibaba Qwen3 (2025)
+      - qwen/qwen-2.5-7b-instruct:free       # solid instruct model
+      - mistralai/mistral-7b-instruct:free   # fast European model
+    # ── Tier 1b: OpenRouter Paid (one key → all providers) ──────────────────
+    - api_key_env: OPENROUTER_API_KEY
+      base_url: https://openrouter.ai/api/v1
+      default_model: anthropic/claude-sonnet-4-6
+      enabled: false                          # enable by setting OPENROUTER_API_KEY in .env
+      name: openrouter_paid
+      timeout_seconds: 120
+      type: openrouter
+      models:
+      # ── Anthropic via OpenRouter ──────────────────────────────────────────
+      - anthropic/claude-opus-4-6            # most capable Claude
+      - anthropic/claude-sonnet-4-6          # balanced — fast + smart
+      - anthropic/claude-haiku-4-5           # fastest Claude
+      # ── OpenAI via OpenRouter ─────────────────────────────────────────────
+      - openai/gpt-5                         # OpenAI flagship (2026)
+      - openai/gpt-5-mini                    # cost-effective GPT-5
+      - openai/gpt-4.1                       # best non-reasoning OpenAI
+      - openai/o3-pro                        # max reasoning compute
+      - openai/o3                            # frontier reasoning
+      # ── Google via OpenRouter ─────────────────────────────────────────────
+      - google/gemini-2.5-pro               # top Google reasoning + coding
+      - google/gemini-2.5-flash             # fast + affordable Google
+      # ── xAI via OpenRouter ────────────────────────────────────────────────
+      - x-ai/grok-3                          # Grok flagship
+      - x-ai/grok-3-mini                     # Grok fast tier
+      # ── Meta via OpenRouter ───────────────────────────────────────────────
+      - meta-llama/llama-4-maverick          # Meta's strongest paid model
+      # ── Mistral via OpenRouter ────────────────────────────────────────────
+      - mistralai/mistral-large              # Mistral Large
+      - mistralai/codestral                  # coding specialist
+      # ── DeepSeek via OpenRouter ───────────────────────────────────────────
+      - deepseek/deepseek-r1                 # top reasoning, paid tier
+    # ── Tier 2: Paid cloud (direct provider API keys) ────────────────────────
     - api_key_env: OPENAI_API_KEY
       base_url: https://api.openai.com/v1
       default_model: gpt-4o-mini
       models:
-      - gpt-4o-mini
-      - gpt-4o
-      - o1-mini
-      - o1
+      # ── GPT-5 family (June 2026) ─────────────────────────────────────────────
+      - gpt-5.3-codex        # agentic coding — frontier reasoning + tool use
+      - gpt-5.2              # flagship — configurable extended reasoning
+      - gpt-5.2-pro          # pro tier — most precise, highest capability
+      - gpt-5.1              # coding + agentic tasks
+      - gpt-5                # balanced reasoning, strong general tasks
+      - gpt-5-mini           # cost-sensitive, low latency
+      - gpt-5-nano           # fastest, cheapest in the GPT-5 class
+      - gpt-5-pro            # smarter + more precise than gpt-5
+      # ── o-series reasoning ───────────────────────────────────────────────────
+      - o3-pro               # maximum reasoning — more compute than o3
+      - o3                   # frontier reasoning
+      # ── GPT-4.1 family (still solid, widely supported) ───────────────────────
+      - gpt-4.1              # best non-reasoning model
+      - gpt-4.1-mini         # fast + smaller gpt-4.1
+      - gpt-4o-mini          # fast, affordable workhorse
       name: openai
-      timeout_seconds: 60
+      timeout_seconds: 120
       type: openai
     - api_key_env: ANTHROPIC_API_KEY
       base_url: https://api.anthropic.com
-      default_model: claude-3-5-haiku-20241022
+      default_model: claude-haiku-4-5-20251001
       enabled: false
       models:
-      - claude-3-5-haiku-20241022
-      - claude-3-5-sonnet-20241022
-      - claude-opus-4-6
-      - claude-sonnet-4-6
+      # ── Claude 4 family (2025) ───────────────────────────────────────────────
+      - claude-opus-4-6              # most capable — complex reasoning + coding
+      - claude-sonnet-4-6            # balanced — fast + smart, best value
+      - claude-haiku-4-5-20251001    # fastest + cheapest Claude
+      # ── Claude 3.5 family (still excellent) ─────────────────────────────────
+      - claude-3-5-sonnet-20241022   # strong coding + analysis
+      - claude-3-5-haiku-20241022    # fast, good for simple tasks
       name: anthropic
       timeout_seconds: 60
       type: anthropic
@@ -34,22 +101,30 @@ providers:
       default_model: llama-3.1-8b-instant
       enabled: false
       models:
-      - llama-3.1-8b-instant
-      - llama-3.3-70b-versatile
-      - mixtral-8x7b-32768
-      - gemma2-9b-it
+      - llama-3.3-70b-versatile      # best Groq model — fast 70B
+      - llama-3.1-70b-versatile      # solid 70B
+      - llama-3.1-8b-instant         # ultra-fast 8B
+      - llama-3.2-90b-vision-preview # vision capable
+      - mixtral-8x7b-32768           # MoE, fast for longer contexts
+      - gemma2-9b-it                 # Google's compact model
       name: groq
       timeout_seconds: 30
       type: openai_compatible
     - api_key_env: GOOGLE_API_KEY
       base_url: https://generativelanguage.googleapis.com/v1beta/openai
-      default_model: gemini-1.5-flash
+      default_model: gemini-2.5-flash
       enabled: false
       models:
-      - gemini-1.5-flash
-      - gemini-1.5-pro
-      - gemini-2.0-flash
+      # ── Gemini 2.5 (2025) ────────────────────────────────────────────────────
+      - gemini-2.5-pro               # top reasoning + coding (Mar 2025)
+      - gemini-2.5-flash             # fast + cheap, best value (May 2025)
+      - gemini-2.5-flash-thinking-exp # extended thinking mode
+      # ── Gemini 2.0 ───────────────────────────────────────────────────────────
+      - gemini-2.0-flash             # fast multimodal
       - gemini-2.0-flash-thinking-exp
+      # ── Gemini 1.5 (legacy) ──────────────────────────────────────────────────
+      - gemini-1.5-pro               # long context (2M tokens)
+      - gemini-1.5-flash             # fast, cost-effective
       name: gemini
       timeout_seconds: 60
       type: openai_compatible
@@ -76,20 +151,45 @@ providers:
       name: mistral
       timeout_seconds: 60
       type: openai_compatible
+    # ── xAI / Grok ───────────────────────────────────────────────────────────
+    - api_key_env: XAI_API_KEY
+      base_url: https://api.x.ai/v1
+      default_model: grok-3-mini
+      enabled: false
+      models:
+      - grok-3               # flagship — strong reasoning + coding
+      - grok-3-mini          # fast + cheap, free tier available
+      - grok-3-mini-fast     # ultra-fast, lower latency
+      - grok-2-vision        # vision + image understanding
+      name: xai
+      timeout_seconds: 60
+      type: openai_compatible
   local:
     active: ollama
     list:
     - base_url: http://localhost:11434
-      default_model: llama3.2
+      default_model: gemma3:1b
       models:
-      - llama3.2
-      - llama3.1:8b
-      - mistral
-      - phi4
-      - gemma2
-      - qwen2.5
-      - deepseek-r1
-      - codellama
+      # ── Ultra-light (CPU, any machine) ──────────────────────────────────────
+      - gemma3:1b        # ~815 MB — default, works everywhere
+      - phi4-mini        # ~2.5 GB — Microsoft, strong reasoning for its size
+      # ── Standard (4–8 GB RAM) ────────────────────────────────────────────────
+      - gemma3:4b        # ~2.5 GB — Google, excellent quality/size ratio
+      - gemma3:12b       # ~7 GB  — Google, strong all-rounder
+      - llama3.2:3b      # ~2 GB  — Meta, fast + capable
+      - llama3.2         # ~2 GB  — Meta baseline
+      - llama3.1:8b      # ~4.7 GB — Meta, reliable workhorse
+      - qwen2.5:7b       # ~4.7 GB — Alibaba, great coding + multilingual
+      - qwen2.5-coder:7b # ~4.7 GB — Alibaba, specialized for code
+      - mistral          # ~4.1 GB — Mistral, solid European model
+      - deepseek-r1:7b   # ~4.7 GB — DeepSeek reasoning (distilled)
+      # ── Heavy (16+ GB RAM / GPU recommended) ────────────────────────────────
+      - gemma3:27b       # ~17 GB — Google, near-GPT-4o quality
+      - llama3.1:70b     # ~40 GB — Meta 70B, excellent reasoning
+      - qwen2.5:32b      # ~20 GB — Alibaba 32B, top open-weight
+      - phi4             # ~9 GB  — Microsoft Phi-4, strong STEM
+      - deepseek-r1      # ~4.7 GB — DeepSeek R1 (default tag)
+      - codellama        # ~3.8 GB — Meta, coding specialist
       name: ollama
       timeout_seconds: 120
       type: ollama
@@ -119,6 +219,218 @@ providers:
       type: openai_compatible
 routing:
   default_backend: local
+
+  # ── 3-tier fallback chain ────────────────────────────────────────────────
+  # Tier 0: local (Ollama / LM Studio / MLX)   — $0, private, offline-capable
+  # Tier 1: openrouter_free                     — $0, rate-limited
+  # Tier 2: openai (or any paid provider)       — paid, last resort
+  fallback_chain:
+    - local
+    - openrouter_free
+    - openai
+
+  # ── Centroid classifier buckets ─────────────────────────────────────────
+  # Each bucket has 20-25 examples to improve centroid accuracy.
+  # Boundary cases are explicitly included so the classifier doesn't confuse
+  # adjacent buckets (simple/creative, coding/reasoning, reasoning/critical).
+  # Change examples → restart → centroids recompute automatically (no training).
+  centroid_buckets:
+
+    simple:
+      tier: 0    # local — fast, cheap, no reasoning needed
+      examples:
+        # Factual lookups
+        - "what is the capital of France"
+        - "who is the CEO of Apple"
+        - "when was Python created"
+        - "what does API stand for"
+        - "what is the meaning of serendipity"
+        - "how many bytes are in a megabyte"
+        - "what country is Buenos Aires in"
+        - "who wrote The Great Gatsby"
+        # Definitions and translations
+        - "define photosynthesis"
+        - "translate hello to Spanish"
+        - "what does GDPR stand for"
+        - "what is a REST API"
+        # Light editing (NOT rewriting — see creative)
+        - "fix the typo in this sentence"
+        - "correct the grammar in this line"
+        - "capitalise these words properly"
+        # Very short summaries (one sentence)
+        - "tldr this paragraph"
+        - "summarize in one sentence"
+        - "give me the gist of this text"
+        # Quick conversions
+        - "convert 100 USD to EUR"
+        - "how many kilometers is 26 miles"
+        - "what is 15 percent of 240"
+        # Date / time
+        - "how many days until Christmas"
+        - "what day of the week is July 4 2025"
+
+    coding:
+      tier: 0    # local — codellama, qwen-coder, gemma3 handle this well
+      examples:
+        # Write new code
+        - "write a Python function to reverse a linked list"
+        - "implement binary search in Python"
+        - "write a bash script to rename all jpg files in a folder"
+        - "create a React component for a loading spinner"
+        - "write a SQL query to find duplicate emails"
+        - "implement a debounce function in JavaScript"
+        # Fix / debug single units
+        - "fix this bug in my JavaScript code"
+        - "this function throws a KeyError — fix it"
+        - "why does this loop run one extra time"
+        - "my regex isn't matching — what's wrong"
+        # Small additions and edits
+        - "add type hints to this function"
+        - "add a docstring to this method"
+        - "add error handling to this API call"
+        - "rename this variable to be more descriptive"
+        - "convert this class to use dataclasses"
+        # Understand / explain code (NOT deep analysis — see reasoning)
+        - "what does this SQL query do"
+        - "what does this regex pattern match"
+        - "explain this git diff"
+        - "what does this one-liner do"
+        # Tests for a single function (NOT full coverage audit — see critical)
+        - "write a unit test for this function"
+        - "add pytest tests for this class"
+        # Refactor a small block
+        - "extract this repeated logic into a helper"
+        - "make this function more readable"
+
+    reasoning:
+      tier: 1    # openrouter_free — deepseek-r1:free, llama-4 excel here
+      examples:
+        # Causal / step-by-step explanation
+        - "explain step by step why quicksort is O(n log n)"
+        - "walk me through how HTTPS encryption works end-to-end"
+        - "why does this algorithm fail on large inputs"
+        - "explain why TCP guarantees delivery but UDP does not"
+        - "how does garbage collection work in the JVM"
+        # Trade-off analysis (NOT a full system review — see critical)
+        - "analyze the trade-offs between SQL and NoSQL for this use case"
+        - "compare and contrast REST and GraphQL"
+        - "what are the pros and cons of microservices vs monolith"
+        - "evaluate Redis vs Memcached for session storage"
+        - "should we use Kafka or RabbitMQ for this workload"
+        # Multi-step debugging (NOT production audit — see critical)
+        - "debug this race condition step by step"
+        - "trace why this recursive function hits a stack overflow"
+        - "walk through why this join returns duplicate rows"
+        # Root cause and implication
+        - "why would removing this index slow down inserts"
+        - "what would happen if we increased connection pool size here"
+        - "explain the knock-on effects of changing this schema"
+        # Research and synthesis (NOT writing — see creative)
+        - "what are the main differences between B-tree and LSM-tree indexes"
+        - "explain the CAP theorem with an example"
+        - "how do transformers handle long-range dependencies"
+        - "what is the difference between optimistic and pessimistic locking"
+        # Estimation and reasoning under uncertainty
+        - "estimate the storage cost of 10 million user records per year"
+        - "how much latency would this extra network hop add"
+
+    creative:
+      tier: 1    # openrouter_free — llama-4-scout, mistral, gemma3 work here
+      examples:
+        # Long-form writing
+        - "write a blog post about the future of AI coding assistants"
+        - "write a 500-word article on developer burnout"
+        - "write a story about a programmer who discovers a bug in reality"
+        - "write a LinkedIn post announcing a product launch"
+        # Professional communication
+        - "draft a professional email to a client about a project delay"
+        - "compose a job posting for a senior backend engineer"
+        - "write a polite but firm follow-up email after no response"
+        - "draft a project proposal for migrating to microservices"
+        # Marketing and product copy
+        - "write a product description for a standing desk"
+        - "create a Twitter thread explaining React hooks to beginners"
+        - "write landing page copy for a developer tool"
+        - "write a compelling release announcement for version 2.0"
+        # Editing and rewriting (NOT one-sentence fix — see simple)
+        - "rewrite this paragraph to be more engaging and concise"
+        - "rephrase this technical explanation for a non-technical audience"
+        - "make this README more welcoming for new contributors"
+        - "improve the tone of this feedback to sound more constructive"
+        # Documentation and summaries (longer form)
+        - "write a README for this project"
+        - "write an executive summary of this architecture document"
+        - "summarize the key decisions from this meeting transcript"
+        - "create onboarding documentation for this API"
+        # Creative ideation
+        - "brainstorm five names for a developer productivity app"
+        - "suggest three alternative approaches to this UI layout"
+        - "come up with interview questions for a senior React engineer"
+
+    critical:
+      tier: 2    # paid cloud — GPT-5, Claude-4, needs high accuracy + judgment
+      examples:
+        # Full security audits (NOT just one function — see coding)
+        - "do a full security audit of this authentication service"
+        - "review this entire payment flow for vulnerabilities"
+        - "check this API for all OWASP Top 10 issues"
+        - "what are all the ways an attacker could exploit this code"
+        - "audit this session management implementation end to end"
+        # Production readiness reviews
+        - "review this entire module for production readiness"
+        - "comprehensive code review before we ship this to customers"
+        - "what are all the failure modes of this distributed system"
+        - "review this database migration for data loss risks"
+        - "is this service ready to handle 100x traffic"
+        # Architecture and system design decisions
+        - "design the architecture for a payment processing platform"
+        - "what is the right architecture for a multi-tenant SaaS product"
+        - "design a fault-tolerant event sourcing system"
+        - "how should we structure the data model for this product"
+        # Compliance and legal impact
+        - "review this data handling code for GDPR compliance"
+        - "what PII is this system collecting and is it necessary"
+        - "does this logging violate HIPAA requirements"
+        # Large-scale refactors
+        - "refactor this entire service to be stateless"
+        - "migrate this callback-based module to async/await throughout"
+        - "redesign this API to be backward compatible with all clients"
+        # Performance and reliability analysis
+        - "give me a complete performance analysis and optimization plan for this service"
+        - "find every N+1 query in this ORM layer"
+        - "what are the reliability bottlenecks in this architecture diagram"
+        - "profile this system and prioritize the top 3 optimizations"
+
+  # ── Per-bucket model preferences ─────────────────────────────────────────
+  # Pin a specific model for each capability bucket.
+  # Leave empty ("") to let the rating system auto-select the best available.
+  # These are defaults — override at runtime via POST /v1/preferences or dashboard.
+  # Examples:
+  #   reasoning: "claude-opus-4-6"          # best reasoning, paid
+  #   coding:    "qwen/qwen-2.5-coder-32b-instruct"
+  #   simple:    "gemma3:1b"                # smallest/fastest local
+  #   critical:  "gpt-4o"
+  bucket_preferences:
+    simple:    ""    # auto — use highest-rated model for this bucket
+    coding:    ""    # auto
+    reasoning: ""    # auto (deepseek-r1:free is excellent here)
+    creative:  ""    # auto
+    critical:  ""    # auto
+
+  # ── Confidence threshold ─────────────────────────────────────────────────
+  # If centroid classifier confidence < this value, prompt stays on local (Tier 0).
+  # Raise to send more ambiguous prompts to cloud; lower to save more API quota.
+  # Range: 0.0 (no threshold) → 1.0 (everything goes local)
+  classifier_confidence_threshold: 0.35
+
+  # ── Model rating settings ────────────────────────────────────────────────
+  rating:
+    cache_file: model_ratings.json
+    source_weights:
+      hf_leaderboard:  0.55
+      bundled_baseline: 0.30
+      self_benchmark:  0.15
+
   rules:
   - condition: header_equals
     header: X-Route-To
@@ -139,10 +451,20 @@ routing:
     values:
     - gpt-
     - o1
+    - o3
     - claude-
     - gemini
     - mistral-large
     - mixtral
+    - grok-
+    - x-ai/
+    - openai/
+    - anthropic/
+    - google/
+    - meta-llama/
+    - mistralai/
+    - deepseek/
+    - perplexity/
   - condition: model_name_contains
     name: model_hint_local
     reason: Model name suggests a locally-available model
@@ -272,4 +594,4 @@ server:
   - '*'
   host: 0.0.0.0
   log_level: info
-  port: 8080
+  port: 8081

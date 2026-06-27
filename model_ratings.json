@@ -1,0 +1,6146 @@
+{
+  "updated_at": "2026-06-27T19:31:01.501861+00:00",
+  "model_count": 438,
+  "sources": {
+    "hf_leaderboard": 100,
+    "openrouter_catalog_raw": 339,
+    "openrouter_seeded": 339,
+    "baseline": 0
+  },
+  "errors": [],
+  "models": {
+    "0-hero/Matter-0.2-7B-DPO": {
+      "model": "0-hero/Matter-0.2-7B-DPO",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.16,
+      "coding": 0.161,
+      "reasoning": 0.062,
+      "creative": 0.196,
+      "critical": 0.054,
+      "overall": 0.089,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-1.5-34B": {
+      "model": "01-ai/Yi-1.5-34B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.305,
+      "coding": 0.311,
+      "reasoning": 0.228,
+      "creative": 0.309,
+      "critical": 0.208,
+      "overall": 0.256,
+      "best_bucket": "coding"
+    },
+    "01-ai/Yi-1.5-34B-32K": {
+      "model": "01-ai/Yi-1.5-34B-32K",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.32,
+      "coding": 0.325,
+      "reasoning": 0.235,
+      "creative": 0.327,
+      "critical": 0.213,
+      "overall": 0.267,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-1.5-34B-Chat": {
+      "model": "01-ai/Yi-1.5-34B-Chat",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.446,
+      "coding": 0.445,
+      "reasoning": 0.285,
+      "creative": 0.487,
+      "critical": 0.266,
+      "overall": 0.334,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-1.5-34B-Chat-16K": {
+      "model": "01-ai/Yi-1.5-34B-Chat-16K",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.378,
+      "coding": 0.384,
+      "reasoning": 0.252,
+      "creative": 0.403,
+      "critical": 0.227,
+      "overall": 0.294,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-1.5-6B": {
+      "model": "01-ai/Yi-1.5-6B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.217,
+      "coding": 0.207,
+      "reasoning": 0.134,
+      "creative": 0.231,
+      "critical": 0.123,
+      "overall": 0.167,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-1.5-6B-Chat": {
+      "model": "01-ai/Yi-1.5-6B-Chat",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.332,
+      "coding": 0.313,
+      "reasoning": 0.175,
+      "creative": 0.375,
+      "critical": 0.163,
+      "overall": 0.228,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-1.5-9B": {
+      "model": "01-ai/Yi-1.5-9B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.271,
+      "coding": 0.263,
+      "reasoning": 0.192,
+      "creative": 0.282,
+      "critical": 0.183,
+      "overall": 0.222,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-1.5-9B-32K": {
+      "model": "01-ai/Yi-1.5-9B-32K",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.236,
+      "coding": 0.231,
+      "reasoning": 0.173,
+      "creative": 0.241,
+      "critical": 0.163,
+      "overall": 0.198,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-1.5-9B-Chat": {
+      "model": "01-ai/Yi-1.5-9B-Chat",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.414,
+      "coding": 0.407,
+      "reasoning": 0.241,
+      "creative": 0.461,
+      "critical": 0.224,
+      "overall": 0.295,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-1.5-9B-Chat-16K": {
+      "model": "01-ai/Yi-1.5-9B-Chat-16K",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.325,
+      "coding": 0.313,
+      "reasoning": 0.191,
+      "creative": 0.352,
+      "critical": 0.174,
+      "overall": 0.238,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-34B": {
+      "model": "01-ai/Yi-34B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.29,
+      "coding": 0.279,
+      "reasoning": 0.181,
+      "creative": 0.302,
+      "critical": 0.168,
+      "overall": 0.224,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-34B-200K": {
+      "model": "01-ai/Yi-34B-200K",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.231,
+      "coding": 0.227,
+      "reasoning": 0.172,
+      "creative": 0.224,
+      "critical": 0.155,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "01-ai/Yi-34B-Chat": {
+      "model": "01-ai/Yi-34B-Chat",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.349,
+      "coding": 0.342,
+      "reasoning": 0.187,
+      "creative": 0.383,
+      "critical": 0.169,
+      "overall": 0.242,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-6B": {
+      "model": "01-ai/Yi-6B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.21,
+      "coding": 0.193,
+      "reasoning": 0.091,
+      "creative": 0.233,
+      "critical": 0.077,
+      "overall": 0.136,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-6B-200K": {
+      "model": "01-ai/Yi-6B-200K",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.129,
+      "coding": 0.129,
+      "reasoning": 0.101,
+      "creative": 0.123,
+      "critical": 0.083,
+      "overall": 0.12,
+      "best_bucket": "simple"
+    },
+    "01-ai/Yi-6B-Chat": {
+      "model": "01-ai/Yi-6B-Chat",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.23,
+      "coding": 0.203,
+      "reasoning": 0.09,
+      "creative": 0.259,
+      "critical": 0.084,
+      "overall": 0.141,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-9B": {
+      "model": "01-ai/Yi-9B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.237,
+      "coding": 0.229,
+      "reasoning": 0.142,
+      "creative": 0.251,
+      "critical": 0.127,
+      "overall": 0.178,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-9B-200K": {
+      "model": "01-ai/Yi-9B-200K",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.224,
+      "coding": 0.215,
+      "reasoning": 0.143,
+      "creative": 0.232,
+      "critical": 0.128,
+      "overall": 0.177,
+      "best_bucket": "creative"
+    },
+    "01-ai/Yi-Coder-9B-Chat": {
+      "model": "01-ai/Yi-Coder-9B-Chat",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.281,
+      "coding": 0.284,
+      "reasoning": 0.119,
+      "creative": 0.328,
+      "critical": 0.098,
+      "overall": 0.17,
+      "best_bucket": "creative"
+    },
+    "1-800-LLMs/Qwen-2.5-14B-Hindi": {
+      "model": "1-800-LLMs/Qwen-2.5-14B-Hindi",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.468,
+      "coding": 0.466,
+      "reasoning": 0.313,
+      "creative": 0.501,
+      "critical": 0.289,
+      "overall": 0.363,
+      "best_bucket": "creative"
+    },
+    "1-800-LLMs/Qwen-2.5-14B-Hindi-Custom-Instruct": {
+      "model": "1-800-LLMs/Qwen-2.5-14B-Hindi-Custom-Instruct",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.348,
+      "coding": 0.356,
+      "reasoning": 0.288,
+      "creative": 0.347,
+      "critical": 0.265,
+      "overall": 0.31,
+      "best_bucket": "coding"
+    },
+    "1024m/PHI-4-Hindi": {
+      "model": "1024m/PHI-4-Hindi",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.233,
+      "coding": 0.268,
+      "reasoning": 0.285,
+      "creative": 0.193,
+      "critical": 0.255,
+      "overall": 0.275,
+      "best_bucket": "reasoning"
+    },
+    "1024m/QWEN-14B-B100": {
+      "model": "1024m/QWEN-14B-B100",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.557,
+      "coding": 0.556,
+      "reasoning": 0.369,
+      "creative": 0.611,
+      "critical": 0.348,
+      "overall": 0.419,
+      "best_bucket": "creative"
+    },
+    "152334H/miqu-1-70b-sf": {
+      "model": "152334H/miqu-1-70b-sf",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.391,
+      "coding": 0.395,
+      "reasoning": 0.241,
+      "creative": 0.425,
+      "critical": 0.216,
+      "overall": 0.291,
+      "best_bucket": "creative"
+    },
+    "1TuanPham/T-VisStar-7B-v0.1": {
+      "model": "1TuanPham/T-VisStar-7B-v0.1",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.267,
+      "coding": 0.269,
+      "reasoning": 0.15,
+      "creative": 0.292,
+      "critical": 0.127,
+      "overall": 0.191,
+      "best_bucket": "creative"
+    },
+    "1TuanPham/T-VisStar-v0.1": {
+      "model": "1TuanPham/T-VisStar-v0.1",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.267,
+      "coding": 0.269,
+      "reasoning": 0.15,
+      "creative": 0.292,
+      "critical": 0.127,
+      "overall": 0.191,
+      "best_bucket": "creative"
+    },
+    "3rd-Degree-Burn/L-3.1-Science-Writer-8B": {
+      "model": "3rd-Degree-Burn/L-3.1-Science-Writer-8B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.307,
+      "coding": 0.294,
+      "reasoning": 0.156,
+      "creative": 0.339,
+      "critical": 0.135,
+      "overall": 0.211,
+      "best_bucket": "creative"
+    },
+    "3rd-Degree-Burn/Llama-3.1-8B-Squareroot": {
+      "model": "3rd-Degree-Burn/Llama-3.1-8B-Squareroot",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.143,
+      "coding": 0.145,
+      "reasoning": 0.108,
+      "creative": 0.16,
+      "critical": 0.106,
+      "overall": 0.112,
+      "best_bucket": "creative"
+    },
+    "3rd-Degree-Burn/Llama-3.1-8B-Squareroot-v1": {
+      "model": "3rd-Degree-Burn/Llama-3.1-8B-Squareroot-v1",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.139,
+      "coding": 0.139,
+      "reasoning": 0.061,
+      "creative": 0.171,
+      "critical": 0.059,
+      "overall": 0.08,
+      "best_bucket": "creative"
+    },
+    "3rd-Degree-Burn/Llama-Squared-8B": {
+      "model": "3rd-Degree-Burn/Llama-Squared-8B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.187,
+      "coding": 0.193,
+      "reasoning": 0.098,
+      "creative": 0.21,
+      "critical": 0.085,
+      "overall": 0.124,
+      "best_bucket": "creative"
+    },
+    "4season/final_model_test_v2": {
+      "model": "4season/final_model_test_v2",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.284,
+      "coding": 0.323,
+      "reasoning": 0.211,
+      "creative": 0.297,
+      "critical": 0.18,
+      "overall": 0.231,
+      "best_bucket": "coding"
+    },
+    "AALF/FuseChat-Llama-3.1-8B-Instruct-preview": {
+      "model": "AALF/FuseChat-Llama-3.1-8B-Instruct-preview",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.442,
+      "coding": 0.421,
+      "reasoning": 0.217,
+      "creative": 0.507,
+      "critical": 0.205,
+      "overall": 0.286,
+      "best_bucket": "creative"
+    },
+    "AALF/FuseChat-Llama-3.1-8B-SFT-preview": {
+      "model": "AALF/FuseChat-Llama-3.1-8B-SFT-preview",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.449,
+      "coding": 0.43,
+      "reasoning": 0.221,
+      "creative": 0.514,
+      "critical": 0.206,
+      "overall": 0.292,
+      "best_bucket": "creative"
+    },
+    "AALF/gemma-2-27b-it-SimPO-37K": {
+      "model": "AALF/gemma-2-27b-it-SimPO-37K",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.152,
+      "coding": 0.152,
+      "reasoning": 0.071,
+      "creative": 0.173,
+      "critical": 0.063,
+      "overall": 0.095,
+      "best_bucket": "creative"
+    },
+    "AALF/gemma-2-27b-it-SimPO-37K-100steps": {
+      "model": "AALF/gemma-2-27b-it-SimPO-37K-100steps",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.163,
+      "coding": 0.16,
+      "reasoning": 0.075,
+      "creative": 0.187,
+      "critical": 0.07,
+      "overall": 0.102,
+      "best_bucket": "creative"
+    },
+    "AELLM/gemma-2-aeria-infinity-9b": {
+      "model": "AELLM/gemma-2-aeria-infinity-9b",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.478,
+      "coding": 0.477,
+      "reasoning": 0.254,
+      "creative": 0.544,
+      "critical": 0.235,
+      "overall": 0.319,
+      "best_bucket": "creative"
+    },
+    "AELLM/gemma-2-lyco-infinity-9b": {
+      "model": "AELLM/gemma-2-lyco-infinity-9b",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.458,
+      "coding": 0.453,
+      "reasoning": 0.233,
+      "creative": 0.523,
+      "critical": 0.214,
+      "overall": 0.3,
+      "best_bucket": "creative"
+    },
+    "AGI-0/Art-v0-3B": {
+      "model": "AGI-0/Art-v0-3B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.168,
+      "coding": 0.175,
+      "reasoning": 0.114,
+      "creative": 0.198,
+      "critical": 0.111,
+      "overall": 0.121,
+      "best_bucket": "creative"
+    },
+    "AGI-0/Artificium-llama3.1-8B-001": {
+      "model": "AGI-0/Artificium-llama3.1-8B-001",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.32,
+      "coding": 0.29,
+      "reasoning": 0.131,
+      "creative": 0.369,
+      "critical": 0.121,
+      "overall": 0.195,
+      "best_bucket": "creative"
+    },
+    "AGI-0/smartllama3.1-8B-001": {
+      "model": "AGI-0/smartllama3.1-8B-001",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.273,
+      "coding": 0.258,
+      "reasoning": 0.163,
+      "creative": 0.295,
+      "critical": 0.148,
+      "overall": 0.204,
+      "best_bucket": "creative"
+    },
+    "AI-MO/NuminaMath-7B-CoT": {
+      "model": "AI-MO/NuminaMath-7B-CoT",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.21,
+      "coding": 0.208,
+      "reasoning": 0.143,
+      "creative": 0.226,
+      "critical": 0.134,
+      "overall": 0.161,
+      "best_bucket": "creative"
+    },
+    "AI-MO/NuminaMath-7B-TIR": {
+      "model": "AI-MO/NuminaMath-7B-TIR",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.2,
+      "coding": 0.191,
+      "reasoning": 0.112,
+      "creative": 0.22,
+      "critical": 0.102,
+      "overall": 0.142,
+      "best_bucket": "creative"
+    },
+    "AI-Sweden-Models/Llama-3-8B-instruct": {
+      "model": "AI-Sweden-Models/Llama-3-8B-instruct",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.186,
+      "coding": 0.179,
+      "reasoning": 0.11,
+      "creative": 0.201,
+      "critical": 0.091,
+      "overall": 0.143,
+      "best_bucket": "creative"
+    },
+    "AI-Sweden-Models/gpt-sw3-40b": {
+      "model": "AI-Sweden-Models/gpt-sw3-40b",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.081,
+      "coding": 0.083,
+      "reasoning": 0.036,
+      "creative": 0.095,
+      "critical": 0.03,
+      "overall": 0.049,
+      "best_bucket": "creative"
+    },
+    "AI4free/Dhanishtha": {
+      "model": "AI4free/Dhanishtha",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.149,
+      "coding": 0.15,
+      "reasoning": 0.105,
+      "creative": 0.169,
+      "critical": 0.103,
+      "overall": 0.112,
+      "best_bucket": "creative"
+    },
+    "AI4free/t2": {
+      "model": "AI4free/t2",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.185,
+      "coding": 0.172,
+      "reasoning": 0.089,
+      "creative": 0.226,
+      "critical": 0.09,
+      "overall": 0.113,
+      "best_bucket": "creative"
+    },
+    "AIDC-AI/Marco-o1": {
+      "model": "AIDC-AI/Marco-o1",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.364,
+      "coding": 0.363,
+      "reasoning": 0.236,
+      "creative": 0.394,
+      "critical": 0.212,
+      "overall": 0.276,
+      "best_bucket": "creative"
+    },
+    "Aashraf995/Creative-7B-nerd": {
+      "model": "Aashraf995/Creative-7B-nerd",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.381,
+      "coding": 0.374,
+      "reasoning": 0.258,
+      "creative": 0.407,
+      "critical": 0.239,
+      "overall": 0.3,
+      "best_bucket": "creative"
+    },
+    "Aashraf995/Gemma-Evo-10B": {
+      "model": "Aashraf995/Gemma-Evo-10B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.488,
+      "coding": 0.482,
+      "reasoning": 0.278,
+      "creative": 0.547,
+      "critical": 0.257,
+      "overall": 0.343,
+      "best_bucket": "creative"
+    },
+    "Aashraf995/Qwen-Evo-7B": {
+      "model": "Aashraf995/Qwen-Evo-7B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.384,
+      "coding": 0.38,
+      "reasoning": 0.262,
+      "creative": 0.41,
+      "critical": 0.241,
+      "overall": 0.303,
+      "best_bucket": "creative"
+    },
+    "Aashraf995/QwenStock-14B": {
+      "model": "Aashraf995/QwenStock-14B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.446,
+      "coding": 0.449,
+      "reasoning": 0.334,
+      "creative": 0.466,
+      "critical": 0.311,
+      "overall": 0.371,
+      "best_bucket": "creative"
+    },
+    "AbacusResearch/Jallabi-34B": {
+      "model": "AbacusResearch/Jallabi-34B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.332,
+      "coding": 0.331,
+      "reasoning": 0.213,
+      "creative": 0.346,
+      "critical": 0.184,
+      "overall": 0.262,
+      "best_bucket": "creative"
+    },
+    "Ahdoot/StructuredThinker-v0.3-MoreStructure": {
+      "model": "Ahdoot/StructuredThinker-v0.3-MoreStructure",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.314,
+      "coding": 0.306,
+      "reasoning": 0.204,
+      "creative": 0.341,
+      "critical": 0.19,
+      "overall": 0.239,
+      "best_bucket": "creative"
+    },
+    "Ahdoot/Test_StealthThinker": {
+      "model": "Ahdoot/Test_StealthThinker",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.306,
+      "coding": 0.289,
+      "reasoning": 0.174,
+      "creative": 0.337,
+      "critical": 0.159,
+      "overall": 0.221,
+      "best_bucket": "creative"
+    },
+    "AicoresSecurity/Cybernet-Sec-3B-R1-V0": {
+      "model": "AicoresSecurity/Cybernet-Sec-3B-R1-V0",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.361,
+      "coding": 0.336,
+      "reasoning": 0.134,
+      "creative": 0.425,
+      "critical": 0.123,
+      "overall": 0.206,
+      "best_bucket": "creative"
+    },
+    "AicoresSecurity/Cybernet-Sec-3B-R1-V0-Coder": {
+      "model": "AicoresSecurity/Cybernet-Sec-3B-R1-V0-Coder",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.4,
+      "coding": 0.369,
+      "reasoning": 0.151,
+      "creative": 0.472,
+      "critical": 0.142,
+      "overall": 0.229,
+      "best_bucket": "creative"
+    },
+    "AicoresSecurity/Cybernet-Sec-3B-R1-V1": {
+      "model": "AicoresSecurity/Cybernet-Sec-3B-R1-V1",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.346,
+      "coding": 0.319,
+      "reasoning": 0.133,
+      "creative": 0.409,
+      "critical": 0.124,
+      "overall": 0.2,
+      "best_bucket": "creative"
+    },
+    "AicoresSecurity/Cybernet-Sec-3B-R1-V1.1": {
+      "model": "AicoresSecurity/Cybernet-Sec-3B-R1-V1.1",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.383,
+      "coding": 0.351,
+      "reasoning": 0.154,
+      "creative": 0.45,
+      "critical": 0.145,
+      "overall": 0.226,
+      "best_bucket": "creative"
+    },
+    "Alepach/notHumpback-M0": {
+      "model": "Alepach/notHumpback-M0",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.106,
+      "coding": 0.093,
+      "reasoning": 0.026,
+      "creative": 0.134,
+      "critical": 0.026,
+      "overall": 0.051,
+      "best_bucket": "creative"
+    },
+    "Alepach/notHumpback-M1": {
+      "model": "Alepach/notHumpback-M1",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.099,
+      "coding": 0.089,
+      "reasoning": 0.025,
+      "creative": 0.125,
+      "critical": 0.025,
+      "overall": 0.048,
+      "best_bucket": "creative"
+    },
+    "Alepach/notHumpback-M1-v2": {
+      "model": "Alepach/notHumpback-M1-v2",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.104,
+      "coding": 0.091,
+      "reasoning": 0.03,
+      "creative": 0.13,
+      "critical": 0.031,
+      "overall": 0.052,
+      "best_bucket": "creative"
+    },
+    "Alibaba-NLP/gte-Qwen2-7B-instruct": {
+      "model": "Alibaba-NLP/gte-Qwen2-7B-instruct",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.197,
+      "coding": 0.185,
+      "reasoning": 0.099,
+      "creative": 0.21,
+      "critical": 0.08,
+      "overall": 0.138,
+      "best_bucket": "creative"
+    },
+    "Alsebay/Qwen2.5-7B-test-novelist": {
+      "model": "Alsebay/Qwen2.5-7B-test-novelist",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.375,
+      "coding": 0.359,
+      "reasoning": 0.216,
+      "creative": 0.414,
+      "critical": 0.196,
+      "overall": 0.272,
+      "best_bucket": "creative"
+    },
+    "Amaorynho/BBAI2006": {
+      "model": "Amaorynho/BBAI2006",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.069,
+      "coding": 0.061,
+      "reasoning": 0.018,
+      "creative": 0.086,
+      "critical": 0.017,
+      "overall": 0.035,
+      "best_bucket": "creative"
+    },
+    "Amaorynho/BBAI270V4": {
+      "model": "Amaorynho/BBAI270V4",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.092,
+      "coding": 0.085,
+      "reasoning": 0.025,
+      "creative": 0.115,
+      "critical": 0.023,
+      "overall": 0.045,
+      "best_bucket": "creative"
+    },
+    "Amaorynho/BBAIIFEV1": {
+      "model": "Amaorynho/BBAIIFEV1",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.484,
+      "coding": 0.457,
+      "reasoning": 0.223,
+      "creative": 0.559,
+      "critical": 0.208,
+      "overall": 0.306,
+      "best_bucket": "creative"
+    },
+    "Amaorynho/BBAI_375": {
+      "model": "Amaorynho/BBAI_375",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.069,
+      "coding": 0.061,
+      "reasoning": 0.018,
+      "creative": 0.086,
+      "critical": 0.017,
+      "overall": 0.035,
+      "best_bucket": "creative"
+    },
+    "Amu/t1-1.5B": {
+      "model": "Amu/t1-1.5B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.21,
+      "coding": 0.192,
+      "reasoning": 0.076,
+      "creative": 0.242,
+      "critical": 0.066,
+      "overall": 0.121,
+      "best_bucket": "creative"
+    },
+    "Amu/t1-3B": {
+      "model": "Amu/t1-3B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.175,
+      "coding": 0.192,
+      "reasoning": 0.097,
+      "creative": 0.208,
+      "critical": 0.087,
+      "overall": 0.112,
+      "best_bucket": "creative"
+    },
+    "ArliAI/ArliAI-RPMax-12B-v1.1": {
+      "model": "ArliAI/ArliAI-RPMax-12B-v1.1",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.337,
+      "coding": 0.314,
+      "reasoning": 0.146,
+      "creative": 0.385,
+      "critical": 0.134,
+      "overall": 0.21,
+      "best_bucket": "creative"
+    },
+    "ArliAI/Llama-3.1-8B-ArliAI-RPMax-v1.1": {
+      "model": "ArliAI/Llama-3.1-8B-ArliAI-RPMax-v1.1",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.389,
+      "coding": 0.368,
+      "reasoning": 0.168,
+      "creative": 0.449,
+      "critical": 0.153,
+      "overall": 0.239,
+      "best_bucket": "creative"
+    },
+    "Arthur-LAGACHERIE/Precis-1B-Instruct": {
+      "model": "Arthur-LAGACHERIE/Precis-1B-Instruct",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.176,
+      "coding": 0.159,
+      "reasoning": 0.049,
+      "creative": 0.218,
+      "critical": 0.048,
+      "overall": 0.088,
+      "best_bucket": "creative"
+    },
+    "Artples/L-MChat-7b": {
+      "model": "Artples/L-MChat-7b",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.334,
+      "coding": 0.31,
+      "reasoning": 0.151,
+      "creative": 0.381,
+      "critical": 0.141,
+      "overall": 0.212,
+      "best_bucket": "creative"
+    },
+    "Artples/L-MChat-Small": {
+      "model": "Artples/L-MChat-Small",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.222,
+      "coding": 0.234,
+      "reasoning": 0.12,
+      "creative": 0.248,
+      "critical": 0.099,
+      "overall": 0.152,
+      "best_bucket": "creative"
+    },
+    "Aryanne/QwentileSwap": {
+      "model": "Aryanne/QwentileSwap",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.573,
+      "coding": 0.569,
+      "reasoning": 0.377,
+      "creative": 0.617,
+      "critical": 0.347,
+      "overall": 0.439,
+      "best_bucket": "creative"
+    },
+    "Aryanne/SHBA": {
+      "model": "Aryanne/SHBA",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.474,
+      "coding": 0.445,
+      "reasoning": 0.215,
+      "creative": 0.546,
+      "critical": 0.2,
+      "overall": 0.299,
+      "best_bucket": "creative"
+    },
+    "Aryanne/SuperHeart": {
+      "model": "Aryanne/SuperHeart",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.365,
+      "coding": 0.349,
+      "reasoning": 0.197,
+      "creative": 0.404,
+      "critical": 0.177,
+      "overall": 0.256,
+      "best_bucket": "creative"
+    },
+    "AtAndDev/Qwen2.5-1.5B-continuous-learnt": {
+      "model": "AtAndDev/Qwen2.5-1.5B-continuous-learnt",
+      "sources": [
+        "hf_leaderboard_v1",
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.278,
+      "coding": 0.261,
+      "reasoning": 0.119,
+      "creative": 0.321,
+      "critical": 0.108,
+      "overall": 0.17,
+      "best_bucket": "creative"
+    },
+    "Ateron/Glowing-Forest-12B": {
+      "model": "Ateron/Glowing-Forest-12B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.294,
+      "coding": 0.297,
+      "reasoning": 0.188,
+      "creative": 0.314,
+      "critical": 0.167,
+      "overall": 0.226,
+      "best_bucket": "creative"
+    },
+    "Ateron/Lotus-Magpic": {
+      "model": "Ateron/Lotus-Magpic",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.394,
+      "coding": 0.381,
+      "reasoning": 0.188,
+      "creative": 0.45,
+      "critical": 0.168,
+      "overall": 0.255,
+      "best_bucket": "creative"
+    },
+    "Ateron/Way_of_MagPicaro": {
+      "model": "Ateron/Way_of_MagPicaro",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.248,
+      "coding": 0.257,
+      "reasoning": 0.179,
+      "creative": 0.257,
+      "critical": 0.157,
+      "overall": 0.206,
+      "best_bucket": "coding"
+    },
+    "AuraIndustries/Aura-4B": {
+      "model": "AuraIndustries/Aura-4B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.247,
+      "coding": 0.241,
+      "reasoning": 0.118,
+      "creative": 0.28,
+      "critical": 0.105,
+      "overall": 0.161,
+      "best_bucket": "creative"
+    },
+    "AuraIndustries/Aura-8B": {
+      "model": "AuraIndustries/Aura-8B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.441,
+      "coding": 0.412,
+      "reasoning": 0.191,
+      "creative": 0.508,
+      "critical": 0.174,
+      "overall": 0.274,
+      "best_bucket": "creative"
+    },
+    "AuraIndustries/Aura-MoE-2x4B": {
+      "model": "AuraIndustries/Aura-MoE-2x4B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.275,
+      "coding": 0.26,
+      "reasoning": 0.113,
+      "creative": 0.319,
+      "critical": 0.098,
+      "overall": 0.168,
+      "best_bucket": "creative"
+    },
+    "AuraIndustries/Aura-MoE-2x4B-v2": {
+      "model": "AuraIndustries/Aura-MoE-2x4B-v2",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.283,
+      "coding": 0.269,
+      "reasoning": 0.121,
+      "creative": 0.329,
+      "critical": 0.109,
+      "overall": 0.175,
+      "best_bucket": "creative"
+    },
+    "Aurel9/testmerge-7b": {
+      "model": "Aurel9/testmerge-7b",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.285,
+      "coding": 0.294,
+      "reasoning": 0.171,
+      "creative": 0.313,
+      "critical": 0.147,
+      "overall": 0.21,
+      "best_bucket": "creative"
+    },
+    "Ayush-Singh/Llama1B-sft-2": {
+      "model": "Ayush-Singh/Llama1B-sft-2",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.064,
+      "coding": 0.056,
+      "reasoning": 0.016,
+      "creative": 0.08,
+      "critical": 0.015,
+      "overall": 0.032,
+      "best_bucket": "creative"
+    },
+    "Azure99/Blossom-V6-14B": {
+      "model": "Azure99/Blossom-V6-14B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.449,
+      "coding": 0.424,
+      "reasoning": 0.273,
+      "creative": 0.496,
+      "critical": 0.257,
+      "overall": 0.328,
+      "best_bucket": "creative"
+    },
+    "Azure99/Blossom-V6-7B": {
+      "model": "Azure99/Blossom-V6-7B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.403,
+      "coding": 0.386,
+      "reasoning": 0.27,
+      "creative": 0.439,
+      "critical": 0.256,
+      "overall": 0.31,
+      "best_bucket": "creative"
+    },
+    "Azure99/blossom-v5-32b": {
+      "model": "Azure99/blossom-v5-32b",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.387,
+      "coding": 0.392,
+      "reasoning": 0.227,
+      "creative": 0.424,
+      "critical": 0.202,
+      "overall": 0.277,
+      "best_bucket": "creative"
+    },
+    "Azure99/blossom-v5-llama3-8b": {
+      "model": "Azure99/blossom-v5-llama3-8b",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.246,
+      "coding": 0.239,
+      "reasoning": 0.101,
+      "creative": 0.29,
+      "critical": 0.089,
+      "overall": 0.146,
+      "best_bucket": "creative"
+    },
+    "Azure99/blossom-v5.1-34b": {
+      "model": "Azure99/blossom-v5.1-34b",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.422,
+      "coding": 0.422,
+      "reasoning": 0.25,
+      "creative": 0.462,
+      "critical": 0.225,
+      "overall": 0.303,
+      "best_bucket": "creative"
+    },
+    "Azure99/blossom-v5.1-9b": {
+      "model": "Azure99/blossom-v5.1-9b",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.367,
+      "coding": 0.358,
+      "reasoning": 0.218,
+      "creative": 0.404,
+      "critical": 0.204,
+      "overall": 0.265,
+      "best_bucket": "creative"
+    },
+    "BAAI/Gemma2-9B-IT-Simpo-Infinity-Preference": {
+      "model": "BAAI/Gemma2-9B-IT-Simpo-Infinity-Preference",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.286,
+      "coding": 0.306,
+      "reasoning": 0.199,
+      "creative": 0.3,
+      "critical": 0.176,
+      "overall": 0.226,
+      "best_bucket": "coding"
+    },
+    "BAAI/Infinity-Instruct-3M-0613-Llama3-70B": {
+      "model": "BAAI/Infinity-Instruct-3M-0613-Llama3-70B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.49,
+      "coding": 0.494,
+      "reasoning": 0.295,
+      "creative": 0.539,
+      "critical": 0.268,
+      "overall": 0.356,
+      "best_bucket": "creative"
+    },
+    "BAAI/Infinity-Instruct-3M-0613-Mistral-7B": {
+      "model": "BAAI/Infinity-Instruct-3M-0613-Mistral-7B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.338,
+      "coding": 0.329,
+      "reasoning": 0.166,
+      "creative": 0.384,
+      "critical": 0.148,
+      "overall": 0.223,
+      "best_bucket": "creative"
+    },
+    "BAAI/Infinity-Instruct-3M-0625-Llama3-70B": {
+      "model": "BAAI/Infinity-Instruct-3M-0625-Llama3-70B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.514,
+      "coding": 0.52,
+      "reasoning": 0.305,
+      "creative": 0.57,
+      "critical": 0.277,
+      "overall": 0.369,
+      "best_bucket": "creative"
+    },
+    "BAAI/Infinity-Instruct-3M-0625-Llama3-8B": {
+      "model": "BAAI/Infinity-Instruct-3M-0625-Llama3-8B",
+      "sources": [
+        "hf_leaderboard_v1"
+      ],
+      "side": "local",
+      "simple": 0.365,
+      "coding": 0.35,
+      "reasoning": 0.153,
+      "creative": 0.422,
+      "critical": 0.135,
+      "overall": 0.221,
+      "best_bucket": "creative"
+    },
+    "sakana/fugu-ultra": {
+      "model": "sakana/fugu-ultra",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.594,
+      "coding": 0.594,
+      "reasoning": 0.594,
+      "creative": 0.594,
+      "critical": 0.594,
+      "overall": 0.594,
+      "best_bucket": "simple"
+    },
+    "google/gemini-3.1-flash-image": {
+      "model": "google/gemini-3.1-flash-image",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.474,
+      "coding": 0.444,
+      "reasoning": 0.404,
+      "creative": 0.464,
+      "critical": 0.394,
+      "overall": 0.444,
+      "best_bucket": "simple"
+    },
+    "google/gemini-3-pro-image": {
+      "model": "google/gemini-3-pro-image",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.549,
+      "coding": 0.519,
+      "reasoning": 0.479,
+      "creative": 0.539,
+      "critical": 0.469,
+      "overall": 0.519,
+      "best_bucket": "simple"
+    },
+    "cohere/north-mini-code:free": {
+      "model": "cohere/north-mini-code:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.23,
+      "coding": 0.2,
+      "reasoning": 0.16,
+      "creative": 0.22,
+      "critical": 0.15,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "z-ai/glm-5.2": {
+      "model": "z-ai/glm-5.2",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.472,
+      "coding": 0.472,
+      "reasoning": 0.472,
+      "creative": 0.472,
+      "critical": 0.472,
+      "overall": 0.472,
+      "best_bucket": "simple"
+    },
+    "openrouter/fusion": {
+      "model": "openrouter/fusion",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "moonshotai/kimi-k2.7-code": {
+      "model": "moonshotai/kimi-k2.7-code",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.46,
+      "coding": 0.46,
+      "reasoning": 0.46,
+      "creative": 0.46,
+      "critical": 0.46,
+      "overall": 0.46,
+      "best_bucket": "simple"
+    },
+    "~anthropic/claude-fable-latest": {
+      "model": "~anthropic/claude-fable-latest",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.66,
+      "coding": 0.66,
+      "reasoning": 0.66,
+      "creative": 0.66,
+      "critical": 0.66,
+      "overall": 0.66,
+      "best_bucket": "simple"
+    },
+    "anthropic/claude-fable-5": {
+      "model": "anthropic/claude-fable-5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.66,
+      "coding": 0.66,
+      "reasoning": 0.66,
+      "creative": 0.66,
+      "critical": 0.66,
+      "overall": 0.66,
+      "best_bucket": "simple"
+    },
+    "nex-agi/nex-n2-pro": {
+      "model": "nex-agi/nex-n2-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.424,
+      "coding": 0.424,
+      "reasoning": 0.424,
+      "creative": 0.424,
+      "critical": 0.424,
+      "overall": 0.424,
+      "best_bucket": "simple"
+    },
+    "nvidia/nemotron-3.5-content-safety:free": {
+      "model": "nvidia/nemotron-3.5-content-safety:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "nvidia/nemotron-3-ultra-550b-a55b:free": {
+      "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "nvidia/nemotron-3-ultra-550b-a55b": {
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.444,
+      "coding": 0.444,
+      "reasoning": 0.444,
+      "creative": 0.444,
+      "critical": 0.444,
+      "overall": 0.444,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.7-plus": {
+      "model": "qwen/qwen3.7-plus",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.43,
+      "coding": 0.43,
+      "reasoning": 0.43,
+      "creative": 0.43,
+      "critical": 0.43,
+      "overall": 0.43,
+      "best_bucket": "simple"
+    },
+    "minimax/minimax-m3": {
+      "model": "minimax/minimax-m3",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.458,
+      "coding": 0.428,
+      "reasoning": 0.388,
+      "creative": 0.448,
+      "critical": 0.378,
+      "overall": 0.428,
+      "best_bucket": "simple"
+    },
+    "stepfun/step-3.7-flash": {
+      "model": "stepfun/step-3.7-flash",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.45,
+      "coding": 0.42,
+      "reasoning": 0.38,
+      "creative": 0.44,
+      "critical": 0.37,
+      "overall": 0.42,
+      "best_bucket": "simple"
+    },
+    "anthropic/claude-opus-4.8-fast": {
+      "model": "anthropic/claude-opus-4.8-fast",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.69,
+      "coding": 0.66,
+      "reasoning": 0.66,
+      "creative": 0.7,
+      "critical": 0.68,
+      "overall": 0.66,
+      "best_bucket": "creative"
+    },
+    "anthropic/claude-opus-4.8": {
+      "model": "anthropic/claude-opus-4.8",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.624,
+      "coding": 0.594,
+      "reasoning": 0.594,
+      "creative": 0.634,
+      "critical": 0.614,
+      "overall": 0.594,
+      "best_bucket": "creative"
+    },
+    "qwen/qwen3.7-max": {
+      "model": "qwen/qwen3.7-max",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.488,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.488,
+      "critical": 0.488,
+      "overall": 0.488,
+      "best_bucket": "simple"
+    },
+    "x-ai/grok-build-0.1": {
+      "model": "x-ai/grok-build-0.1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.475,
+      "coding": 0.475,
+      "reasoning": 0.475,
+      "creative": 0.475,
+      "critical": 0.475,
+      "overall": 0.475,
+      "best_bucket": "simple"
+    },
+    "google/gemini-3.5-flash": {
+      "model": "google/gemini-3.5-flash",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.529,
+      "coding": 0.499,
+      "reasoning": 0.459,
+      "creative": 0.519,
+      "critical": 0.449,
+      "overall": 0.499,
+      "best_bucket": "simple"
+    },
+    "anthropic/claude-opus-4.7-fast": {
+      "model": "anthropic/claude-opus-4.7-fast",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.802,
+      "coding": 0.772,
+      "reasoning": 0.772,
+      "creative": 0.812,
+      "critical": 0.792,
+      "overall": 0.772,
+      "best_bucket": "creative"
+    },
+    "perceptron/perceptron-mk1": {
+      "model": "perceptron/perceptron-mk1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.415,
+      "coding": 0.415,
+      "reasoning": 0.415,
+      "creative": 0.415,
+      "critical": 0.415,
+      "overall": 0.415,
+      "best_bucket": "simple"
+    },
+    "inclusionai/ring-2.6-1t": {
+      "model": "inclusionai/ring-2.6-1t",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.408,
+      "coding": 0.408,
+      "reasoning": 0.408,
+      "creative": 0.408,
+      "critical": 0.408,
+      "overall": 0.408,
+      "best_bucket": "simple"
+    },
+    "google/gemini-3.1-flash-lite": {
+      "model": "google/gemini-3.1-flash-lite",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.454,
+      "coding": 0.424,
+      "reasoning": 0.384,
+      "creative": 0.444,
+      "critical": 0.374,
+      "overall": 0.424,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-chat-latest": {
+      "model": "openai/gpt-chat-latest",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.594,
+      "coding": 0.594,
+      "reasoning": 0.594,
+      "creative": 0.594,
+      "critical": 0.594,
+      "overall": 0.594,
+      "best_bucket": "simple"
+    },
+    "x-ai/grok-4.3": {
+      "model": "x-ai/grok-4.3",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.488,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.488,
+      "critical": 0.488,
+      "overall": 0.488,
+      "best_bucket": "simple"
+    },
+    "ibm-granite/granite-4.1-8b": {
+      "model": "ibm-granite/granite-4.1-8b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.405,
+      "coding": 0.405,
+      "reasoning": 0.405,
+      "creative": 0.405,
+      "critical": 0.405,
+      "overall": 0.405,
+      "best_bucket": "simple"
+    },
+    "mistralai/mistral-medium-3-5": {
+      "model": "mistralai/mistral-medium-3-5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.499,
+      "coding": 0.499,
+      "reasoning": 0.499,
+      "creative": 0.499,
+      "critical": 0.499,
+      "overall": 0.499,
+      "best_bucket": "simple"
+    },
+    "openrouter/owl-alpha": {
+      "model": "openrouter/owl-alpha",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.23,
+      "coding": 0.2,
+      "reasoning": 0.16,
+      "creative": 0.22,
+      "critical": 0.15,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "poolside/laguna-xs.2:free": {
+      "model": "poolside/laguna-xs.2:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "poolside/laguna-xs.2": {
+      "model": "poolside/laguna-xs.2",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.41,
+      "coding": 0.41,
+      "reasoning": 0.41,
+      "creative": 0.41,
+      "critical": 0.41,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "poolside/laguna-m.1:free": {
+      "model": "poolside/laguna-m.1:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "poolside/laguna-m.1": {
+      "model": "poolside/laguna-m.1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.42,
+      "coding": 0.42,
+      "reasoning": 0.42,
+      "creative": 0.42,
+      "critical": 0.42,
+      "overall": 0.42,
+      "best_bucket": "simple"
+    },
+    "~anthropic/claude-haiku-latest": {
+      "model": "~anthropic/claude-haiku-latest",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.505,
+      "coding": 0.475,
+      "reasoning": 0.435,
+      "creative": 0.495,
+      "critical": 0.425,
+      "overall": 0.475,
+      "best_bucket": "simple"
+    },
+    "~openai/gpt-mini-latest": {
+      "model": "~openai/gpt-mini-latest",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.491,
+      "coding": 0.461,
+      "reasoning": 0.421,
+      "creative": 0.481,
+      "critical": 0.411,
+      "overall": 0.461,
+      "best_bucket": "simple"
+    },
+    "~google/gemini-pro-latest": {
+      "model": "~google/gemini-pro-latest",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.549,
+      "coding": 0.519,
+      "reasoning": 0.479,
+      "creative": 0.539,
+      "critical": 0.469,
+      "overall": 0.519,
+      "best_bucket": "simple"
+    },
+    "~moonshotai/kimi-latest": {
+      "model": "~moonshotai/kimi-latest",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.455,
+      "coding": 0.455,
+      "reasoning": 0.455,
+      "creative": 0.455,
+      "critical": 0.455,
+      "overall": 0.455,
+      "best_bucket": "simple"
+    },
+    "~google/gemini-flash-latest": {
+      "model": "~google/gemini-flash-latest",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.529,
+      "coding": 0.499,
+      "reasoning": 0.459,
+      "creative": 0.519,
+      "critical": 0.449,
+      "overall": 0.499,
+      "best_bucket": "simple"
+    },
+    "~anthropic/claude-sonnet-latest": {
+      "model": "~anthropic/claude-sonnet-latest",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.58,
+      "coding": 0.55,
+      "reasoning": 0.55,
+      "creative": 0.59,
+      "critical": 0.57,
+      "overall": 0.55,
+      "best_bucket": "creative"
+    },
+    "~openai/gpt-latest": {
+      "model": "~openai/gpt-latest",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.594,
+      "coding": 0.594,
+      "reasoning": 0.594,
+      "creative": 0.594,
+      "critical": 0.594,
+      "overall": 0.594,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.5-plus-20260420": {
+      "model": "qwen/qwen3.5-plus-20260420",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.428,
+      "coding": 0.428,
+      "reasoning": 0.428,
+      "creative": 0.428,
+      "critical": 0.428,
+      "overall": 0.428,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.6-flash": {
+      "model": "qwen/qwen3.6-flash",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.449,
+      "coding": 0.419,
+      "reasoning": 0.379,
+      "creative": 0.439,
+      "critical": 0.369,
+      "overall": 0.419,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.6-35b-a3b": {
+      "model": "qwen/qwen3.6-35b-a3b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.444,
+      "coding": 0.414,
+      "reasoning": 0.374,
+      "creative": 0.434,
+      "critical": 0.364,
+      "overall": 0.414,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.6-max-preview": {
+      "model": "qwen/qwen3.6-max-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.477,
+      "coding": 0.477,
+      "reasoning": 0.477,
+      "creative": 0.477,
+      "critical": 0.477,
+      "overall": 0.477,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.6-27b": {
+      "model": "qwen/qwen3.6-27b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.425,
+      "coding": 0.425,
+      "reasoning": 0.425,
+      "creative": 0.425,
+      "critical": 0.425,
+      "overall": 0.425,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5.5-pro": {
+      "model": "openai/gpt-5.5-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.802,
+      "coding": 0.772,
+      "reasoning": 0.772,
+      "creative": 0.812,
+      "critical": 0.792,
+      "overall": 0.772,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-5.5": {
+      "model": "openai/gpt-5.5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.624,
+      "coding": 0.594,
+      "reasoning": 0.594,
+      "creative": 0.634,
+      "critical": 0.614,
+      "overall": 0.594,
+      "best_bucket": "creative"
+    },
+    "deepseek/deepseek-v4-pro": {
+      "model": "deepseek/deepseek-v4-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.439,
+      "coding": 0.439,
+      "reasoning": 0.439,
+      "creative": 0.439,
+      "critical": 0.439,
+      "overall": 0.439,
+      "best_bucket": "simple"
+    },
+    "deepseek/deepseek-v4-flash": {
+      "model": "deepseek/deepseek-v4-flash",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.439,
+      "coding": 0.409,
+      "reasoning": 0.369,
+      "creative": 0.429,
+      "critical": 0.359,
+      "overall": 0.409,
+      "best_bucket": "simple"
+    },
+    "inclusionai/ling-2.6-1t": {
+      "model": "inclusionai/ling-2.6-1t",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.408,
+      "coding": 0.408,
+      "reasoning": 0.408,
+      "creative": 0.408,
+      "critical": 0.408,
+      "overall": 0.408,
+      "best_bucket": "simple"
+    },
+    "tencent/hy3-preview": {
+      "model": "tencent/hy3-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.407,
+      "coding": 0.407,
+      "reasoning": 0.407,
+      "creative": 0.407,
+      "critical": 0.407,
+      "overall": 0.407,
+      "best_bucket": "simple"
+    },
+    "xiaomi/mimo-v2.5-pro": {
+      "model": "xiaomi/mimo-v2.5-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.439,
+      "coding": 0.439,
+      "reasoning": 0.439,
+      "creative": 0.439,
+      "critical": 0.439,
+      "overall": 0.439,
+      "best_bucket": "simple"
+    },
+    "xiaomi/mimo-v2.5": {
+      "model": "xiaomi/mimo-v2.5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.411,
+      "coding": 0.411,
+      "reasoning": 0.411,
+      "creative": 0.411,
+      "critical": 0.411,
+      "overall": 0.411,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5.4-image-2": {
+      "model": "openai/gpt-5.4-image-2",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.668,
+      "coding": 0.638,
+      "reasoning": 0.638,
+      "creative": 0.678,
+      "critical": 0.658,
+      "overall": 0.638,
+      "best_bucket": "creative"
+    },
+    "inclusionai/ling-2.6-flash": {
+      "model": "inclusionai/ling-2.6-flash",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.431,
+      "coding": 0.401,
+      "reasoning": 0.361,
+      "creative": 0.421,
+      "critical": 0.351,
+      "overall": 0.401,
+      "best_bucket": "simple"
+    },
+    "~anthropic/claude-opus-latest": {
+      "model": "~anthropic/claude-opus-latest",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.624,
+      "coding": 0.594,
+      "reasoning": 0.594,
+      "creative": 0.634,
+      "critical": 0.614,
+      "overall": 0.594,
+      "best_bucket": "creative"
+    },
+    "openrouter/pareto-code": {
+      "model": "openrouter/pareto-code",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "moonshotai/kimi-k2.6": {
+      "model": "moonshotai/kimi-k2.6",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.455,
+      "coding": 0.455,
+      "reasoning": 0.455,
+      "creative": 0.455,
+      "critical": 0.455,
+      "overall": 0.455,
+      "best_bucket": "simple"
+    },
+    "anthropic/claude-opus-4.7": {
+      "model": "anthropic/claude-opus-4.7",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.624,
+      "coding": 0.594,
+      "reasoning": 0.594,
+      "creative": 0.634,
+      "critical": 0.614,
+      "overall": 0.594,
+      "best_bucket": "creative"
+    },
+    "anthropic/claude-opus-4.6-fast": {
+      "model": "anthropic/claude-opus-4.6-fast",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.802,
+      "coding": 0.772,
+      "reasoning": 0.772,
+      "creative": 0.812,
+      "critical": 0.792,
+      "overall": 0.772,
+      "best_bucket": "creative"
+    },
+    "z-ai/glm-5.1": {
+      "model": "z-ai/glm-5.1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.474,
+      "coding": 0.474,
+      "reasoning": 0.474,
+      "creative": 0.474,
+      "critical": 0.474,
+      "overall": 0.474,
+      "best_bucket": "simple"
+    },
+    "google/gemma-4-26b-a4b-it:free": {
+      "model": "google/gemma-4-26b-a4b-it:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "google/gemma-4-26b-a4b-it": {
+      "model": "google/gemma-4-26b-a4b-it",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.406,
+      "coding": 0.406,
+      "reasoning": 0.406,
+      "creative": 0.406,
+      "critical": 0.406,
+      "overall": 0.406,
+      "best_bucket": "simple"
+    },
+    "google/gemma-4-31b-it:free": {
+      "model": "google/gemma-4-31b-it:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.23,
+      "coding": 0.2,
+      "reasoning": 0.16,
+      "creative": 0.22,
+      "critical": 0.15,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "google/gemma-4-31b-it": {
+      "model": "google/gemma-4-31b-it",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.442,
+      "coding": 0.412,
+      "reasoning": 0.372,
+      "creative": 0.432,
+      "critical": 0.362,
+      "overall": 0.412,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.6-plus": {
+      "model": "qwen/qwen3.6-plus",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.43,
+      "coding": 0.43,
+      "reasoning": 0.43,
+      "creative": 0.43,
+      "critical": 0.43,
+      "overall": 0.43,
+      "best_bucket": "simple"
+    },
+    "z-ai/glm-5v-turbo": {
+      "model": "z-ai/glm-5v-turbo",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.485,
+      "coding": 0.485,
+      "reasoning": 0.485,
+      "creative": 0.485,
+      "critical": 0.485,
+      "overall": 0.485,
+      "best_bucket": "simple"
+    },
+    "arcee-ai/trinity-large-thinking": {
+      "model": "arcee-ai/trinity-large-thinking",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.384,
+      "coding": 0.454,
+      "reasoning": 0.504,
+      "creative": 0.364,
+      "critical": 0.494,
+      "overall": 0.424,
+      "best_bucket": "reasoning"
+    },
+    "x-ai/grok-4.20-multi-agent": {
+      "model": "x-ai/grok-4.20-multi-agent",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.488,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.488,
+      "critical": 0.488,
+      "overall": 0.488,
+      "best_bucket": "simple"
+    },
+    "x-ai/grok-4.20": {
+      "model": "x-ai/grok-4.20",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.488,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.488,
+      "critical": 0.488,
+      "overall": 0.488,
+      "best_bucket": "simple"
+    },
+    "google/lyria-3-pro-preview": {
+      "model": "google/lyria-3-pro-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "google/lyria-3-clip-preview": {
+      "model": "google/lyria-3-clip-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "kwaipilot/kat-coder-pro-v2": {
+      "model": "kwaipilot/kat-coder-pro-v2",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.408,
+      "coding": 0.528,
+      "reasoning": 0.448,
+      "creative": 0.368,
+      "critical": 0.468,
+      "overall": 0.428,
+      "best_bucket": "coding"
+    },
+    "rekaai/reka-edge": {
+      "model": "rekaai/reka-edge",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.41,
+      "coding": 0.41,
+      "reasoning": 0.41,
+      "creative": 0.41,
+      "critical": 0.41,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "minimax/minimax-m2.7": {
+      "model": "minimax/minimax-m2.7",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.448,
+      "coding": 0.418,
+      "reasoning": 0.378,
+      "creative": 0.438,
+      "critical": 0.368,
+      "overall": 0.418,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5.4-nano": {
+      "model": "openai/gpt-5.4-nano",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.45,
+      "coding": 0.42,
+      "reasoning": 0.42,
+      "creative": 0.46,
+      "critical": 0.44,
+      "overall": 0.42,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-5.4-mini": {
+      "model": "openai/gpt-5.4-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.491,
+      "coding": 0.461,
+      "reasoning": 0.461,
+      "creative": 0.501,
+      "critical": 0.481,
+      "overall": 0.461,
+      "best_bucket": "creative"
+    },
+    "mistralai/mistral-small-2603": {
+      "model": "mistralai/mistral-small-2603",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.445,
+      "coding": 0.415,
+      "reasoning": 0.375,
+      "creative": 0.435,
+      "critical": 0.365,
+      "overall": 0.415,
+      "best_bucket": "simple"
+    },
+    "z-ai/glm-5-turbo": {
+      "model": "z-ai/glm-5-turbo",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.485,
+      "coding": 0.485,
+      "reasoning": 0.485,
+      "creative": 0.485,
+      "critical": 0.485,
+      "overall": 0.485,
+      "best_bucket": "simple"
+    },
+    "nvidia/nemotron-3-super-120b-a12b:free": {
+      "model": "nvidia/nemotron-3-super-120b-a12b:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "nvidia/nemotron-3-super-120b-a12b": {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.409,
+      "coding": 0.409,
+      "reasoning": 0.409,
+      "creative": 0.409,
+      "critical": 0.409,
+      "overall": 0.409,
+      "best_bucket": "simple"
+    },
+    "bytedance-seed/seed-2.0-lite": {
+      "model": "bytedance-seed/seed-2.0-lite",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.424,
+      "coding": 0.424,
+      "reasoning": 0.424,
+      "creative": 0.424,
+      "critical": 0.424,
+      "overall": 0.424,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.5-9b": {
+      "model": "qwen/qwen3.5-9b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.41,
+      "coding": 0.41,
+      "reasoning": 0.41,
+      "creative": 0.41,
+      "critical": 0.41,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5.4-pro": {
+      "model": "openai/gpt-5.4-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.802,
+      "coding": 0.772,
+      "reasoning": 0.772,
+      "creative": 0.812,
+      "critical": 0.792,
+      "overall": 0.772,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-5.4": {
+      "model": "openai/gpt-5.4",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.566,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.576,
+      "critical": 0.556,
+      "overall": 0.536,
+      "best_bucket": "creative"
+    },
+    "inception/mercury-2": {
+      "model": "inception/mercury-2",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.424,
+      "coding": 0.424,
+      "reasoning": 0.424,
+      "creative": 0.424,
+      "critical": 0.424,
+      "overall": 0.424,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5.3-chat": {
+      "model": "openai/gpt-5.3-chat",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.54,
+      "coding": 0.51,
+      "reasoning": 0.51,
+      "creative": 0.55,
+      "critical": 0.53,
+      "overall": 0.51,
+      "best_bucket": "creative"
+    },
+    "google/gemini-3.1-flash-lite-preview": {
+      "model": "google/gemini-3.1-flash-lite-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.454,
+      "coding": 0.424,
+      "reasoning": 0.384,
+      "creative": 0.444,
+      "critical": 0.374,
+      "overall": 0.424,
+      "best_bucket": "simple"
+    },
+    "bytedance-seed/seed-2.0-mini": {
+      "model": "bytedance-seed/seed-2.0-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.44,
+      "coding": 0.41,
+      "reasoning": 0.37,
+      "creative": 0.43,
+      "critical": 0.36,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "google/gemini-3.1-flash-image-preview": {
+      "model": "google/gemini-3.1-flash-image-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.474,
+      "coding": 0.444,
+      "reasoning": 0.404,
+      "creative": 0.464,
+      "critical": 0.394,
+      "overall": 0.444,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.5-35b-a3b": {
+      "model": "qwen/qwen3.5-35b-a3b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.444,
+      "coding": 0.414,
+      "reasoning": 0.374,
+      "creative": 0.434,
+      "critical": 0.364,
+      "overall": 0.414,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.5-27b": {
+      "model": "qwen/qwen3.5-27b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.419,
+      "coding": 0.419,
+      "reasoning": 0.419,
+      "creative": 0.419,
+      "critical": 0.419,
+      "overall": 0.419,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.5-122b-a10b": {
+      "model": "qwen/qwen3.5-122b-a10b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.425,
+      "coding": 0.425,
+      "reasoning": 0.425,
+      "creative": 0.425,
+      "critical": 0.425,
+      "overall": 0.425,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.5-flash-02-23": {
+      "model": "qwen/qwen3.5-flash-02-23",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.437,
+      "coding": 0.407,
+      "reasoning": 0.367,
+      "creative": 0.427,
+      "critical": 0.357,
+      "overall": 0.407,
+      "best_bucket": "simple"
+    },
+    "liquid/lfm-2-24b-a2b": {
+      "model": "liquid/lfm-2-24b-a2b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.403,
+      "coding": 0.403,
+      "reasoning": 0.403,
+      "creative": 0.403,
+      "critical": 0.403,
+      "overall": 0.403,
+      "best_bucket": "simple"
+    },
+    "google/gemini-3.1-pro-preview-customtools": {
+      "model": "google/gemini-3.1-pro-preview-customtools",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.549,
+      "coding": 0.519,
+      "reasoning": 0.479,
+      "creative": 0.539,
+      "critical": 0.469,
+      "overall": 0.519,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5.3-codex": {
+      "model": "openai/gpt-5.3-codex",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.54,
+      "coding": 0.51,
+      "reasoning": 0.51,
+      "creative": 0.55,
+      "critical": 0.53,
+      "overall": 0.51,
+      "best_bucket": "creative"
+    },
+    "aion-labs/aion-2.0": {
+      "model": "aion-labs/aion-2.0",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.464,
+      "coding": 0.464,
+      "reasoning": 0.464,
+      "creative": 0.464,
+      "critical": 0.464,
+      "overall": 0.464,
+      "best_bucket": "simple"
+    },
+    "google/gemini-3.1-pro-preview": {
+      "model": "google/gemini-3.1-pro-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.549,
+      "coding": 0.519,
+      "reasoning": 0.479,
+      "creative": 0.539,
+      "critical": 0.469,
+      "overall": 0.519,
+      "best_bucket": "simple"
+    },
+    "anthropic/claude-sonnet-4.6": {
+      "model": "anthropic/claude-sonnet-4.6",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.58,
+      "coding": 0.55,
+      "reasoning": 0.55,
+      "creative": 0.59,
+      "critical": 0.57,
+      "overall": 0.55,
+      "best_bucket": "creative"
+    },
+    "qwen/qwen3.5-plus-02-15": {
+      "model": "qwen/qwen3.5-plus-02-15",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.425,
+      "coding": 0.425,
+      "reasoning": 0.425,
+      "creative": 0.425,
+      "critical": 0.425,
+      "overall": 0.425,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3.5-397b-a17b": {
+      "model": "qwen/qwen3.5-397b-a17b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.435,
+      "coding": 0.435,
+      "reasoning": 0.435,
+      "creative": 0.435,
+      "critical": 0.435,
+      "overall": 0.435,
+      "best_bucket": "simple"
+    },
+    "minimax/minimax-m2.5": {
+      "model": "minimax/minimax-m2.5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.442,
+      "coding": 0.412,
+      "reasoning": 0.372,
+      "creative": 0.432,
+      "critical": 0.362,
+      "overall": 0.412,
+      "best_bucket": "simple"
+    },
+    "z-ai/glm-5": {
+      "model": "z-ai/glm-5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.451,
+      "coding": 0.451,
+      "reasoning": 0.451,
+      "creative": 0.451,
+      "critical": 0.451,
+      "overall": 0.451,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-max-thinking": {
+      "model": "qwen/qwen3-max-thinking",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.422,
+      "coding": 0.492,
+      "reasoning": 0.542,
+      "creative": 0.402,
+      "critical": 0.532,
+      "overall": 0.462,
+      "best_bucket": "reasoning"
+    },
+    "anthropic/claude-opus-4.6": {
+      "model": "anthropic/claude-opus-4.6",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.624,
+      "coding": 0.594,
+      "reasoning": 0.594,
+      "creative": 0.634,
+      "critical": 0.614,
+      "overall": 0.594,
+      "best_bucket": "creative"
+    },
+    "qwen/qwen3-coder-next": {
+      "model": "qwen/qwen3-coder-next",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.391,
+      "coding": 0.511,
+      "reasoning": 0.431,
+      "creative": 0.351,
+      "critical": 0.451,
+      "overall": 0.411,
+      "best_bucket": "coding"
+    },
+    "openrouter/free": {
+      "model": "openrouter/free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "stepfun/step-3.5-flash": {
+      "model": "stepfun/step-3.5-flash",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.439,
+      "coding": 0.409,
+      "reasoning": 0.369,
+      "creative": 0.429,
+      "critical": 0.359,
+      "overall": 0.409,
+      "best_bucket": "simple"
+    },
+    "moonshotai/kimi-k2.5": {
+      "model": "moonshotai/kimi-k2.5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.435,
+      "coding": 0.435,
+      "reasoning": 0.435,
+      "creative": 0.435,
+      "critical": 0.435,
+      "overall": 0.435,
+      "best_bucket": "simple"
+    },
+    "upstage/solar-pro-3": {
+      "model": "upstage/solar-pro-3",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.415,
+      "coding": 0.415,
+      "reasoning": 0.415,
+      "creative": 0.415,
+      "critical": 0.415,
+      "overall": 0.415,
+      "best_bucket": "simple"
+    },
+    "minimax/minimax-m2-her": {
+      "model": "minimax/minimax-m2-her",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.458,
+      "coding": 0.428,
+      "reasoning": 0.388,
+      "creative": 0.448,
+      "critical": 0.378,
+      "overall": 0.428,
+      "best_bucket": "simple"
+    },
+    "writer/palmyra-x5": {
+      "model": "writer/palmyra-x5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.451,
+      "coding": 0.451,
+      "reasoning": 0.451,
+      "creative": 0.451,
+      "critical": 0.451,
+      "overall": 0.451,
+      "best_bucket": "simple"
+    },
+    "liquid/lfm-2.5-1.2b-thinking:free": {
+      "model": "liquid/lfm-2.5-1.2b-thinking:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.16,
+      "coding": 0.23,
+      "reasoning": 0.28,
+      "creative": 0.14,
+      "critical": 0.27,
+      "overall": 0.2,
+      "best_bucket": "reasoning"
+    },
+    "liquid/lfm-2.5-1.2b-instruct:free": {
+      "model": "liquid/lfm-2.5-1.2b-instruct:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-audio": {
+      "model": "openai/gpt-audio",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.536,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.536,
+      "critical": 0.536,
+      "overall": 0.536,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-audio-mini": {
+      "model": "openai/gpt-audio-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.481,
+      "coding": 0.451,
+      "reasoning": 0.411,
+      "creative": 0.471,
+      "critical": 0.401,
+      "overall": 0.451,
+      "best_bucket": "simple"
+    },
+    "z-ai/glm-4.7-flash": {
+      "model": "z-ai/glm-4.7-flash",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.436,
+      "coding": 0.406,
+      "reasoning": 0.366,
+      "creative": 0.426,
+      "critical": 0.356,
+      "overall": 0.406,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5.2-codex": {
+      "model": "openai/gpt-5.2-codex",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.54,
+      "coding": 0.51,
+      "reasoning": 0.51,
+      "creative": 0.55,
+      "critical": 0.53,
+      "overall": 0.51,
+      "best_bucket": "creative"
+    },
+    "bytedance-seed/seed-1.6-flash": {
+      "model": "bytedance-seed/seed-1.6-flash",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.438,
+      "coding": 0.408,
+      "reasoning": 0.368,
+      "creative": 0.428,
+      "critical": 0.358,
+      "overall": 0.408,
+      "best_bucket": "simple"
+    },
+    "bytedance-seed/seed-1.6": {
+      "model": "bytedance-seed/seed-1.6",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.424,
+      "coding": 0.424,
+      "reasoning": 0.424,
+      "creative": 0.424,
+      "critical": 0.424,
+      "overall": 0.424,
+      "best_bucket": "simple"
+    },
+    "minimax/minimax-m2.1": {
+      "model": "minimax/minimax-m2.1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.458,
+      "coding": 0.428,
+      "reasoning": 0.388,
+      "creative": 0.448,
+      "critical": 0.378,
+      "overall": 0.428,
+      "best_bucket": "simple"
+    },
+    "z-ai/glm-4.7": {
+      "model": "z-ai/glm-4.7",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.436,
+      "coding": 0.436,
+      "reasoning": 0.436,
+      "creative": 0.436,
+      "critical": 0.436,
+      "overall": 0.436,
+      "best_bucket": "simple"
+    },
+    "google/gemini-3-flash-preview": {
+      "model": "google/gemini-3-flash-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.474,
+      "coding": 0.444,
+      "reasoning": 0.404,
+      "creative": 0.464,
+      "critical": 0.394,
+      "overall": 0.444,
+      "best_bucket": "simple"
+    },
+    "nvidia/nemotron-3-nano-30b-a3b:free": {
+      "model": "nvidia/nemotron-3-nano-30b-a3b:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.23,
+      "coding": 0.2,
+      "reasoning": 0.16,
+      "creative": 0.22,
+      "critical": 0.15,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "nvidia/nemotron-3-nano-30b-a3b": {
+      "model": "nvidia/nemotron-3-nano-30b-a3b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.435,
+      "coding": 0.405,
+      "reasoning": 0.365,
+      "creative": 0.425,
+      "critical": 0.355,
+      "overall": 0.405,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5.2-chat": {
+      "model": "openai/gpt-5.2-chat",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.54,
+      "coding": 0.51,
+      "reasoning": 0.51,
+      "creative": 0.55,
+      "critical": 0.53,
+      "overall": 0.51,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-5.2-pro": {
+      "model": "openai/gpt-5.2-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.765,
+      "coding": 0.735,
+      "reasoning": 0.735,
+      "creative": 0.775,
+      "critical": 0.755,
+      "overall": 0.735,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-5.2": {
+      "model": "openai/gpt-5.2",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.54,
+      "coding": 0.51,
+      "reasoning": 0.51,
+      "creative": 0.55,
+      "critical": 0.53,
+      "overall": 0.51,
+      "best_bucket": "creative"
+    },
+    "mistralai/devstral-2512": {
+      "model": "mistralai/devstral-2512",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.436,
+      "coding": 0.436,
+      "reasoning": 0.436,
+      "creative": 0.436,
+      "critical": 0.436,
+      "overall": 0.436,
+      "best_bucket": "simple"
+    },
+    "relace/relace-search": {
+      "model": "relace/relace-search",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.475,
+      "coding": 0.475,
+      "reasoning": 0.475,
+      "creative": 0.475,
+      "critical": 0.475,
+      "overall": 0.475,
+      "best_bucket": "simple"
+    },
+    "z-ai/glm-4.6v": {
+      "model": "z-ai/glm-4.6v",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.428,
+      "coding": 0.428,
+      "reasoning": 0.428,
+      "creative": 0.428,
+      "critical": 0.428,
+      "overall": 0.428,
+      "best_bucket": "simple"
+    },
+    "openrouter/bodybuilder": {
+      "model": "openrouter/bodybuilder",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5.1-codex-max": {
+      "model": "openai/gpt-5.1-codex-max",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.518,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.528,
+      "critical": 0.508,
+      "overall": 0.488,
+      "best_bucket": "creative"
+    },
+    "amazon/nova-2-lite-v1": {
+      "model": "amazon/nova-2-lite-v1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.428,
+      "coding": 0.428,
+      "reasoning": 0.428,
+      "creative": 0.428,
+      "critical": 0.428,
+      "overall": 0.428,
+      "best_bucket": "simple"
+    },
+    "mistralai/ministral-14b-2512": {
+      "model": "mistralai/ministral-14b-2512",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.45,
+      "coding": 0.42,
+      "reasoning": 0.38,
+      "creative": 0.44,
+      "critical": 0.37,
+      "overall": 0.42,
+      "best_bucket": "simple"
+    },
+    "mistralai/ministral-8b-2512": {
+      "model": "mistralai/ministral-8b-2512",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.445,
+      "coding": 0.415,
+      "reasoning": 0.375,
+      "creative": 0.435,
+      "critical": 0.365,
+      "overall": 0.415,
+      "best_bucket": "simple"
+    },
+    "mistralai/ministral-3b-2512": {
+      "model": "mistralai/ministral-3b-2512",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.44,
+      "coding": 0.41,
+      "reasoning": 0.37,
+      "creative": 0.43,
+      "critical": 0.36,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "mistralai/mistral-large-2512": {
+      "model": "mistralai/mistral-large-2512",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.444,
+      "coding": 0.444,
+      "reasoning": 0.444,
+      "creative": 0.444,
+      "critical": 0.444,
+      "overall": 0.444,
+      "best_bucket": "simple"
+    },
+    "arcee-ai/trinity-mini": {
+      "model": "arcee-ai/trinity-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.435,
+      "coding": 0.405,
+      "reasoning": 0.365,
+      "creative": 0.425,
+      "critical": 0.355,
+      "overall": 0.405,
+      "best_bucket": "simple"
+    },
+    "deepseek/deepseek-v3.2": {
+      "model": "deepseek/deepseek-v3.2",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.422,
+      "coding": 0.422,
+      "reasoning": 0.422,
+      "creative": 0.422,
+      "critical": 0.422,
+      "overall": 0.422,
+      "best_bucket": "simple"
+    },
+    "anthropic/claude-opus-4.5": {
+      "model": "anthropic/claude-opus-4.5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.624,
+      "coding": 0.594,
+      "reasoning": 0.594,
+      "creative": 0.634,
+      "critical": 0.614,
+      "overall": 0.594,
+      "best_bucket": "creative"
+    },
+    "allenai/olmo-3-32b-think": {
+      "model": "allenai/olmo-3-32b-think",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.415,
+      "coding": 0.415,
+      "reasoning": 0.415,
+      "creative": 0.415,
+      "critical": 0.415,
+      "overall": 0.415,
+      "best_bucket": "simple"
+    },
+    "google/gemini-3-pro-image-preview": {
+      "model": "google/gemini-3-pro-image-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.549,
+      "coding": 0.519,
+      "reasoning": 0.479,
+      "creative": 0.539,
+      "critical": 0.469,
+      "overall": 0.519,
+      "best_bucket": "simple"
+    },
+    "deepcogito/cogito-v2.1-671b": {
+      "model": "deepcogito/cogito-v2.1-671b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.518,
+      "coding": 0.488,
+      "reasoning": 0.448,
+      "creative": 0.508,
+      "critical": 0.438,
+      "overall": 0.488,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5.1": {
+      "model": "openai/gpt-5.1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.518,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.528,
+      "critical": 0.508,
+      "overall": 0.488,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-5.1-chat": {
+      "model": "openai/gpt-5.1-chat",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.518,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.528,
+      "critical": 0.508,
+      "overall": 0.488,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-5.1-codex": {
+      "model": "openai/gpt-5.1-codex",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.518,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.528,
+      "critical": 0.508,
+      "overall": 0.488,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-5.1-codex-mini": {
+      "model": "openai/gpt-5.1-codex-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.454,
+      "coding": 0.424,
+      "reasoning": 0.424,
+      "creative": 0.464,
+      "critical": 0.444,
+      "overall": 0.424,
+      "best_bucket": "creative"
+    },
+    "moonshotai/kimi-k2-thinking": {
+      "model": "moonshotai/kimi-k2-thinking",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.411,
+      "coding": 0.481,
+      "reasoning": 0.531,
+      "creative": 0.391,
+      "critical": 0.521,
+      "overall": 0.451,
+      "best_bucket": "reasoning"
+    },
+    "amazon/nova-premier-v1": {
+      "model": "amazon/nova-premier-v1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.536,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.536,
+      "critical": 0.536,
+      "overall": 0.536,
+      "best_bucket": "simple"
+    },
+    "perplexity/sonar-pro-search": {
+      "model": "perplexity/sonar-pro-search",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.55,
+      "coding": 0.55,
+      "reasoning": 0.55,
+      "creative": 0.55,
+      "critical": 0.55,
+      "overall": 0.55,
+      "best_bucket": "simple"
+    },
+    "mistralai/voxtral-small-24b-2507": {
+      "model": "mistralai/voxtral-small-24b-2507",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.44,
+      "coding": 0.41,
+      "reasoning": 0.37,
+      "creative": 0.43,
+      "critical": 0.36,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-oss-safeguard-20b": {
+      "model": "openai/gpt-oss-safeguard-20b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.408,
+      "coding": 0.408,
+      "reasoning": 0.408,
+      "creative": 0.408,
+      "critical": 0.408,
+      "overall": 0.408,
+      "best_bucket": "simple"
+    },
+    "nvidia/nemotron-nano-12b-v2-vl:free": {
+      "model": "nvidia/nemotron-nano-12b-v2-vl:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.23,
+      "coding": 0.2,
+      "reasoning": 0.16,
+      "creative": 0.22,
+      "critical": 0.15,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "minimax/minimax-m2": {
+      "model": "minimax/minimax-m2",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.455,
+      "coding": 0.425,
+      "reasoning": 0.385,
+      "creative": 0.445,
+      "critical": 0.375,
+      "overall": 0.425,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-vl-32b-instruct": {
+      "model": "qwen/qwen3-vl-32b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.411,
+      "coding": 0.411,
+      "reasoning": 0.411,
+      "creative": 0.411,
+      "critical": 0.411,
+      "overall": 0.411,
+      "best_bucket": "simple"
+    },
+    "ibm-granite/granite-4.0-h-micro": {
+      "model": "ibm-granite/granite-4.0-h-micro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.402,
+      "coding": 0.402,
+      "reasoning": 0.402,
+      "creative": 0.402,
+      "critical": 0.402,
+      "overall": 0.402,
+      "best_bucket": "simple"
+    },
+    "microsoft/phi-4-mini-instruct": {
+      "model": "microsoft/phi-4-mini-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.438,
+      "coding": 0.408,
+      "reasoning": 0.368,
+      "creative": 0.428,
+      "critical": 0.358,
+      "overall": 0.408,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5-image-mini": {
+      "model": "openai/gpt-5-image-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.566,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.576,
+      "critical": 0.556,
+      "overall": 0.536,
+      "best_bucket": "creative"
+    },
+    "anthropic/claude-haiku-4.5": {
+      "model": "anthropic/claude-haiku-4.5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.505,
+      "coding": 0.475,
+      "reasoning": 0.435,
+      "creative": 0.495,
+      "critical": 0.425,
+      "overall": 0.475,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-vl-8b-thinking": {
+      "model": "qwen/qwen3-vl-8b-thinking",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.372,
+      "coding": 0.442,
+      "reasoning": 0.492,
+      "creative": 0.352,
+      "critical": 0.482,
+      "overall": 0.412,
+      "best_bucket": "reasoning"
+    },
+    "qwen/qwen3-vl-8b-instruct": {
+      "model": "qwen/qwen3-vl-8b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.408,
+      "coding": 0.408,
+      "reasoning": 0.408,
+      "creative": 0.408,
+      "critical": 0.408,
+      "overall": 0.408,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5-image": {
+      "model": "openai/gpt-5-image",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.69,
+      "coding": 0.66,
+      "reasoning": 0.66,
+      "creative": 0.7,
+      "critical": 0.68,
+      "overall": 0.66,
+      "best_bucket": "creative"
+    },
+    "openai/o3-deep-research": {
+      "model": "openai/o3-deep-research",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.62,
+      "coding": 0.69,
+      "reasoning": 0.74,
+      "creative": 0.6,
+      "critical": 0.73,
+      "overall": 0.66,
+      "best_bucket": "reasoning"
+    },
+    "openai/o4-mini-deep-research": {
+      "model": "openai/o4-mini-deep-research",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.479,
+      "coding": 0.549,
+      "reasoning": 0.599,
+      "creative": 0.459,
+      "critical": 0.589,
+      "overall": 0.519,
+      "best_bucket": "reasoning"
+    },
+    "nvidia/llama-3.3-nemotron-super-49b-v1.5": {
+      "model": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.436,
+      "coding": 0.436,
+      "reasoning": 0.436,
+      "creative": 0.436,
+      "critical": 0.436,
+      "overall": 0.436,
+      "best_bucket": "simple"
+    },
+    "google/gemini-2.5-flash-image": {
+      "model": "google/gemini-2.5-flash-image",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.458,
+      "coding": 0.428,
+      "reasoning": 0.388,
+      "creative": 0.448,
+      "critical": 0.378,
+      "overall": 0.428,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-vl-30b-a3b-thinking": {
+      "model": "qwen/qwen3-vl-30b-a3b-thinking",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.373,
+      "coding": 0.443,
+      "reasoning": 0.493,
+      "creative": 0.353,
+      "critical": 0.483,
+      "overall": 0.413,
+      "best_bucket": "reasoning"
+    },
+    "qwen/qwen3-vl-30b-a3b-instruct": {
+      "model": "qwen/qwen3-vl-30b-a3b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.443,
+      "coding": 0.413,
+      "reasoning": 0.373,
+      "creative": 0.433,
+      "critical": 0.363,
+      "overall": 0.413,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5-pro": {
+      "model": "openai/gpt-5-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.73,
+      "coding": 0.7,
+      "reasoning": 0.7,
+      "creative": 0.74,
+      "critical": 0.72,
+      "overall": 0.7,
+      "best_bucket": "creative"
+    },
+    "z-ai/glm-4.6": {
+      "model": "z-ai/glm-4.6",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.439,
+      "coding": 0.439,
+      "reasoning": 0.439,
+      "creative": 0.439,
+      "critical": 0.439,
+      "overall": 0.439,
+      "best_bucket": "simple"
+    },
+    "anthropic/claude-sonnet-4.5": {
+      "model": "anthropic/claude-sonnet-4.5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.58,
+      "coding": 0.55,
+      "reasoning": 0.55,
+      "creative": 0.59,
+      "critical": 0.57,
+      "overall": 0.55,
+      "best_bucket": "creative"
+    },
+    "deepseek/deepseek-v3.2-exp": {
+      "model": "deepseek/deepseek-v3.2-exp",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.426,
+      "coding": 0.426,
+      "reasoning": 0.426,
+      "creative": 0.426,
+      "critical": 0.426,
+      "overall": 0.426,
+      "best_bucket": "simple"
+    },
+    "thedrummer/cydonia-24b-v4.1": {
+      "model": "thedrummer/cydonia-24b-v4.1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.428,
+      "coding": 0.428,
+      "reasoning": 0.428,
+      "creative": 0.428,
+      "critical": 0.428,
+      "overall": 0.428,
+      "best_bucket": "simple"
+    },
+    "relace/relace-apply-3": {
+      "model": "relace/relace-apply-3",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.467,
+      "coding": 0.467,
+      "reasoning": 0.467,
+      "creative": 0.467,
+      "critical": 0.467,
+      "overall": 0.467,
+      "best_bucket": "simple"
+    },
+    "google/gemini-2.5-flash-lite-preview-09-2025": {
+      "model": "google/gemini-2.5-flash-lite-preview-09-2025",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.44,
+      "coding": 0.41,
+      "reasoning": 0.37,
+      "creative": 0.43,
+      "critical": 0.36,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-vl-235b-a22b-thinking": {
+      "model": "qwen/qwen3-vl-235b-a22b-thinking",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.385,
+      "coding": 0.455,
+      "reasoning": 0.505,
+      "creative": 0.365,
+      "critical": 0.495,
+      "overall": 0.425,
+      "best_bucket": "reasoning"
+    },
+    "qwen/qwen3-vl-235b-a22b-instruct": {
+      "model": "qwen/qwen3-vl-235b-a22b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.42,
+      "coding": 0.42,
+      "reasoning": 0.42,
+      "creative": 0.42,
+      "critical": 0.42,
+      "overall": 0.42,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-max": {
+      "model": "qwen/qwen3-max",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.462,
+      "coding": 0.462,
+      "reasoning": 0.462,
+      "creative": 0.462,
+      "critical": 0.462,
+      "overall": 0.462,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-coder-plus": {
+      "model": "qwen/qwen3-coder-plus",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.434,
+      "coding": 0.554,
+      "reasoning": 0.474,
+      "creative": 0.394,
+      "critical": 0.494,
+      "overall": 0.454,
+      "best_bucket": "coding"
+    },
+    "openai/gpt-5-codex": {
+      "model": "openai/gpt-5-codex",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.518,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.528,
+      "critical": 0.508,
+      "overall": 0.488,
+      "best_bucket": "creative"
+    },
+    "deepseek/deepseek-v3.1-terminus": {
+      "model": "deepseek/deepseek-v3.1-terminus",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.426,
+      "coding": 0.426,
+      "reasoning": 0.426,
+      "creative": 0.426,
+      "critical": 0.426,
+      "overall": 0.426,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-coder-flash": {
+      "model": "qwen/qwen3-coder-flash",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.399,
+      "coding": 0.519,
+      "reasoning": 0.439,
+      "creative": 0.359,
+      "critical": 0.459,
+      "overall": 0.419,
+      "best_bucket": "coding"
+    },
+    "qwen/qwen3-next-80b-a3b-thinking": {
+      "model": "qwen/qwen3-next-80b-a3b-thinking",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.37,
+      "coding": 0.44,
+      "reasoning": 0.49,
+      "creative": 0.35,
+      "critical": 0.48,
+      "overall": 0.41,
+      "best_bucket": "reasoning"
+    },
+    "qwen/qwen3-next-80b-a3b-instruct:free": {
+      "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.23,
+      "coding": 0.2,
+      "reasoning": 0.16,
+      "creative": 0.22,
+      "critical": 0.15,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-next-80b-a3b-instruct": {
+      "model": "qwen/qwen3-next-80b-a3b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.439,
+      "coding": 0.409,
+      "reasoning": 0.369,
+      "creative": 0.429,
+      "critical": 0.359,
+      "overall": 0.409,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen-plus-2025-07-28:thinking": {
+      "model": "qwen/qwen-plus-2025-07-28:thinking",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.385,
+      "coding": 0.455,
+      "reasoning": 0.505,
+      "creative": 0.365,
+      "critical": 0.495,
+      "overall": 0.425,
+      "best_bucket": "reasoning"
+    },
+    "qwen/qwen-plus-2025-07-28": {
+      "model": "qwen/qwen-plus-2025-07-28",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.425,
+      "coding": 0.425,
+      "reasoning": 0.425,
+      "creative": 0.425,
+      "critical": 0.425,
+      "overall": 0.425,
+      "best_bucket": "simple"
+    },
+    "nvidia/nemotron-nano-9b-v2:free": {
+      "model": "nvidia/nemotron-nano-9b-v2:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.23,
+      "coding": 0.2,
+      "reasoning": 0.16,
+      "creative": 0.22,
+      "critical": 0.15,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "moonshotai/kimi-k2-0905": {
+      "model": "moonshotai/kimi-k2-0905",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.451,
+      "coding": 0.451,
+      "reasoning": 0.451,
+      "creative": 0.451,
+      "critical": 0.451,
+      "overall": 0.451,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-30b-a3b-thinking-2507": {
+      "model": "qwen/qwen3-30b-a3b-thinking-2507",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.368,
+      "coding": 0.438,
+      "reasoning": 0.488,
+      "creative": 0.348,
+      "critical": 0.478,
+      "overall": 0.408,
+      "best_bucket": "reasoning"
+    },
+    "nousresearch/hermes-4-70b": {
+      "model": "nousresearch/hermes-4-70b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.413,
+      "coding": 0.413,
+      "reasoning": 0.413,
+      "creative": 0.413,
+      "critical": 0.413,
+      "overall": 0.413,
+      "best_bucket": "simple"
+    },
+    "nousresearch/hermes-4-405b": {
+      "model": "nousresearch/hermes-4-405b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.475,
+      "coding": 0.475,
+      "reasoning": 0.475,
+      "creative": 0.475,
+      "critical": 0.475,
+      "overall": 0.475,
+      "best_bucket": "simple"
+    },
+    "deepseek/deepseek-chat-v3.1": {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.421,
+      "coding": 0.421,
+      "reasoning": 0.421,
+      "creative": 0.421,
+      "critical": 0.421,
+      "overall": 0.421,
+      "best_bucket": "simple"
+    },
+    "mistralai/mistral-medium-3.1": {
+      "model": "mistralai/mistral-medium-3.1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.436,
+      "coding": 0.436,
+      "reasoning": 0.436,
+      "creative": 0.436,
+      "critical": 0.436,
+      "overall": 0.436,
+      "best_bucket": "simple"
+    },
+    "z-ai/glm-4.5v": {
+      "model": "z-ai/glm-4.5v",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.451,
+      "coding": 0.451,
+      "reasoning": 0.451,
+      "creative": 0.451,
+      "critical": 0.451,
+      "overall": 0.451,
+      "best_bucket": "simple"
+    },
+    "ai21/jamba-large-1.7": {
+      "model": "ai21/jamba-large-1.7",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.519,
+      "coding": 0.519,
+      "reasoning": 0.519,
+      "creative": 0.519,
+      "critical": 0.519,
+      "overall": 0.519,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-5-chat": {
+      "model": "openai/gpt-5-chat",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.518,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.528,
+      "critical": 0.508,
+      "overall": 0.488,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-5": {
+      "model": "openai/gpt-5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.518,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.528,
+      "critical": 0.508,
+      "overall": 0.488,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-5-mini": {
+      "model": "openai/gpt-5-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.454,
+      "coding": 0.424,
+      "reasoning": 0.424,
+      "creative": 0.464,
+      "critical": 0.444,
+      "overall": 0.424,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-5-nano": {
+      "model": "openai/gpt-5-nano",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.435,
+      "coding": 0.405,
+      "reasoning": 0.405,
+      "creative": 0.445,
+      "critical": 0.425,
+      "overall": 0.405,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-oss-120b:free": {
+      "model": "openai/gpt-oss-120b:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-oss-120b": {
+      "model": "openai/gpt-oss-120b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.403,
+      "coding": 0.403,
+      "reasoning": 0.403,
+      "creative": 0.403,
+      "critical": 0.403,
+      "overall": 0.403,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-oss-20b:free": {
+      "model": "openai/gpt-oss-20b:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-oss-20b": {
+      "model": "openai/gpt-oss-20b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.403,
+      "coding": 0.403,
+      "reasoning": 0.403,
+      "creative": 0.403,
+      "critical": 0.403,
+      "overall": 0.403,
+      "best_bucket": "simple"
+    },
+    "anthropic/claude-opus-4.1": {
+      "model": "anthropic/claude-opus-4.1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.73,
+      "coding": 0.7,
+      "reasoning": 0.7,
+      "creative": 0.74,
+      "critical": 0.72,
+      "overall": 0.7,
+      "best_bucket": "creative"
+    },
+    "mistralai/codestral-2508": {
+      "model": "mistralai/codestral-2508",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.408,
+      "coding": 0.528,
+      "reasoning": 0.448,
+      "creative": 0.368,
+      "critical": 0.468,
+      "overall": 0.428,
+      "best_bucket": "coding"
+    },
+    "qwen/qwen3-coder-30b-a3b-instruct": {
+      "model": "qwen/qwen3-coder-30b-a3b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.387,
+      "coding": 0.507,
+      "reasoning": 0.427,
+      "creative": 0.347,
+      "critical": 0.447,
+      "overall": 0.407,
+      "best_bucket": "coding"
+    },
+    "qwen/qwen3-30b-a3b-instruct-2507": {
+      "model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.435,
+      "coding": 0.405,
+      "reasoning": 0.365,
+      "creative": 0.425,
+      "critical": 0.355,
+      "overall": 0.405,
+      "best_bucket": "simple"
+    },
+    "z-ai/glm-4.5": {
+      "model": "z-ai/glm-4.5",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.451,
+      "coding": 0.451,
+      "reasoning": 0.451,
+      "creative": 0.451,
+      "critical": 0.451,
+      "overall": 0.451,
+      "best_bucket": "simple"
+    },
+    "z-ai/glm-4.5-air": {
+      "model": "z-ai/glm-4.5-air",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.413,
+      "coding": 0.413,
+      "reasoning": 0.413,
+      "creative": 0.413,
+      "critical": 0.413,
+      "overall": 0.413,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-235b-a22b-thinking-2507": {
+      "model": "qwen/qwen3-235b-a22b-thinking-2507",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.37,
+      "coding": 0.44,
+      "reasoning": 0.49,
+      "creative": 0.35,
+      "critical": 0.48,
+      "overall": 0.41,
+      "best_bucket": "reasoning"
+    },
+    "qwen/qwen3-coder:free": {
+      "model": "qwen/qwen3-coder:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.18,
+      "coding": 0.3,
+      "reasoning": 0.22,
+      "creative": 0.14,
+      "critical": 0.24,
+      "overall": 0.2,
+      "best_bucket": "coding"
+    },
+    "qwen/qwen3-coder": {
+      "model": "qwen/qwen3-coder",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.402,
+      "coding": 0.522,
+      "reasoning": 0.442,
+      "creative": 0.362,
+      "critical": 0.462,
+      "overall": 0.422,
+      "best_bucket": "coding"
+    },
+    "bytedance/ui-tars-1.5-7b": {
+      "model": "bytedance/ui-tars-1.5-7b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.41,
+      "coding": 0.41,
+      "reasoning": 0.41,
+      "creative": 0.41,
+      "critical": 0.41,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "google/gemini-2.5-flash-lite": {
+      "model": "google/gemini-2.5-flash-lite",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.44,
+      "coding": 0.41,
+      "reasoning": 0.37,
+      "creative": 0.43,
+      "critical": 0.36,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-235b-a22b-2507": {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.409,
+      "coding": 0.409,
+      "reasoning": 0.409,
+      "creative": 0.409,
+      "critical": 0.409,
+      "overall": 0.409,
+      "best_bucket": "simple"
+    },
+    "switchpoint/router": {
+      "model": "switchpoint/router",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.467,
+      "coding": 0.467,
+      "reasoning": 0.467,
+      "creative": 0.467,
+      "critical": 0.467,
+      "overall": 0.467,
+      "best_bucket": "simple"
+    },
+    "moonshotai/kimi-k2": {
+      "model": "moonshotai/kimi-k2",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.449,
+      "coding": 0.449,
+      "reasoning": 0.449,
+      "creative": 0.449,
+      "critical": 0.449,
+      "overall": 0.449,
+      "best_bucket": "simple"
+    },
+    "cognitivecomputations/dolphin-mistral-24b-venice-edition:free": {
+      "model": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "tencent/hunyuan-a13b-instruct": {
+      "model": "tencent/hunyuan-a13b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.444,
+      "coding": 0.414,
+      "reasoning": 0.374,
+      "creative": 0.434,
+      "critical": 0.364,
+      "overall": 0.414,
+      "best_bucket": "simple"
+    },
+    "morph/morph-v3-large": {
+      "model": "morph/morph-v3-large",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.47,
+      "coding": 0.47,
+      "reasoning": 0.47,
+      "creative": 0.47,
+      "critical": 0.47,
+      "overall": 0.47,
+      "best_bucket": "simple"
+    },
+    "morph/morph-v3-fast": {
+      "model": "morph/morph-v3-fast",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.464,
+      "coding": 0.464,
+      "reasoning": 0.464,
+      "creative": 0.464,
+      "critical": 0.464,
+      "overall": 0.464,
+      "best_bucket": "simple"
+    },
+    "baidu/ernie-4.5-vl-424b-a47b": {
+      "model": "baidu/ernie-4.5-vl-424b-a47b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.438,
+      "coding": 0.438,
+      "reasoning": 0.438,
+      "creative": 0.438,
+      "critical": 0.438,
+      "overall": 0.438,
+      "best_bucket": "simple"
+    },
+    "mistralai/mistral-small-3.2-24b-instruct": {
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.438,
+      "coding": 0.408,
+      "reasoning": 0.368,
+      "creative": 0.428,
+      "critical": 0.358,
+      "overall": 0.408,
+      "best_bucket": "simple"
+    },
+    "minimax/minimax-m1": {
+      "model": "minimax/minimax-m1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.466,
+      "coding": 0.436,
+      "reasoning": 0.396,
+      "creative": 0.456,
+      "critical": 0.386,
+      "overall": 0.436,
+      "best_bucket": "simple"
+    },
+    "google/gemini-2.5-flash": {
+      "model": "google/gemini-2.5-flash",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.458,
+      "coding": 0.428,
+      "reasoning": 0.388,
+      "creative": 0.448,
+      "critical": 0.378,
+      "overall": 0.428,
+      "best_bucket": "simple"
+    },
+    "google/gemini-2.5-pro": {
+      "model": "google/gemini-2.5-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.518,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.528,
+      "critical": 0.508,
+      "overall": 0.488,
+      "best_bucket": "creative"
+    },
+    "openai/o3-pro": {
+      "model": "openai/o3-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.69,
+      "coding": 0.76,
+      "reasoning": 0.81,
+      "creative": 0.67,
+      "critical": 0.8,
+      "overall": 0.73,
+      "best_bucket": "reasoning"
+    },
+    "google/gemini-2.5-pro-preview": {
+      "model": "google/gemini-2.5-pro-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.518,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.528,
+      "critical": 0.508,
+      "overall": 0.488,
+      "best_bucket": "creative"
+    },
+    "deepseek/deepseek-r1-0528": {
+      "model": "deepseek/deepseek-r1-0528",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.414,
+      "coding": 0.494,
+      "reasoning": 0.534,
+      "creative": 0.394,
+      "critical": 0.514,
+      "overall": 0.444,
+      "best_bucket": "reasoning"
+    },
+    "anthropic/claude-opus-4": {
+      "model": "anthropic/claude-opus-4",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.73,
+      "coding": 0.7,
+      "reasoning": 0.7,
+      "creative": 0.74,
+      "critical": 0.72,
+      "overall": 0.7,
+      "best_bucket": "creative"
+    },
+    "anthropic/claude-sonnet-4": {
+      "model": "anthropic/claude-sonnet-4",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.58,
+      "coding": 0.55,
+      "reasoning": 0.55,
+      "creative": 0.59,
+      "critical": 0.57,
+      "overall": 0.55,
+      "best_bucket": "creative"
+    },
+    "google/gemma-3n-e4b-it": {
+      "model": "google/gemma-3n-e4b-it",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.406,
+      "coding": 0.406,
+      "reasoning": 0.406,
+      "creative": 0.406,
+      "critical": 0.406,
+      "overall": 0.406,
+      "best_bucket": "simple"
+    },
+    "mistralai/mistral-medium-3": {
+      "model": "mistralai/mistral-medium-3",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.436,
+      "coding": 0.436,
+      "reasoning": 0.436,
+      "creative": 0.436,
+      "critical": 0.436,
+      "overall": 0.436,
+      "best_bucket": "simple"
+    },
+    "google/gemini-2.5-pro-preview-05-06": {
+      "model": "google/gemini-2.5-pro-preview-05-06",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.518,
+      "coding": 0.488,
+      "reasoning": 0.488,
+      "creative": 0.528,
+      "critical": 0.508,
+      "overall": 0.488,
+      "best_bucket": "creative"
+    },
+    "arcee-ai/virtuoso-large": {
+      "model": "arcee-ai/virtuoso-large",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.461,
+      "coding": 0.461,
+      "reasoning": 0.461,
+      "creative": 0.461,
+      "critical": 0.461,
+      "overall": 0.461,
+      "best_bucket": "simple"
+    },
+    "arcee-ai/coder-large": {
+      "model": "arcee-ai/coder-large",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.424,
+      "coding": 0.544,
+      "reasoning": 0.464,
+      "creative": 0.384,
+      "critical": 0.484,
+      "overall": 0.444,
+      "best_bucket": "coding"
+    },
+    "meta-llama/llama-guard-4-12b": {
+      "model": "meta-llama/llama-guard-4-12b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.418,
+      "coding": 0.418,
+      "reasoning": 0.418,
+      "creative": 0.418,
+      "critical": 0.418,
+      "overall": 0.418,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-30b-a3b": {
+      "model": "qwen/qwen3-30b-a3b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.442,
+      "coding": 0.412,
+      "reasoning": 0.372,
+      "creative": 0.432,
+      "critical": 0.362,
+      "overall": 0.412,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-8b": {
+      "model": "qwen/qwen3-8b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.405,
+      "coding": 0.405,
+      "reasoning": 0.405,
+      "creative": 0.405,
+      "critical": 0.405,
+      "overall": 0.405,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-14b": {
+      "model": "qwen/qwen3-14b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.41,
+      "coding": 0.41,
+      "reasoning": 0.41,
+      "creative": 0.41,
+      "critical": 0.41,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-32b": {
+      "model": "qwen/qwen3-32b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.408,
+      "coding": 0.408,
+      "reasoning": 0.408,
+      "creative": 0.408,
+      "critical": 0.408,
+      "overall": 0.408,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen3-235b-a22b": {
+      "model": "qwen/qwen3-235b-a22b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.441,
+      "coding": 0.441,
+      "reasoning": 0.441,
+      "creative": 0.441,
+      "critical": 0.441,
+      "overall": 0.441,
+      "best_bucket": "simple"
+    },
+    "openai/o4-mini-high": {
+      "model": "openai/o4-mini-high",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.44,
+      "coding": 0.51,
+      "reasoning": 0.56,
+      "creative": 0.42,
+      "critical": 0.55,
+      "overall": 0.48,
+      "best_bucket": "reasoning"
+    },
+    "openai/o3": {
+      "model": "openai/o3",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.479,
+      "coding": 0.549,
+      "reasoning": 0.599,
+      "creative": 0.459,
+      "critical": 0.589,
+      "overall": 0.519,
+      "best_bucket": "reasoning"
+    },
+    "openai/o4-mini": {
+      "model": "openai/o4-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.44,
+      "coding": 0.51,
+      "reasoning": 0.56,
+      "creative": 0.42,
+      "critical": 0.55,
+      "overall": 0.48,
+      "best_bucket": "reasoning"
+    },
+    "openai/gpt-4.1": {
+      "model": "openai/gpt-4.1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.549,
+      "coding": 0.519,
+      "reasoning": 0.519,
+      "creative": 0.559,
+      "critical": 0.539,
+      "overall": 0.519,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-4.1-mini": {
+      "model": "openai/gpt-4.1-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.466,
+      "coding": 0.436,
+      "reasoning": 0.436,
+      "creative": 0.476,
+      "critical": 0.456,
+      "overall": 0.436,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-4.1-nano": {
+      "model": "openai/gpt-4.1-nano",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.44,
+      "coding": 0.41,
+      "reasoning": 0.41,
+      "creative": 0.45,
+      "critical": 0.43,
+      "overall": 0.41,
+      "best_bucket": "creative"
+    },
+    "meta-llama/llama-4-maverick": {
+      "model": "meta-llama/llama-4-maverick",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.415,
+      "coding": 0.415,
+      "reasoning": 0.415,
+      "creative": 0.415,
+      "critical": 0.415,
+      "overall": 0.415,
+      "best_bucket": "simple"
+    },
+    "meta-llama/llama-4-scout": {
+      "model": "meta-llama/llama-4-scout",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.41,
+      "coding": 0.41,
+      "reasoning": 0.41,
+      "creative": 0.41,
+      "critical": 0.41,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "deepseek/deepseek-chat-v3-0324": {
+      "model": "deepseek/deepseek-chat-v3-0324",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.42,
+      "coding": 0.42,
+      "reasoning": 0.42,
+      "creative": 0.42,
+      "critical": 0.42,
+      "overall": 0.42,
+      "best_bucket": "simple"
+    },
+    "openai/o1-pro": {
+      "model": "openai/o1-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.86,
+      "coding": 0.93,
+      "reasoning": 0.98,
+      "creative": 0.84,
+      "critical": 0.97,
+      "overall": 0.9,
+      "best_bucket": "reasoning"
+    },
+    "mistralai/mistral-small-3.1-24b-instruct": {
+      "model": "mistralai/mistral-small-3.1-24b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.463,
+      "coding": 0.433,
+      "reasoning": 0.393,
+      "creative": 0.453,
+      "critical": 0.383,
+      "overall": 0.433,
+      "best_bucket": "simple"
+    },
+    "google/gemma-3-4b-it": {
+      "model": "google/gemma-3-4b-it",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.405,
+      "coding": 0.405,
+      "reasoning": 0.405,
+      "creative": 0.405,
+      "critical": 0.405,
+      "overall": 0.405,
+      "best_bucket": "simple"
+    },
+    "google/gemma-3-12b-it": {
+      "model": "google/gemma-3-12b-it",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.405,
+      "coding": 0.405,
+      "reasoning": 0.405,
+      "creative": 0.405,
+      "critical": 0.405,
+      "overall": 0.405,
+      "best_bucket": "simple"
+    },
+    "cohere/command-a": {
+      "model": "cohere/command-a",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.536,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.536,
+      "critical": 0.536,
+      "overall": 0.536,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-4o-mini-search-preview": {
+      "model": "openai/gpt-4o-mini-search-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.445,
+      "coding": 0.415,
+      "reasoning": 0.415,
+      "creative": 0.455,
+      "critical": 0.435,
+      "overall": 0.415,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-4o-search-preview": {
+      "model": "openai/gpt-4o-search-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.566,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.576,
+      "critical": 0.556,
+      "overall": 0.536,
+      "best_bucket": "creative"
+    },
+    "rekaai/reka-flash-3": {
+      "model": "rekaai/reka-flash-3",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.44,
+      "coding": 0.41,
+      "reasoning": 0.37,
+      "creative": 0.43,
+      "critical": 0.36,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "google/gemma-3-27b-it": {
+      "model": "google/gemma-3-27b-it",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.408,
+      "coding": 0.408,
+      "reasoning": 0.408,
+      "creative": 0.408,
+      "critical": 0.408,
+      "overall": 0.408,
+      "best_bucket": "simple"
+    },
+    "thedrummer/skyfall-36b-v2": {
+      "model": "thedrummer/skyfall-36b-v2",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.447,
+      "coding": 0.447,
+      "reasoning": 0.447,
+      "creative": 0.447,
+      "critical": 0.447,
+      "overall": 0.447,
+      "best_bucket": "simple"
+    },
+    "perplexity/sonar-reasoning-pro": {
+      "model": "perplexity/sonar-reasoning-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.519,
+      "coding": 0.519,
+      "reasoning": 0.519,
+      "creative": 0.519,
+      "critical": 0.519,
+      "overall": 0.519,
+      "best_bucket": "simple"
+    },
+    "perplexity/sonar-pro": {
+      "model": "perplexity/sonar-pro",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.55,
+      "coding": 0.55,
+      "reasoning": 0.55,
+      "creative": 0.55,
+      "critical": 0.55,
+      "overall": 0.55,
+      "best_bucket": "simple"
+    },
+    "perplexity/sonar-deep-research": {
+      "model": "perplexity/sonar-deep-research",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.519,
+      "coding": 0.519,
+      "reasoning": 0.519,
+      "creative": 0.519,
+      "critical": 0.519,
+      "overall": 0.519,
+      "best_bucket": "simple"
+    },
+    "mistralai/mistral-saba": {
+      "model": "mistralai/mistral-saba",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.42,
+      "coding": 0.42,
+      "reasoning": 0.42,
+      "creative": 0.42,
+      "critical": 0.42,
+      "overall": 0.42,
+      "best_bucket": "simple"
+    },
+    "openai/o3-mini-high": {
+      "model": "openai/o3-mini-high",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.44,
+      "coding": 0.51,
+      "reasoning": 0.56,
+      "creative": 0.42,
+      "critical": 0.55,
+      "overall": 0.48,
+      "best_bucket": "reasoning"
+    },
+    "aion-labs/aion-1.0": {
+      "model": "aion-labs/aion-1.0",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.574,
+      "coding": 0.574,
+      "reasoning": 0.574,
+      "creative": 0.574,
+      "critical": 0.574,
+      "overall": 0.574,
+      "best_bucket": "simple"
+    },
+    "aion-labs/aion-1.0-mini": {
+      "model": "aion-labs/aion-1.0-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.487,
+      "coding": 0.457,
+      "reasoning": 0.417,
+      "creative": 0.477,
+      "critical": 0.407,
+      "overall": 0.457,
+      "best_bucket": "simple"
+    },
+    "aion-labs/aion-rp-llama-3.1-8b": {
+      "model": "aion-labs/aion-rp-llama-3.1-8b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.464,
+      "coding": 0.464,
+      "reasoning": 0.464,
+      "creative": 0.464,
+      "critical": 0.464,
+      "overall": 0.464,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen2.5-vl-72b-instruct": {
+      "model": "qwen/qwen2.5-vl-72b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.464,
+      "coding": 0.464,
+      "reasoning": 0.464,
+      "creative": 0.464,
+      "critical": 0.464,
+      "overall": 0.464,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen-plus": {
+      "model": "qwen/qwen-plus",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.425,
+      "coding": 0.425,
+      "reasoning": 0.425,
+      "creative": 0.425,
+      "critical": 0.425,
+      "overall": 0.425,
+      "best_bucket": "simple"
+    },
+    "openai/o3-mini": {
+      "model": "openai/o3-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.44,
+      "coding": 0.51,
+      "reasoning": 0.56,
+      "creative": 0.42,
+      "critical": 0.55,
+      "overall": 0.48,
+      "best_bucket": "reasoning"
+    },
+    "mistralai/mistral-small-24b-instruct-2501": {
+      "model": "mistralai/mistral-small-24b-instruct-2501",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.435,
+      "coding": 0.405,
+      "reasoning": 0.365,
+      "creative": 0.425,
+      "critical": 0.355,
+      "overall": 0.405,
+      "best_bucket": "simple"
+    },
+    "perplexity/sonar": {
+      "model": "perplexity/sonar",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.475,
+      "coding": 0.475,
+      "reasoning": 0.475,
+      "creative": 0.475,
+      "critical": 0.475,
+      "overall": 0.475,
+      "best_bucket": "simple"
+    },
+    "deepseek/deepseek-r1-distill-llama-70b": {
+      "model": "deepseek/deepseek-r1-distill-llama-70b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.434,
+      "coding": 0.514,
+      "reasoning": 0.554,
+      "creative": 0.414,
+      "critical": 0.534,
+      "overall": 0.464,
+      "best_bucket": "reasoning"
+    },
+    "deepseek/deepseek-r1": {
+      "model": "deepseek/deepseek-r1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.427,
+      "coding": 0.507,
+      "reasoning": 0.547,
+      "creative": 0.407,
+      "critical": 0.527,
+      "overall": 0.457,
+      "best_bucket": "reasoning"
+    },
+    "minimax/minimax-01": {
+      "model": "minimax/minimax-01",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.45,
+      "coding": 0.42,
+      "reasoning": 0.38,
+      "creative": 0.44,
+      "critical": 0.37,
+      "overall": 0.42,
+      "best_bucket": "simple"
+    },
+    "microsoft/phi-4": {
+      "model": "microsoft/phi-4",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.407,
+      "coding": 0.407,
+      "reasoning": 0.407,
+      "creative": 0.407,
+      "critical": 0.407,
+      "overall": 0.407,
+      "best_bucket": "simple"
+    },
+    "sao10k/l3.1-70b-hanami-x1": {
+      "model": "sao10k/l3.1-70b-hanami-x1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.51,
+      "coding": 0.58,
+      "reasoning": 0.63,
+      "creative": 0.49,
+      "critical": 0.62,
+      "overall": 0.55,
+      "best_bucket": "reasoning"
+    },
+    "deepseek/deepseek-chat": {
+      "model": "deepseek/deepseek-chat",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.42,
+      "coding": 0.42,
+      "reasoning": 0.42,
+      "creative": 0.42,
+      "critical": 0.42,
+      "overall": 0.42,
+      "best_bucket": "simple"
+    },
+    "sao10k/l3.3-euryale-70b": {
+      "model": "sao10k/l3.3-euryale-70b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.414,
+      "coding": 0.484,
+      "reasoning": 0.534,
+      "creative": 0.394,
+      "critical": 0.524,
+      "overall": 0.454,
+      "best_bucket": "reasoning"
+    },
+    "openai/o1": {
+      "model": "openai/o1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.66,
+      "coding": 0.73,
+      "reasoning": 0.78,
+      "creative": 0.64,
+      "critical": 0.77,
+      "overall": 0.7,
+      "best_bucket": "reasoning"
+    },
+    "cohere/command-r7b-12-2024": {
+      "model": "cohere/command-r7b-12-2024",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.404,
+      "coding": 0.404,
+      "reasoning": 0.404,
+      "creative": 0.404,
+      "critical": 0.404,
+      "overall": 0.404,
+      "best_bucket": "simple"
+    },
+    "meta-llama/llama-3.3-70b-instruct:free": {
+      "model": "meta-llama/llama-3.3-70b-instruct:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "meta-llama/llama-3.3-70b-instruct": {
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.41,
+      "coding": 0.41,
+      "reasoning": 0.41,
+      "creative": 0.41,
+      "critical": 0.41,
+      "overall": 0.41,
+      "best_bucket": "simple"
+    },
+    "amazon/nova-lite-v1": {
+      "model": "amazon/nova-lite-v1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.406,
+      "coding": 0.406,
+      "reasoning": 0.406,
+      "creative": 0.406,
+      "critical": 0.406,
+      "overall": 0.406,
+      "best_bucket": "simple"
+    },
+    "amazon/nova-micro-v1": {
+      "model": "amazon/nova-micro-v1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.404,
+      "coding": 0.404,
+      "reasoning": 0.404,
+      "creative": 0.404,
+      "critical": 0.404,
+      "overall": 0.404,
+      "best_bucket": "simple"
+    },
+    "amazon/nova-pro-v1": {
+      "model": "amazon/nova-pro-v1",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.464,
+      "coding": 0.464,
+      "reasoning": 0.464,
+      "creative": 0.464,
+      "critical": 0.464,
+      "overall": 0.464,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-4o-2024-11-20": {
+      "model": "openai/gpt-4o-2024-11-20",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.566,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.576,
+      "critical": 0.556,
+      "overall": 0.536,
+      "best_bucket": "creative"
+    },
+    "mistralai/mistral-large-2407": {
+      "model": "mistralai/mistral-large-2407",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.519,
+      "coding": 0.519,
+      "reasoning": 0.519,
+      "creative": 0.519,
+      "critical": 0.519,
+      "overall": 0.519,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen-2.5-coder-32b-instruct": {
+      "model": "qwen/qwen-2.5-coder-32b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.435,
+      "coding": 0.555,
+      "reasoning": 0.475,
+      "creative": 0.395,
+      "critical": 0.495,
+      "overall": 0.455,
+      "best_bucket": "coding"
+    },
+    "thedrummer/unslopnemo-12b": {
+      "model": "thedrummer/unslopnemo-12b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.436,
+      "coding": 0.436,
+      "reasoning": 0.436,
+      "creative": 0.436,
+      "critical": 0.436,
+      "overall": 0.436,
+      "best_bucket": "simple"
+    },
+    "anthracite-org/magnum-v4-72b": {
+      "model": "anthracite-org/magnum-v4-72b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.55,
+      "coding": 0.55,
+      "reasoning": 0.55,
+      "creative": 0.55,
+      "critical": 0.55,
+      "overall": 0.55,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen-2.5-7b-instruct": {
+      "model": "qwen/qwen-2.5-7b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.404,
+      "coding": 0.404,
+      "reasoning": 0.404,
+      "creative": 0.404,
+      "critical": 0.404,
+      "overall": 0.404,
+      "best_bucket": "simple"
+    },
+    "inflection/inflection-3-productivity": {
+      "model": "inflection/inflection-3-productivity",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.536,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.536,
+      "critical": 0.536,
+      "overall": 0.536,
+      "best_bucket": "simple"
+    },
+    "inflection/inflection-3-pi": {
+      "model": "inflection/inflection-3-pi",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.536,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.536,
+      "critical": 0.536,
+      "overall": 0.536,
+      "best_bucket": "simple"
+    },
+    "thedrummer/rocinante-12b": {
+      "model": "thedrummer/rocinante-12b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.424,
+      "coding": 0.424,
+      "reasoning": 0.424,
+      "creative": 0.424,
+      "critical": 0.424,
+      "overall": 0.424,
+      "best_bucket": "simple"
+    },
+    "meta-llama/llama-3.2-3b-instruct:free": {
+      "model": "meta-llama/llama-3.2-3b-instruct:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.23,
+      "coding": 0.2,
+      "reasoning": 0.16,
+      "creative": 0.22,
+      "critical": 0.15,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "meta-llama/llama-3.2-3b-instruct": {
+      "model": "meta-llama/llama-3.2-3b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.435,
+      "coding": 0.405,
+      "reasoning": 0.365,
+      "creative": 0.425,
+      "critical": 0.355,
+      "overall": 0.405,
+      "best_bucket": "simple"
+    },
+    "meta-llama/llama-3.2-1b-instruct": {
+      "model": "meta-llama/llama-3.2-1b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.433,
+      "coding": 0.403,
+      "reasoning": 0.363,
+      "creative": 0.423,
+      "critical": 0.353,
+      "overall": 0.403,
+      "best_bucket": "simple"
+    },
+    "meta-llama/llama-3.2-11b-vision-instruct": {
+      "model": "meta-llama/llama-3.2-11b-vision-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.462,
+      "coding": 0.432,
+      "reasoning": 0.392,
+      "creative": 0.452,
+      "critical": 0.382,
+      "overall": 0.432,
+      "best_bucket": "simple"
+    },
+    "qwen/qwen-2.5-72b-instruct": {
+      "model": "qwen/qwen-2.5-72b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.433,
+      "coding": 0.433,
+      "reasoning": 0.433,
+      "creative": 0.433,
+      "critical": 0.433,
+      "overall": 0.433,
+      "best_bucket": "simple"
+    },
+    "cohere/command-r-08-2024": {
+      "model": "cohere/command-r-08-2024",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.415,
+      "coding": 0.415,
+      "reasoning": 0.415,
+      "creative": 0.415,
+      "critical": 0.415,
+      "overall": 0.415,
+      "best_bucket": "simple"
+    },
+    "cohere/command-r-plus-08-2024": {
+      "model": "cohere/command-r-plus-08-2024",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.536,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.536,
+      "critical": 0.536,
+      "overall": 0.536,
+      "best_bucket": "simple"
+    },
+    "sao10k/l3.1-euryale-70b": {
+      "model": "sao10k/l3.1-euryale-70b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.427,
+      "coding": 0.497,
+      "reasoning": 0.547,
+      "creative": 0.407,
+      "critical": 0.537,
+      "overall": 0.467,
+      "best_bucket": "reasoning"
+    },
+    "nousresearch/hermes-3-llama-3.1-70b": {
+      "model": "nousresearch/hermes-3-llama-3.1-70b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.457,
+      "coding": 0.457,
+      "reasoning": 0.457,
+      "creative": 0.457,
+      "critical": 0.457,
+      "overall": 0.457,
+      "best_bucket": "simple"
+    },
+    "nousresearch/hermes-3-llama-3.1-405b:free": {
+      "model": "nousresearch/hermes-3-llama-3.1-405b:free",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "nousresearch/hermes-3-llama-3.1-405b": {
+      "model": "nousresearch/hermes-3-llama-3.1-405b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.475,
+      "coding": 0.475,
+      "reasoning": 0.475,
+      "creative": 0.475,
+      "critical": 0.475,
+      "overall": 0.475,
+      "best_bucket": "simple"
+    },
+    "sao10k/l3-lunaris-8b": {
+      "model": "sao10k/l3-lunaris-8b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.364,
+      "coding": 0.434,
+      "reasoning": 0.484,
+      "creative": 0.344,
+      "critical": 0.474,
+      "overall": 0.404,
+      "best_bucket": "reasoning"
+    },
+    "openai/gpt-4o-2024-08-06": {
+      "model": "openai/gpt-4o-2024-08-06",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.566,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.576,
+      "critical": 0.556,
+      "overall": 0.536,
+      "best_bucket": "creative"
+    },
+    "meta-llama/llama-3.1-8b-instruct": {
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.402,
+      "coding": 0.402,
+      "reasoning": 0.402,
+      "creative": 0.402,
+      "critical": 0.402,
+      "overall": 0.402,
+      "best_bucket": "simple"
+    },
+    "meta-llama/llama-3.1-70b-instruct": {
+      "model": "meta-llama/llama-3.1-70b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.436,
+      "coding": 0.436,
+      "reasoning": 0.436,
+      "creative": 0.436,
+      "critical": 0.436,
+      "overall": 0.436,
+      "best_bucket": "simple"
+    },
+    "mistralai/mistral-nemo": {
+      "model": "mistralai/mistral-nemo",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.402,
+      "coding": 0.402,
+      "reasoning": 0.402,
+      "creative": 0.402,
+      "critical": 0.402,
+      "overall": 0.402,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-4o-mini": {
+      "model": "openai/gpt-4o-mini",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.445,
+      "coding": 0.415,
+      "reasoning": 0.415,
+      "creative": 0.455,
+      "critical": 0.435,
+      "overall": 0.415,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-4o-mini-2024-07-18": {
+      "model": "openai/gpt-4o-mini-2024-07-18",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.445,
+      "coding": 0.415,
+      "reasoning": 0.415,
+      "creative": 0.455,
+      "critical": 0.435,
+      "overall": 0.415,
+      "best_bucket": "creative"
+    },
+    "google/gemma-2-27b-it": {
+      "model": "google/gemma-2-27b-it",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.454,
+      "coding": 0.454,
+      "reasoning": 0.454,
+      "creative": 0.454,
+      "critical": 0.454,
+      "overall": 0.454,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-4o-2024-05-13": {
+      "model": "openai/gpt-4o-2024-05-13",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.624,
+      "coding": 0.594,
+      "reasoning": 0.594,
+      "creative": 0.634,
+      "critical": 0.614,
+      "overall": 0.594,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-4o": {
+      "model": "openai/gpt-4o",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.566,
+      "coding": 0.536,
+      "reasoning": 0.536,
+      "creative": 0.576,
+      "critical": 0.556,
+      "overall": 0.536,
+      "best_bucket": "creative"
+    },
+    "meta-llama/llama-3-8b-instruct": {
+      "model": "meta-llama/llama-3-8b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.414,
+      "coding": 0.414,
+      "reasoning": 0.414,
+      "creative": 0.414,
+      "critical": 0.414,
+      "overall": 0.414,
+      "best_bucket": "simple"
+    },
+    "mistralai/mixtral-8x22b-instruct": {
+      "model": "mistralai/mixtral-8x22b-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.519,
+      "coding": 0.519,
+      "reasoning": 0.519,
+      "creative": 0.519,
+      "critical": 0.519,
+      "overall": 0.519,
+      "best_bucket": "simple"
+    },
+    "microsoft/wizardlm-2-8x22b": {
+      "model": "microsoft/wizardlm-2-8x22b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.452,
+      "coding": 0.452,
+      "reasoning": 0.452,
+      "creative": 0.452,
+      "critical": 0.452,
+      "overall": 0.452,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-4-turbo": {
+      "model": "openai/gpt-4-turbo",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.69,
+      "coding": 0.66,
+      "reasoning": 0.66,
+      "creative": 0.7,
+      "critical": 0.68,
+      "overall": 0.66,
+      "best_bucket": "creative"
+    },
+    "anthropic/claude-3-haiku": {
+      "model": "anthropic/claude-3-haiku",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.454,
+      "coding": 0.424,
+      "reasoning": 0.424,
+      "creative": 0.464,
+      "critical": 0.444,
+      "overall": 0.424,
+      "best_bucket": "creative"
+    },
+    "mistralai/mistral-large": {
+      "model": "mistralai/mistral-large",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.519,
+      "coding": 0.519,
+      "reasoning": 0.519,
+      "creative": 0.519,
+      "critical": 0.519,
+      "overall": 0.519,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-4-turbo-preview": {
+      "model": "openai/gpt-4-turbo-preview",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.69,
+      "coding": 0.66,
+      "reasoning": 0.66,
+      "creative": 0.7,
+      "critical": 0.68,
+      "overall": 0.66,
+      "best_bucket": "creative"
+    },
+    "openai/gpt-3.5-turbo-0613": {
+      "model": "openai/gpt-3.5-turbo-0613",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.475,
+      "coding": 0.475,
+      "reasoning": 0.475,
+      "creative": 0.475,
+      "critical": 0.475,
+      "overall": 0.475,
+      "best_bucket": "simple"
+    },
+    "openrouter/auto": {
+      "model": "openrouter/auto",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.2,
+      "coding": 0.2,
+      "reasoning": 0.2,
+      "creative": 0.2,
+      "critical": 0.2,
+      "overall": 0.2,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-3.5-turbo-instruct": {
+      "model": "openai/gpt-3.5-turbo-instruct",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.499,
+      "coding": 0.499,
+      "reasoning": 0.499,
+      "creative": 0.499,
+      "critical": 0.499,
+      "overall": 0.499,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-3.5-turbo-16k": {
+      "model": "openai/gpt-3.5-turbo-16k",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.55,
+      "coding": 0.55,
+      "reasoning": 0.55,
+      "creative": 0.55,
+      "critical": 0.55,
+      "overall": 0.55,
+      "best_bucket": "simple"
+    },
+    "mancer/weaver": {
+      "model": "mancer/weaver",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.461,
+      "coding": 0.461,
+      "reasoning": 0.461,
+      "creative": 0.461,
+      "critical": 0.461,
+      "overall": 0.461,
+      "best_bucket": "simple"
+    },
+    "undi95/remm-slerp-l2-13b": {
+      "model": "undi95/remm-slerp-l2-13b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.47,
+      "coding": 0.44,
+      "reasoning": 0.4,
+      "creative": 0.46,
+      "critical": 0.39,
+      "overall": 0.44,
+      "best_bucket": "simple"
+    },
+    "gryphe/mythomax-l2-13b": {
+      "model": "gryphe/mythomax-l2-13b",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.436,
+      "coding": 0.406,
+      "reasoning": 0.366,
+      "creative": 0.426,
+      "critical": 0.356,
+      "overall": 0.406,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-3.5-turbo": {
+      "model": "openai/gpt-3.5-turbo",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.444,
+      "coding": 0.444,
+      "reasoning": 0.444,
+      "creative": 0.444,
+      "critical": 0.444,
+      "overall": 0.444,
+      "best_bucket": "simple"
+    },
+    "openai/gpt-4": {
+      "model": "openai/gpt-4",
+      "sources": [
+        "openrouter_catalog"
+      ],
+      "side": "cloud",
+      "simple": 0.802,
+      "coding": 0.772,
+      "reasoning": 0.772,
+      "creative": 0.812,
+      "critical": 0.792,
+      "overall": 0.772,
+      "best_bucket": "creative"
+    }
+  }
+}

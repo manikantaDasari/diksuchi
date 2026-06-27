@@ -1,7 +1,7 @@
 """
 python_openai_sdk.py
 ────────────────────
-Use the official OpenAI Python SDK against your local AI Router.
+Use the official OpenAI Python SDK against your local Diksuchi router.
 The router is fully OpenAI-compatible, so this is a one-line change:
   base_url="http://localhost:8080/v1"
 

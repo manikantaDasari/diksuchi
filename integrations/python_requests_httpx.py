@@ -103,7 +103,7 @@ def route_preview(prompt: str, model: str = "") -> dict:
 # ─── Example: build a simple CLI chatbot ─────────────────────────────────────
 
 def cli_chatbot():
-    print("=== AI Router CLI Chatbot ===")
+    print("=== Diksuchi CLI Chatbot ===")
     stats = get_stats()
     print(f"Router online. Active: local={stats['active_local']}  cloud={stats['active_cloud']}")
     print("Type 'exit' to quit, 'stats' for routing stats\n")

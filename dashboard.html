@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AI Router — Dashboard</title>
+<title>Diksuchi — Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 /* ─── Design tokens ──────────────────────────────────────────────────────── */
@@ -474,8 +474,13 @@ input { flex: 1; }
 }
 .pc-badge.active   { background: rgba(225,246,74,.1); color: var(--lime);  border: 1px solid rgba(225,246,74,.25); }
 .pc-badge.disabled { background: rgba(99,99,97,.1);   color: var(--text-3); border: 1px solid var(--border); }
+.pc-badge.no-key   { background: rgba(220,60,60,.08); color: #e05555;       border: 1px solid rgba(220,60,60,.25); }
 .pc-badge.type     { background: var(--surface2);      color: var(--text-3); border: 1px solid var(--border); font-family: monospace; }
 .cloud-card .pc-badge.active { background: rgba(19,189,124,.1); color: var(--green); border-color: rgba(19,189,124,.25); }
+
+/* No-key provider card — visually muted */
+.provider-card.no-key-card { opacity: .72; }
+.provider-card.no-key-card:hover { opacity: 1; }
 
 .pc-name  { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
 .pc-url   { font-size: 9px; font-family: monospace; color: var(--text-3); margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -507,18 +512,307 @@ input { flex: 1; }
   border-color: rgba(19,189,124,.25);
 }
 
+/* Configure button — shown when API key is missing */
+.configure-btn {
+  width: 100%; margin-top: 14px; padding: 8px;
+  border-radius: var(--radius); font-size: 11px; font-weight: 700;
+  letter-spacing: .3px; text-transform: uppercase;
+  border: 1px solid rgba(220,60,60,.3);
+  background: rgba(220,60,60,.06); color: #e05555;
+  cursor: pointer; transition: all .2s;
+}
+.configure-btn:hover {
+  background: rgba(220,60,60,.12); border-color: rgba(220,60,60,.5);
+}
+
+/* ─── Ratings page ───────────────────────────────────────────────────────── */
+.ratings-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  gap: 14px; flex-wrap: wrap;
+}
+.ratings-meta { font-size: 10px; color: var(--text-3); font-family: monospace; }
+.ratings-meta b { color: var(--text-2); }
+
+.fetch-btn {
+  padding: 7px 16px; border-radius: var(--radius); font-size: 11px; font-weight: 700;
+  letter-spacing: .3px; text-transform: uppercase;
+  border: 1px solid rgba(225,246,74,.35);
+  background: rgba(225,246,74,.07); color: var(--lime);
+  cursor: pointer; transition: all .2s;
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.fetch-btn:hover:not(:disabled) { background: rgba(225,246,74,.14); transform: translateY(-1px); }
+.fetch-btn:disabled { opacity: .4; cursor: wait; }
+.fetch-btn.loading { animation: pulse-lime 1s ease-in-out infinite; }
+@keyframes pulse-lime { 0%,100%{opacity:.6} 50%{opacity:1} }
+
+/* Best-model-per-bucket summary strip */
+.bucket-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  padding: 16px 18px;
+}
+.bucket-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  text-align: center;
+  position: relative; overflow: hidden;
+  transition: border-color .2s;
+}
+.bucket-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+}
+.bc-simple::after   { background: #8B8BFF; }
+.bc-coding::after   { background: var(--lime); }
+.bc-reasoning::after{ background: #42C4FF; }
+.bc-creative::after { background: #FF8B42; }
+.bc-critical::after { background: var(--red); }
+
+.bc-tier {
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px;
+  margin-bottom: 5px;
+  font-family: monospace;
+}
+.bc-simple .bc-tier   { color: #8B8BFF; }
+.bc-coding .bc-tier   { color: var(--lime); }
+.bc-reasoning .bc-tier{ color: #42C4FF; }
+.bc-creative .bc-tier { color: #FF8B42; }
+.bc-critical .bc-tier { color: var(--red); }
+
+.bc-name   { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.bc-model  { font-size: 9px; font-family: monospace; color: var(--text-3); word-break: break-all; }
+.bc-score  { font-size: 20px; font-weight: 800; margin-top: 8px; }
+.bc-simple .bc-score   { color: #8B8BFF; }
+.bc-coding .bc-score   { color: var(--lime); }
+.bc-reasoning .bc-score{ color: #42C4FF; }
+.bc-creative .bc-score { color: #FF8B42; }
+.bc-critical .bc-score { color: var(--red); }
+
+/* Model table */
+.ratings-scroll { max-height: 560px; overflow-y: auto; }
+.ratings-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.ratings-table thead tr { background: var(--surface2); }
+.ratings-table th {
+  padding: 9px 12px; text-align: left;
+  font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-3); font-weight: 700; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--surface2);
+}
+.ratings-table td { padding: 7px 12px; border-bottom: 1px solid rgba(46,46,44,.5); vertical-align: middle; }
+.ratings-table tr:hover td { background: rgba(42,42,40,.6); }
+.ratings-table tr:last-child td { border-bottom: none; }
+
+.model-name-cell { font-family: monospace; font-size: 10px; color: var(--text-2); }
+.best-badge {
+  display: inline-block; font-size: 8px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .5px;
+  padding: 1px 5px; border-radius: 3px; margin-left: 5px; vertical-align: middle;
+}
+.source-tag {
+  font-size: 8px; font-family: monospace;
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: 3px; padding: 1px 5px; color: var(--text-3);
+}
+
+/* Mini bucket score bars (5 in a row) */
+.mini-scores { display: flex; align-items: center; gap: 3px; }
+.mini-score-bar { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.msb-label { font-size: 7px; color: var(--text-3); text-transform: uppercase; letter-spacing: .3px; }
+.msb-track { width: 24px; height: 32px; background: var(--surface3); border-radius: 2px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+.msb-fill  { width: 100%; border-radius: 2px; transition: height .5s ease; }
+.msb-val   { font-size: 8px; font-family: monospace; color: var(--text-3); }
+
+.ratings-empty {
+  padding: 48px 20px; text-align: center;
+}
+.ratings-empty-icon { font-size: 32px; margin-bottom: 12px; opacity: .4; }
+.ratings-empty h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--text-2); }
+.ratings-empty p  { font-size: 11px; color: var(--text-3); line-height: 1.6; }
+.ratings-empty code { font-family: monospace; background: var(--surface3); padding: 1px 6px; border-radius: 3px; }
+
 /* ─── Empty state ────────────────────────────────────────────────────────── */
 .empty { text-align: center; color: var(--text-3); padding: 40px 20px; font-size: 12px; }
 .empty-icon { font-size: 26px; margin-bottom: 8px; opacity: .5; }
+
+/* ─── Preferences page ───────────────────────────────────────────────────── */
+.pref-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  padding: 18px;
+}
+.pref-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.pref-card:hover { border-color: var(--border-hi); }
+.pref-card-head {
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  display: flex; align-items: center; gap: 10px;
+}
+.pref-bucket-name { font-size: 13px; font-weight: 700; flex: 1; }
+.pref-tier-tag {
+  font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px;
+  padding: 2px 7px; border-radius: 3px; font-family: monospace;
+}
+.pref-body { padding: 10px 14px 14px; }
+
+.pref-select {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); border-radius: var(--radius); padding: 6px 10px;
+  font-size: 10px; font-family: monospace; outline: none;
+  cursor: pointer; transition: border-color .2s; margin-bottom: 0;
+}
+.pref-select:focus { border-color: var(--lime); }
+
+.pref-actions { display: flex; gap: 6px; margin-top: 12px; }
+.pref-save-btn {
+  flex: 1; padding: 7px 12px; border-radius: var(--radius);
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px;
+  background: rgba(225,246,74,.08); border: 1px solid rgba(225,246,74,.3);
+  color: var(--lime); cursor: pointer; transition: all .2s;
+}
+.pref-save-btn:hover { background: rgba(225,246,74,.16); }
+.pref-reset-btn {
+  padding: 7px 12px; border-radius: var(--radius);
+  font-size: 11px; font-weight: 700;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-3); cursor: pointer; transition: all .2s;
+}
+.pref-reset-btn:hover { border-color: var(--red); color: var(--red); }
+
+/* ── Tier bucket rows ──────────────────────────────────────────────────────── */
+.ptier-row { margin-bottom: 9px; }
+.ptier-row:last-of-type { margin-bottom: 0; }
+.ptier-row-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; color: var(--text-2);
+  margin-bottom: 4px;
+}
+.ptier-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.ptier-row-name { flex: 1; }
+.ptier-pinned-tag {
+  font-size: 9px; font-family: monospace; padding: 1px 5px; border-radius: 3px;
+  background: rgba(225,246,74,.1); color: var(--lime); border: 1px solid rgba(225,246,74,.25);
+  max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ptier-other-tag {
+  font-size: 9px; font-family: monospace; color: var(--text-3);
+  padding: 1px 5px; border-radius: 3px; border: 1px solid var(--border);
+}
+
+/* ─── Routing Policy panel ───────────────────────────────────────────────── */
+.routing-policy {
+  padding: 14px 18px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.rp-title {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px;
+  color: var(--text-2); margin-bottom: 10px; font-family: monospace;
+  display: flex; align-items: center; gap: 8px;
+}
+.rp-title::after {
+  content: 'Check which tiers are permitted per bucket — unchecked tiers are skipped';
+  font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--text-3);
+}
+.rp-grid {
+  display: grid;
+  grid-template-columns: 90px repeat(3, 1fr);
+  gap: 6px 8px;
+  align-items: center;
+}
+.rp-header {
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+  font-family: monospace; text-align: center; padding: 4px 8px;
+  border-radius: 4px;
+}
+.rp-bucket-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; color: var(--text-2);
+}
+.rp-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.rp-tier-btn {
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 6px 8px; border-radius: 5px; cursor: pointer;
+  font-size: 9px; font-weight: 700; font-family: monospace; letter-spacing: .3px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text-3); transition: all .15s; user-select: none;
+}
+.rp-tier-btn:hover { border-color: var(--border-hi); color: var(--text-2); }
+.rp-tier-btn.rp-selected-0 { background: rgba(225,246,74,.10); color: #E1F64A; border-color: rgba(225,246,74,.35); }
+.rp-tier-btn.rp-selected-1 { background: rgba(19,189,124,.10); color: #13BD7C; border-color: rgba(19,189,124,.35); }
+.rp-tier-btn.rp-selected-2 { background: rgba(255,139,66,.10); color: #FF8B42; border-color: rgba(255,139,66,.35); }
+.rp-tier-btn .rp-check { font-size: 10px; }
+
+/* ─── Overview tier-status row ───────────────────────────────────────────── */
+.tier-status-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 14px 24px 4px;
+}
+.tier-status-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.tier-status-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.ts-local::before  { background: #E1F64A; }
+.ts-free::before   { background: #13BD7C; }
+.ts-paid::before   { background: #FF8B42; }
+.ts-tier-tag {
+  font-size: 9px; font-weight: 700; letter-spacing: .8px;
+  font-family: monospace; text-transform: uppercase; margin-bottom: 6px;
+}
+.ts-local .ts-tier-tag  { color: #E1F64A; }
+.ts-free .ts-tier-tag   { color: #13BD7C; }
+.ts-paid .ts-tier-tag   { color: #FF8B42; }
+.ts-provider {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ts-detail {
+  font-size: 10px; color: var(--text-3); font-family: monospace; line-height: 1.5;
+}
+.ts-pill {
+  display: inline-block; font-size: 9px; font-weight: 700; font-family: monospace;
+  padding: 1px 6px; border-radius: 3px; margin-top: 4px;
+}
+.ts-pill.active   { background: rgba(225,246,74,.12); color: #E1F64A; border: 1px solid rgba(225,246,74,.3); }
+.ts-pill.keyed    { background: rgba(19,189,124,.10);  color: #13BD7C; border: 1px solid rgba(19,189,124,.3); }
+.ts-pill.nokey    { background: var(--surface2); color: var(--text-3); border: 1px solid var(--border); }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media(max-width:1100px) {
   .grid-3 { grid-template-columns: 1fr 1fr; }
   .grid-4 { grid-template-columns: repeat(2,1fr); }
   .header-center { display: none; }
+  .pref-grid { grid-template-columns: 1fr 1fr; }
 }
 @media(max-width:700px) {
   .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; }
+  .pref-grid { grid-template-columns: 1fr; }
   header { padding: 0 16px; }
   .main { padding: 16px; }
 }
@@ -536,8 +830,8 @@ input { flex: 1; }
       </svg>
     </div>
     <div class="logo-text">
-      <h1>AI Router</h1>
-      <p>LOCAL-FIRST INFERENCE PROXY</p>
+      <h1>Diksuchi</h1>
+      <p>LOCAL-FIRST AI ROUTER</p>
     </div>
   </div>
 
@@ -546,10 +840,12 @@ input { flex: 1; }
     <div class="h-tab" onclick="showPage('providers', this)">Providers</div>
     <div class="h-tab" onclick="showPage('log', this)">Request Log</div>
     <div class="h-tab" onclick="showPage('test', this)">Route Preview</div>
+    <div class="h-tab" onclick="showPage('ratings', this)">Model Ratings</div>
+    <div class="h-tab" onclick="showPage('preferences', this)">Preferences</div>
   </div>
 
   <div class="header-right">
-    <span class="endpoint-tag" id="base-url">localhost:8080</span>
+    <span class="endpoint-tag" id="base-url">localhost:8081</span>
     <div class="status-pill offline" id="status-pill">
       <div class="dot"></div>
       <span id="status-text">Connecting</span>
@@ -587,6 +883,28 @@ input { flex: 1; }
       <div class="stat-label">Errors</div>
       <div class="stat-value" id="s-errors">—</div>
       <div class="stat-sub" id="s-fallback-sub">0 fallbacks</div>
+    </div>
+  </div>
+
+  <!-- Tier health summary -->
+  <div class="tier-status-row">
+    <div class="tier-status-card ts-local">
+      <div class="ts-tier-tag">Tier 0 · Local</div>
+      <div class="ts-provider" id="ts-local-prov">—</div>
+      <div class="ts-detail" id="ts-local-detail">—</div>
+      <div id="ts-local-pill"></div>
+    </div>
+    <div class="tier-status-card ts-free">
+      <div class="ts-tier-tag">Tier 1 · Free Cloud</div>
+      <div class="ts-provider" id="ts-free-prov">—</div>
+      <div class="ts-detail" id="ts-free-detail">—</div>
+      <div id="ts-free-pill"></div>
+    </div>
+    <div class="tier-status-card ts-paid">
+      <div class="ts-tier-tag">Tier 2 · Paid Cloud</div>
+      <div class="ts-provider" id="ts-paid-prov">—</div>
+      <div class="ts-detail" id="ts-paid-detail">—</div>
+      <div id="ts-paid-pill"></div>
     </div>
   </div>
 
@@ -675,8 +993,47 @@ input { flex: 1; }
     </div>
   </div>
 
+  <!-- ── OpenRouter Mode toggle ──────────────────────────────────────────── -->
   <div id="cloud-providers-section" style="margin-top:8px;">
     <div class="section-heading">Cloud Providers</div>
+
+    <div id="or-mode-card" style="
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    ">
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+        <div style="font-size:22px;flex-shrink:0;">🌐</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">
+            Use OpenRouter for Everything
+          </div>
+          <div style="font-size:11px;color:var(--text-3);line-height:1.5;" id="or-mode-desc">
+            One <code style="font-size:10px;background:var(--surface2);padding:1px 5px;border-radius:3px;">OPENROUTER_API_KEY</code> unlocks Claude, GPT-5, Gemini, Grok, DeepSeek &amp; more — no per-provider keys needed.
+          </div>
+          <div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;" id="or-mode-chain-display"></div>
+        </div>
+      </div>
+      <div style="flex-shrink:0;">
+        <button id="or-toggle-btn" onclick="toggleORMode()"
+          style="
+            padding: 8px 18px; border-radius: 20px; font-size: 11px;
+            font-weight: 700; letter-spacing: .5px; border: none;
+            cursor: pointer; transition: all .2s; white-space: nowrap;
+            background: var(--surface2); color: var(--text-3);
+            border: 1px solid var(--border);
+          ">
+          OFF
+        </button>
+      </div>
+    </div>
+
     <div class="provider-cards" id="cloud-provider-cards">
       <div class="empty"><div class="empty-icon">◉</div>Loading…</div>
     </div>
@@ -743,7 +1100,7 @@ input { flex: 1; }
             <span class="chip" onclick="setPrompt('Write a comprehensive financial model for a SaaS startup with 5-year projections')">Complex task</span>
             <span class="chip" onclick="setPrompt('Quick question: summarize this briefly')">Quick keyword</span>
             <span class="chip" onclick="setPrompt('Translate to Spanish: Hello world')">Translate</span>
-            <span class="chip" onclick="setPromptModel('Write some code', 'gpt-4o')">GPT-4o hint</span>
+            <span class="chip" onclick="setPromptModel('Write some code', 'gpt-5.3-codex')">GPT-5 codex hint</span>
             <span class="chip" onclick="setPromptModel('Write some code', 'llama3.2')">llama3.2 hint</span>
           </div>
         </div>
@@ -752,10 +1109,133 @@ input { flex: 1; }
   </div>
 </div>
 
+<!-- ════ PREFERENCES ════ -->
+<div class="page" id="page-preferences">
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="panel-title-dot dot-lime"></span>
+        Model Preferences — pin a specific model per capability bucket
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="discovery-badge" style="font-size:10px;color:var(--text-3);"></span>
+        <button class="refresh-btn" onclick="refreshModels()" title="Re-discover models from all providers">⟳ SYNC MODELS</button>
+        <button class="refresh-btn" onclick="loadPreferences()">↻ REFRESH</button>
+      </div>
+    </div>
+
+    <!-- ── Routing Policy: per-bucket minimum tier ──────────────────── -->
+    <div class="routing-policy">
+      <div class="rp-title">⚙ Routing Policy — Allowed Tiers</div>
+      <div class="rp-grid" id="routing-policy-grid">
+        <!-- Header row -->
+        <div></div>
+        <div class="rp-header" style="color:#E1F64A;background:rgba(225,246,74,.07);border:1px solid rgba(225,246,74,.2);">Tier 0 · Local</div>
+        <div class="rp-header" style="color:#13BD7C;background:rgba(19,189,124,.07);border:1px solid rgba(19,189,124,.2);">Tier 1 · Free Cloud</div>
+        <div class="rp-header" style="color:#FF8B42;background:rgba(255,139,66,.07);border:1px solid rgba(255,139,66,.2);">Tier 2 · Paid Cloud</div>
+        <!-- Bucket rows rendered by JS → renderRoutingPolicy() -->
+      </div>
+    </div>
+
+    <div style="padding:10px 18px; font-size:11px; color:var(--text-3); line-height:1.6; border-bottom:1px solid var(--border); background:var(--surface2);">
+      Pin a specific model per tier below. Empty = auto (best rated for that bucket).
+      Model lists refresh live from Ollama and OpenRouter every 6 h.
+    </div>
+
+    <div class="pref-grid" id="pref-grid">
+      <div class="empty"><div class="empty-icon">⚙</div>Loading preferences…</div>
+    </div>
+  </div>
+
+  <!-- API quick reference -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title"><span class="panel-title-dot dot-white"></span>API — set preferences programmatically</div>
+    </div>
+    <div class="panel-body" style="font-family:monospace;font-size:11px;color:var(--text-3);line-height:2;">
+      <div><span style="color:var(--lime)">POST</span> /v1/preferences &nbsp;&nbsp;<span style="color:var(--text-3)">{"reasoning": "claude-opus-4-6"}</span></div>
+      <div><span style="color:var(--lime)">POST</span> /v1/preferences &nbsp;&nbsp;<span style="color:var(--text-3)">{"coding": "qwen/qwen-2.5-coder-32b-instruct"}</span></div>
+      <div><span style="color:var(--lime)">POST</span> /v1/preferences &nbsp;&nbsp;<span style="color:var(--text-3)">{"critical": "gpt-4o", "reasoning": "o1"}</span></div>
+      <div><span style="color:var(--green)">GET</span>  /v1/preferences/resolve/reasoning &nbsp;&nbsp;<span style="color:var(--text-3)">← preview which model would run</span></div>
+      <div><span style="color:var(--red)">DELETE</span> /v1/preferences/coding &nbsp;&nbsp;<span style="color:var(--text-3)">← reset one bucket to auto</span></div>
+      <div><span style="color:var(--text-3); font-size:10px;">Per-request override: just set "model" in your request body → router finds the right provider automatically</span></div>
+    </div>
+  </div>
+
+</div><!-- /page-preferences -->
+
+<!-- ════ RATINGS ════ -->
+<div class="page" id="page-ratings">
+
+  <div class="panel">
+    <div class="ratings-toolbar">
+      <div>
+        <div class="panel-title" style="margin-bottom:4px;">
+          <span class="panel-title-dot dot-lime"></span>
+          Model Ratings — capability scores per bucket
+        </div>
+        <div class="ratings-meta" id="ratings-meta">
+          No ratings fetched yet — click Fetch Ratings to pull from HF Leaderboard + baseline
+        </div>
+      </div>
+      <button class="fetch-btn" id="fetch-btn" onclick="fetchRatings()">
+        <span id="fetch-icon">⬇</span>&nbsp;Fetch Ratings
+      </button>
+    </div>
+
+    <!-- Bucket summary strip -->
+    <div class="bucket-strip" id="bucket-strip">
+      <div class="bucket-card bc-simple">
+        <div class="bc-tier" id="tier-simple">—</div>
+        <div class="bc-name">Simple</div>
+        <div class="bc-model" id="best-simple">—</div>
+        <div class="bc-score" id="best-simple-score">—</div>
+      </div>
+      <div class="bucket-card bc-coding">
+        <div class="bc-tier" id="tier-coding">—</div>
+        <div class="bc-name">Coding</div>
+        <div class="bc-model" id="best-coding">—</div>
+        <div class="bc-score" id="best-coding-score">—</div>
+      </div>
+      <div class="bucket-card bc-reasoning">
+        <div class="bc-tier" id="tier-reasoning">—</div>
+        <div class="bc-name">Reasoning</div>
+        <div class="bc-model" id="best-reasoning">—</div>
+        <div class="bc-score" id="best-reasoning-score">—</div>
+      </div>
+      <div class="bucket-card bc-creative">
+        <div class="bc-tier" id="tier-creative">—</div>
+        <div class="bc-name">Creative</div>
+        <div class="bc-model" id="best-creative">—</div>
+        <div class="bc-score" id="best-creative-score">—</div>
+      </div>
+      <div class="bucket-card bc-critical">
+        <div class="bc-tier" id="tier-critical">—</div>
+        <div class="bc-name">Critical</div>
+        <div class="bc-model" id="best-critical">—</div>
+        <div class="bc-score" id="best-critical-score">—</div>
+      </div>
+    </div>
+
+    <!-- Model table -->
+    <div class="ratings-scroll">
+      <div id="ratings-content">
+        <div class="ratings-empty">
+          <div class="ratings-empty-icon">📊</div>
+          <h3>No ratings data yet</h3>
+          <p>Click <b>Fetch Ratings</b> above to pull live scores from the<br>HF Open LLM Leaderboard + bundled baseline.<br><br>Or run from terminal: <code>make ratings</code></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-ratings -->
+
 </div><!-- /main -->
 
 <script>
-const BASE = 'http://localhost:8080';
+const BASE = 'http://localhost:8081';
 let lineChart, donutChart;
 let lineData = { labels: [], local: [], cloud: [] };
 let prevTotal = 0;
@@ -763,6 +1243,7 @@ let prevTotal = 0;
 const ICONS = {
   ollama:'🦙', lmstudio:'🖥', mlx:'🍎', llamacpp:'⚙',
   openai:'◎', anthropic:'◆', groq:'⚡', gemini:'◇', together:'◈', mistral:'◉',
+  openrouter_free:'🆓', openrouter_paid:'🌐', xai:'𝕏',
 };
 
 /* ── Nav ──────────────────────────────────────────────────────────────────── */
@@ -771,7 +1252,9 @@ function showPage(id, el) {
   document.querySelectorAll('.h-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   if (el) el.classList.add('active');
-  if (id === 'providers') fetchProviders();
+  if (id === 'providers')   fetchProviders();
+  if (id === 'ratings')     loadRatingsDisplay();
+  if (id === 'preferences') loadPreferences();
 }
 
 /* ── Charts ───────────────────────────────────────────────────────────────── */
@@ -898,40 +1381,170 @@ function updateLog(entries) {
 /* ── Providers ────────────────────────────────────────────────────────────── */
 async function fetchProviders() {
   try {
-    const r = await fetch(`${BASE}/v1/providers`);
-    const d = await r.json();
-    renderProviderCards('local', d.local.providers, d.local.active);
-    renderProviderCards('cloud', d.cloud.providers, d.cloud.active);
+    const [provResp, orResp] = await Promise.all([
+      fetch(`${BASE}/v1/providers`),
+      fetch(`${BASE}/v1/providers/openrouter-mode`),
+    ]);
+    if (!provResp.ok) return;  // router returned an error — skip rendering
+    const d  = await provResp.json();
+    const or = orResp.ok ? await orResp.json() : { enabled: false };
+
+    renderProviderCards('local',  d.local.providers,  d.local.active);
+    renderProviderCards('cloud',  d.cloud.providers,  d.cloud.active);
     document.getElementById('active-local-name').textContent = d.local.active;
     document.getElementById('active-cloud-name').textContent = d.cloud.active;
+
+    // Populate Overview tier-status cards
+    updateOverviewTiers(d);
+
+    // Sync OpenRouter Mode toggle
+    renderORModeToggle(or.enabled, or.fallback_chain || []);
   } catch {}
+}
+
+/* ── Overview tier-status cards ───────────────────────────────────────────── */
+function updateOverviewTiers(d) {
+  // ── TIER 0 · LOCAL ──────────────────────────────────────────────────────
+  const localProvs  = d.local?.providers  || [];
+  const activeLocal = localProvs.find(p => p.name === d.local?.active) || localProvs[0];
+  const localMods   = activeLocal ? (activeLocal.models?.length || 0) : 0;
+  const localTotal  = localProvs.reduce((s, p) => s + (p.models?.length || 0), 0);
+
+  document.getElementById('ts-local-prov').textContent   = activeLocal?.name || 'None configured';
+  document.getElementById('ts-local-detail').textContent = activeLocal
+    ? `${localMods} model${localMods !== 1 ? 's' : ''} loaded  ·  ${localProvs.length} provider${localProvs.length !== 1 ? 's' : ''} configured`
+    : 'No local providers found';
+  document.getElementById('ts-local-pill').innerHTML = activeLocal
+    ? `<span class="ts-pill active">● ACTIVE</span>`
+    : `<span class="ts-pill nokey">OFFLINE</span>`;
+
+  // ── TIER 1 · FREE CLOUD ─────────────────────────────────────────────────
+  const cloudProvs = d.cloud?.providers || [];
+  const freeProv   = cloudProvs.find(p => p.name === 'openrouter_free');
+  const freeMods   = freeProv ? (freeProv.models?.length || 0) : 0;
+
+  document.getElementById('ts-free-prov').textContent   = freeProv ? 'openrouter_free' : 'Not configured';
+  document.getElementById('ts-free-detail').textContent = freeProv
+    ? `${freeMods} free model${freeMods !== 1 ? 's' : ''}  ·  rate-limited`
+    : 'Add OPENROUTER_API_KEY to unlock';
+  document.getElementById('ts-free-pill').innerHTML = freeProv
+    ? `<span class="ts-pill keyed">🆓 READY</span>`
+    : `<span class="ts-pill nokey">NO KEY</span>`;
+
+  // ── TIER 2 · PAID CLOUD ─────────────────────────────────────────────────
+  const paidProvs  = cloudProvs.filter(p => p.name !== 'openrouter_free');
+  const keyedProvs = paidProvs.filter(p => p.has_key);
+  const activePaid = paidProvs.find(p => p.name === d.cloud?.active) || keyedProvs[0];
+  const paidMods   = paidProvs.reduce((s, p) => s + (p.models?.length || 0), 0);
+
+  document.getElementById('ts-paid-prov').textContent   = activePaid?.name || (paidProvs.length ? paidProvs[0].name : 'None configured');
+  document.getElementById('ts-paid-detail').textContent =
+    `${keyedProvs.length}/${paidProvs.length} providers keyed  ·  ${paidMods} model${paidMods !== 1 ? 's' : ''}`;
+  document.getElementById('ts-paid-pill').innerHTML = keyedProvs.length
+    ? `<span class="ts-pill keyed">🔑 ${keyedProvs.length} KEY${keyedProvs.length > 1 ? 'S' : ''}</span>`
+    : `<span class="ts-pill nokey">NO KEYS</span>`;
+}
+
+function renderORModeToggle(isOn, chain) {
+  const btn  = document.getElementById('or-toggle-btn');
+  const card = document.getElementById('or-mode-card');
+  const chainEl = document.getElementById('or-mode-chain-display');
+  if (!btn) return;
+
+  if (isOn) {
+    btn.textContent = 'ON';
+    btn.style.cssText += 'background:#13BD7C20;color:#13BD7C;border-color:#13BD7C50;';
+    card.style.borderColor = 'rgba(19,189,124,.3)';
+    card.style.background  = 'rgba(19,189,124,.03)';
+  } else {
+    btn.textContent = 'OFF';
+    btn.style.cssText += 'background:var(--surface2);color:var(--text-3);border-color:var(--border);';
+    card.style.borderColor = '';
+    card.style.background  = '';
+  }
+
+  if (chain.length) {
+    chainEl.innerHTML = chain.map((c, i) =>
+      `<span style="font-size:9px;font-family:monospace;padding:2px 8px;border-radius:3px;
+        background:var(--surface2);color:${c.includes('openrouter') ? '#13BD7C' : 'var(--text-3)'}">
+        ${i > 0 ? '→ ' : ''}${c}
+      </span>`
+    ).join('');
+  }
+}
+
+async function toggleORMode() {
+  const btn = document.getElementById('or-toggle-btn');
+  const isCurrentlyOn = btn.textContent.trim() === 'ON';
+  btn.textContent = '…';
+  btn.disabled = true;
+  try {
+    const r = await fetch(`${BASE}/v1/providers/openrouter-mode`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled: !isCurrentlyOn }),
+    });
+    const d = await r.json();
+    if (!r.ok) {
+      alert(d.detail || 'Could not toggle OpenRouter Mode');
+    }
+    await fetchProviders();
+    await fetchAll();
+  } catch(e) {
+    alert(`OpenRouter Mode toggle failed: ${e.message}`);
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 function renderProviderCards(side, providers, activeNow) {
   const container = document.getElementById(`${side}-provider-cards`);
   container.innerHTML = providers.map(p => {
     const isActive   = p.name === activeNow;
+    const hasKey     = p.has_key !== false;   // local providers always true
     const isDisabled = p.enabled === false;
+    const noKey      = !isActive && !hasKey;  // not active + no API key configured
     const icon = ICONS[p.name] || (side === 'local' ? '◈' : '◉');
     const models    = (p.models || []).slice(0, 4);
     const extraMods = (p.models || []).length - 4;
-    return `<div class="provider-card ${side}-card ${isActive ? 'active-card' : ''}" id="pc-${side}-${p.name}">
+
+    // Badge row: active > no-key > disabled (not-selected)
+    let badgeHtml = '';
+    if (isActive) {
+      badgeHtml += '<span class="pc-badge active">● ACTIVE</span>';
+    } else if (noKey) {
+      badgeHtml += '<span class="pc-badge no-key">⚿ NO KEY</span>';
+    } else {
+      badgeHtml += '<span class="pc-badge disabled">DISABLED</span>';
+    }
+    if (isDisabled && !isActive) {
+      // only show the type badge; disabled-state already shown via button
+    }
+    badgeHtml += `<span class="pc-badge type">${p.type}</span>`;
+
+    // Bottom button
+    let btnHtml = '';
+    if (isActive) {
+      btnHtml = `<button class="activate-btn is-active" disabled>✓ CURRENTLY ACTIVE</button>`;
+    } else if (noKey) {
+      // Tell the user exactly which env var to add
+      const envVar  = p.api_key_env || `${p.name.toUpperCase()}_API_KEY`;
+      const tipMsg  = `Add ${envVar} to your .env file, then restart the router.\\n\\nExample:\\n${envVar}=sk-...`;
+      btnHtml = `<button class="configure-btn" onclick="alert('${tipMsg.replace(/'/g,"\\'")}')">⚿ ADD API KEY</button>`;
+    } else {
+      btnHtml = `<button class="activate-btn" onclick="activateProvider('${side}','${p.name}')">SWITCH TO ${p.name.toUpperCase()}</button>`;
+    }
+
+    return `<div class="provider-card ${side}-card ${isActive ? 'active-card' : ''} ${noKey ? 'no-key-card' : ''}" id="pc-${side}-${p.name}">
       <div class="pc-top">
         <div class="pc-icon">${icon}</div>
-        <div class="pc-badges">
-          ${isActive   ? '<span class="pc-badge active">● ACTIVE</span>' : ''}
-          ${isDisabled ? '<span class="pc-badge disabled">DISABLED</span>' : ''}
-          <span class="pc-badge type">${p.type}</span>
-        </div>
+        <div class="pc-badges">${badgeHtml}</div>
       </div>
       <div class="pc-name">${p.name}</div>
       <div class="pc-url">${p.base_url}</div>
       <div class="pc-model">Default: <b style="color:var(--text-2)">${p.default_model || '—'}</b></div>
       ${models.length ? `<div class="model-chips">${models.map(m => `<span class="model-chip">${m}</span>`).join('')}${extraMods > 0 ? `<span class="model-chip">+${extraMods}</span>` : ''}</div>` : ''}
-      <button class="activate-btn ${isActive ? 'is-active' : ''}"
-              onclick="activateProvider('${side}','${p.name}')" ${isActive ? 'disabled' : ''}>
-        ${isActive ? '✓ CURRENTLY ACTIVE' : `SWITCH TO ${p.name.toUpperCase()}`}
-      </button>
+      ${btnHtml}
     </div>`;
   }).join('');
 }
@@ -1012,9 +1625,517 @@ async function fetchAll() {
   } catch(e) { console.warn(e); }
 }
 
+/* ── Preferences ──────────────────────────────────────────────────────────── */
+let _allModels    = [];   // populated by loadPreferences()
+let _providerData = null; // full /v1/providers response; used for active-provider filtering
+let _minTiers     = {};   // legacy per-bucket min-tier: {reasoning:1, critical:2, ...}
+let _allowedTiers = {};   // per-bucket allowed-tier sets: {reasoning:[1,2], simple:[0,1]}
+let _configTiers  = {};   // read-only config.yaml defaults: {simple:0, coding:0, ...}
+
+async function loadPreferences() {
+  try {
+    // Fetch preferences + live provider list in parallel
+    const [prefResp, provResp] = await Promise.all([
+      fetch(`${BASE}/v1/preferences`),
+      fetch(`${BASE}/v1/providers`),
+    ]);
+    const d = await prefResp.json();
+
+    // PRIMARY: build _allModels from /v1/providers (live maps, post-discovery).
+    // has_key = true → provider API key set, models fetched from live endpoint.
+    _allModels = [];
+    let pd = null;
+    if (provResp.ok) {
+      pd = await provResp.json();
+      for (const side of ['cloud', 'local']) {
+        for (const p of (pd[side]?.providers || [])) {
+          for (const m of (p.models || [])) {
+            _allModels.push({
+              model: m,
+              provider: p.name,
+              side,
+              type: p.type,
+              has_key: p.has_key,
+            });
+          }
+        }
+      }
+    }
+
+    // Persist for active-provider filter in TIER_DEFS
+    _providerData = pd;
+
+    // FALLBACK: /v1/providers failed or empty. Convert available_models (plain strings)
+    // to proper {model, side, provider} objects so tier filters can split them correctly.
+    if (_allModels.length === 0 && d.available_models?.length) {
+      const CLOUD_PFXS = ['gpt-', 'o1-', 'o3-', 'o4-', 'claude-', 'gemini', 'grok-'];
+      _allModels = d.available_models.map(m => {
+        if (typeof m === 'object' && m.side) return m;
+        const id = typeof m === 'string' ? m : String(m);
+        let side = 'local', provider = 'unknown';
+        if (id.endsWith(':free'))                                              { side = 'cloud'; provider = 'openrouter_free'; }
+        else if (id.includes('/') || CLOUD_PFXS.some(p => id.startsWith(p))) { side = 'cloud'; provider = 'openrouter_paid'; }
+        return { model: id, provider, side, type: 'openai', has_key: false };
+      });
+    }
+
+    // Capture routing policy state and config defaults for the Routing Policy panel
+    _minTiers     = d.min_tiers     || {};
+    _allowedTiers = d.allowed_tiers || {};   // {bucket: [0,1,2]} — multi-select state
+    _configTiers  = d.config_tiers  || {};
+
+    renderPrefGrid(d.preferences || {});
+    renderRoutingPolicy();
+
+    // Update discovery badge (only when providers data was available)
+    if (pd) {
+      const disc = pd.discovery || {};
+      const badge = document.getElementById('discovery-badge');
+      if (badge && disc.last_run) {
+        const t = new Date(disc.last_run);
+        const hhmm = t.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        const counts = Object.entries(disc.counts || {})
+          .map(([p, n]) => `${p}: ${n}`).join(' · ');
+        badge.textContent = `Models synced at ${hhmm}  |  ${counts}`;
+      } else if (badge && !disc.last_run) {
+        badge.textContent = 'Models loaded from config — click ⟳ SYNC MODELS to discover live';
+      }
+    }
+  } catch(e) {
+    document.getElementById('pref-grid').innerHTML =
+      `<div class="empty"><div class="empty-icon">⚠</div>Router offline — run: make dev</div>`;
+  }
+}
+
+async function refreshModels() {
+  const badge = document.getElementById('discovery-badge');
+  if (badge) badge.textContent = '⟳ Discovering models…';
+  try {
+    const r = await fetch(`${BASE}/v1/providers/refresh`, { method: 'POST' });
+    const d = await r.json();
+    const counts = Object.entries(d.counts || {})
+      .map(([p, n]) => `${p}: ${n}`).join(' · ');
+    const t = new Date(d.discovered_at);
+    const hhmm = t.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    if (badge) badge.textContent = `Models refreshed at ${hhmm}  |  ${counts}`;
+    // Reload prefs to pick up new models in dropdowns
+    await loadPreferences();
+  } catch(e) {
+    if (badge) badge.textContent = '⚠ Refresh failed — router offline?';
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Three-tier preferences — Local · Free Cloud · Paid Cloud
+   Each card shows all 5 capability buckets, dropdowns filtered to that tier.
+───────────────────────────────────────────────────────────────────────── */
+const TIER_DEFS = [
+  {
+    id:     'local',
+    label:  'Local',
+    tier:   'TIER 0 · LOCAL',
+    color:  '#E1F64A',
+    desc:   'Private · Zero cost · Offline-capable',
+    // Filter to active local provider only so you don't see every Ollama model
+    // from every local provider — only the one currently in use.
+    filter: m => m.side === 'local' && (
+      !_providerData?.local?.active || m.provider === _providerData.local.active
+    ),
+  },
+  {
+    id:     'free',
+    label:  'Free Cloud',
+    tier:   'TIER 1 · FREE CLOUD',
+    color:  '#13BD7C',
+    desc:   'Rate-limited · $0 · OpenRouter',
+    filter: m => m.side === 'cloud' && (m.provider === 'openrouter_free' || m.model?.endsWith(':free')),
+  },
+  {
+    id:     'paid',
+    label:  'Paid Cloud',
+    tier:   'TIER 2 · PAID',
+    color:  '#FF8B42',
+    desc:   'Highest capability · Costs tokens',
+    filter: m => m.side === 'cloud' && m.provider !== 'openrouter_free' && !m.model?.endsWith(':free'),
+  },
+];
+
+const BUCKET_DEFS = [
+  { id: 'simple',    label: 'Simple',    color: '#8B8BFF' },
+  { id: 'coding',    label: 'Coding',    color: '#E1F64A' },
+  { id: 'reasoning', label: 'Reasoning', color: '#42C4FF' },
+  { id: 'creative',  label: 'Creative',  color: '#FF8B42' },
+  { id: 'critical',  label: 'Critical',  color: '#C22C0A' },
+];
+
+/* ── Routing Policy matrix ────────────────────────────────────────────────── */
+const TIER_LABELS = [
+  { t: 0, label: 'Local',      color: '#E1F64A' },
+  { t: 1, label: 'Free Cloud', color: '#13BD7C' },
+  { t: 2, label: 'Paid Cloud', color: '#FF8B42' },
+];
+
+function renderRoutingPolicy() {
+  const grid = document.getElementById('routing-policy-grid');
+  if (!grid) return;
+
+  // Remove previous bucket rows (keep the 4 header cells = first 4 children)
+  Array.from(grid.children).slice(4).forEach(c => c.remove());
+
+  BUCKET_DEFS.forEach(bucket => {
+    // Effective allowed set for this bucket. Default = all three tiers.
+    const allowed = _allowedTiers[bucket.id] || [0, 1, 2];
+
+    // Bucket label cell
+    const label = document.createElement('div');
+    label.className = 'rp-bucket-label';
+    label.innerHTML = `<span class="rp-dot" style="background:${bucket.color}"></span>${bucket.label}`;
+    grid.appendChild(label);
+
+    // 3 independent tier toggle cells (checkbox behaviour)
+    TIER_LABELS.forEach(({ t, label: tLabel }) => {
+      const isOn = allowed.includes(t);
+      const isLast = isOn && allowed.length === 1;  // last allowed — can't deselect
+
+      const btn = document.createElement('div');
+      btn.className = `rp-tier-btn${isOn ? ` rp-selected-${t}` : ''}`;
+      btn.title = isLast
+        ? `${tLabel} is the only allowed tier for ${bucket.label} — add another tier before removing this one`
+        : isOn
+        ? `Click to block ${tLabel} for ${bucket.label} prompts`
+        : `Click to allow ${tLabel} for ${bucket.label} prompts`;
+
+      btn.innerHTML = isOn
+        ? `<span class="rp-check">✓</span>${tLabel}`
+        : `<span style="opacity:.3">✗</span>${tLabel}`;
+
+      if (isLast) {
+        btn.style.opacity = '0.6';
+        btn.style.cursor  = 'not-allowed';
+      } else {
+        btn.onclick = () => toggleTierAllowed(bucket.id, t, allowed);
+      }
+
+      grid.appendChild(btn);
+    });
+  });
+}
+
+async function toggleTierAllowed(bucketId, tier, currentAllowed) {
+  // Toggle: add if missing, remove if present (never allow empty set)
+  let next;
+  if (currentAllowed.includes(tier)) {
+    next = currentAllowed.filter(t => t !== tier);
+    if (next.length === 0) return;  // UI guard: last tier, do nothing
+  } else {
+    next = [...currentAllowed, tier].sort();
+  }
+
+  // Optimistically update local state and re-render immediately
+  _allowedTiers[bucketId] = next;
+  renderRoutingPolicy();
+
+  try {
+    const r = await fetch(`${BASE}/v1/preferences`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ allowed_tiers: { [bucketId]: next } }),
+    });
+    if (!r.ok) {
+      // Roll back on error
+      _allowedTiers[bucketId] = currentAllowed;
+      renderRoutingPolicy();
+      const err = await r.json().catch(() => ({}));
+      alert(`Could not update routing policy: ${err.detail || r.statusText}`);
+    }
+  } catch(e) {
+    _allowedTiers[bucketId] = currentAllowed;
+    renderRoutingPolicy();
+    alert(`Could not update routing policy: ${e.message}`);
+  }
+}
+
+function renderPrefGrid(prefs) {
+  document.getElementById('pref-grid').innerHTML = TIER_DEFS.map(tier => {
+    // Models that belong to this tier
+    const tierModels = _allModels.filter(tier.filter);
+    const tierModelSet = new Set(tierModels.map(m => m.model));
+
+    // Group this tier's models by provider for <optgroup>
+    const byProvider = {};
+    tierModels.forEach(m => {
+      if (!byProvider[m.provider]) byProvider[m.provider] = { models: [], has_key: m.has_key };
+      byProvider[m.provider].models.push(m.model);
+    });
+
+    // One row per capability bucket
+    const bucketRows = BUCKET_DEFS.map(bucket => {
+      const pref      = prefs[bucket.id] || {};
+      const pinnedHere = !pref.auto && pref.model && tierModelSet.has(pref.model);
+      const pinnedElse = !pref.auto && pref.model && !tierModelSet.has(pref.model);
+
+      const optgroups = Object.entries(byProvider).map(([pname, info]) => {
+        const tag = info.has_key ? '🔑' : '○';
+        return `<optgroup label="${tag} ${pname}">${
+          info.models.map(m =>
+            `<option value="${m}" ${m === pref.model && pinnedHere ? 'selected' : ''}>${m}</option>`
+          ).join('')
+        }</optgroup>`;
+      }).join('');
+
+      const noModels = tierModels.length === 0;
+
+      return `<div class="ptier-row">
+        <div class="ptier-row-label">
+          <span class="ptier-dot" style="background:${bucket.color}"></span>
+          <span class="ptier-row-name">${bucket.label}</span>
+          ${pinnedHere ? `<span class="ptier-pinned-tag">📌 ${pref.model.split('/').pop()}</span>` : ''}
+          ${pinnedElse ? `<span class="ptier-other-tag">→ other tier</span>` : ''}
+        </div>
+        <select class="pref-select" id="sel-${tier.id}-${bucket.id}">
+          <option value="">${noModels ? '— sync models first —' : '— auto (best rated) —'}</option>
+          ${optgroups}
+        </select>
+      </div>`;
+    }).join('');
+
+    const hasPins = BUCKET_DEFS.some(b => {
+      const p = prefs[b.id] || {};
+      return !p.auto && p.model && tierModelSet.has(p.model);
+    });
+
+    return `<div class="pref-card" id="pcard-${tier.id}" style="${hasPins ? `border-color:${tier.color}40;background:${tier.color}05;` : ''}">
+      <div class="pref-card-head" style="border-left:3px solid ${tier.color};">
+        <div style="width:10px;height:10px;border-radius:50%;background:${tier.color};flex-shrink:0;"></div>
+        <div class="pref-bucket-name">${tier.label}</div>
+        <span class="pref-tier-tag" style="background:${tier.color}15;color:${tier.color};border:1px solid ${tier.color}30;">${tier.tier}</span>
+      </div>
+      <div style="padding:5px 14px 6px;font-size:10px;color:var(--text-3);font-family:monospace;letter-spacing:.2px;">${tier.desc}</div>
+      <div class="pref-body">
+        ${bucketRows}
+        <div class="pref-actions">
+          <button class="pref-save-btn" style="background:${tier.color}12;color:${tier.color};border-color:${tier.color}40;" onclick="saveTierPins('${tier.id}')">📌 Save</button>
+          <button class="pref-reset-btn" onclick="resetTierPins('${tier.id}')">✕ Clear</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function saveTierPins(tierId) {
+  const updates = {};
+  BUCKET_DEFS.forEach(b => {
+    const sel = document.getElementById(`sel-${tierId}-${b.id}`);
+    if (sel) updates[b.id] = sel.value;   // "" = reset to auto
+  });
+  try {
+    const r = await fetch(`${BASE}/v1/preferences`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    const d = await r.json();
+    if (d.ok) await loadPreferences();
+    if (d.warnings?.length) alert('Note: ' + d.warnings.join('\n'));
+  } catch(e) { alert('Save failed: ' + e.message); }
+}
+
+async function resetTierPins(tierId) {
+  // Only clear buckets currently pinned to models from this tier
+  const tier = TIER_DEFS.find(t => t.id === tierId);
+  if (!tier) return;
+  const tierModelSet = new Set(_allModels.filter(tier.filter).map(m => m.model));
+
+  const updates = {};
+  BUCKET_DEFS.forEach(b => {
+    const sel = document.getElementById(`sel-${tierId}-${b.id}`);
+    // Clear if the dropdown has something selected that belongs to this tier
+    if (sel && sel.value && tierModelSet.has(sel.value)) {
+      updates[b.id] = '';
+    }
+  });
+
+  if (!Object.keys(updates).length) return;
+  try {
+    const r = await fetch(`${BASE}/v1/preferences`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    if ((await r.json()).ok) await loadPreferences();
+  } catch(e) { alert('Clear failed: ' + e.message); }
+}
+
+/* ── Ratings ──────────────────────────────────────────────────────────────── */
+const BUCKET_COLORS = {
+  simple:    '#8B8BFF',
+  coding:    '#E1F64A',
+  reasoning: '#42C4FF',
+  creative:  '#FF8B42',
+  critical:  '#C22C0A',
+};
+
+async function fetchRatings() {
+  const btn  = document.getElementById('fetch-btn');
+  const icon = document.getElementById('fetch-icon');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  icon.textContent = '⟳';
+  document.getElementById('ratings-meta').textContent = 'Fetching from HF Open LLM Leaderboard…';
+
+  try {
+    const r = await fetch(`${BASE}/v1/ratings/refresh`, { method: 'POST' });
+    const d = await r.json();
+    document.getElementById('ratings-meta').innerHTML =
+      `Last updated: <b>${new Date(d.updated_at).toLocaleString()}</b> &nbsp;·&nbsp; ` +
+      `<b>${d.model_count}</b> models &nbsp;·&nbsp; ` +
+      `HF: ${d.sources?.hf_leaderboard ?? 0} &nbsp;+&nbsp; Baseline: ${d.sources?.baseline ?? 0}` +
+      (d.errors?.length ? ` &nbsp;<span style="color:var(--red)">(${d.errors.length} error${d.errors.length>1?'s':''})</span>` : '');
+    // re-render from the new data
+    await loadRatingsDisplay();
+  } catch(e) {
+    document.getElementById('ratings-meta').innerHTML =
+      `<span style="color:var(--red)">Fetch failed — is the router running? (${e.message})</span>`;
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    icon.textContent = '⬇';
+  }
+}
+
+async function loadRatingsDisplay() {
+  try {
+    const r = await fetch(`${BASE}/v1/ratings`);
+    const d = await r.json();
+    if (d.status === 'not_fetched') return;
+
+    const models = Object.values(d.models);
+    renderBucketStrip(models);
+    renderRatingsTable(models);
+
+    const meta = document.getElementById('ratings-meta');
+    if (!meta.textContent.includes('Last updated')) {
+      meta.innerHTML = `<b>${d.model_count}</b> models rated &nbsp;·&nbsp; click Fetch Ratings to refresh`;
+    }
+  } catch {}
+}
+
+/**
+ * Derive the routing tier label from a model ID.
+ * Uses the `side` field from the baseline when available (passed as arg),
+ * then falls back to pattern-based heuristics.
+ */
+function _modelTier(modelId, side) {
+  if (!modelId) return '—';
+  // Explicit side from ratings data
+  if (side === 'local') return 'Tier 0 · Local';
+  if (side === 'cloud') {
+    if (modelId.endsWith(':free')) return 'Tier 1 · Free Cloud';
+    return 'Tier 2 · Paid Cloud';
+  }
+  // Heuristic fallback (no side field — older ratings data)
+  if (modelId.endsWith(':free')) return 'Tier 1 · Free Cloud';
+  // Has a slash → provider/model format → always cloud-hosted
+  if (modelId.includes('/')) return 'Tier 2 · Paid Cloud';
+  // No slash → check known cloud model name prefixes
+  const CLOUD_PREFIXES = ['gpt-', 'o1', 'o3', 'o4', 'claude-', 'gemini', 'grok-'];
+  if (CLOUD_PREFIXES.some(p => modelId.startsWith(p))) return 'Tier 2 · Paid Cloud';
+  return 'Tier 0 · Local';
+}
+
+function renderBucketStrip(models) {
+  const buckets = ['simple','coding','reasoning','creative','critical'];
+  buckets.forEach(b => {
+    // find best model for this bucket among all rated models
+    let best = null, bestScore = -1;
+    models.forEach(m => {
+      if ((m[b] || 0) > bestScore) { bestScore = m[b]; best = m; }
+    });
+    const nameEl  = document.getElementById(`best-${b}`);
+    const scoreEl = document.getElementById(`best-${b}-score`);
+    const tierEl  = document.getElementById(`tier-${b}`);
+    if (best) {
+      const short = best.model.split('/').pop().replace(/:free$/, '').slice(0, 22);
+      nameEl.textContent  = short + (best.model.includes(':free') ? ' :free' : '');
+      scoreEl.textContent = Math.round(bestScore * 100) + '%';
+      if (tierEl) tierEl.textContent = _modelTier(best.model, best.side);
+    } else {
+      nameEl.textContent  = '—';
+      scoreEl.textContent = '—';
+      if (tierEl) tierEl.textContent = '—';
+    }
+  });
+}
+
+function renderRatingsTable(models) {
+  if (!models.length) return;
+
+  // Sort by overall desc
+  const sorted = [...models].sort((a, b) => (b.overall || 0) - (a.overall || 0));
+
+  const buckets = ['simple','coding','reasoning','creative','critical'];
+  const BEST_COLORS = {
+    simple:'#8B8BFF', coding:'#E1F64A', reasoning:'#42C4FF', creative:'#FF8B42', critical:'#C22C0A',
+  };
+
+  const tableHtml = `
+    <table class="ratings-table">
+      <thead>
+        <tr>
+          <th style="min-width:180px;">Model</th>
+          <th>Tier</th>
+          <th>Overall</th>
+          <th style="min-width:175px;">Bucket Scores</th>
+          <th>Best Bucket</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${sorted.slice(0, 60).map(m => {
+          const overall = Math.round((m.overall || 0) * 100);
+          const short   = m.model.length > 36 ? '…' + m.model.slice(-35) : m.model;
+          const bestCol = BEST_COLORS[m.best_bucket] || '#A8A8A4';
+          const srcs    = (m.sources || []).join(', ');
+
+          const bars = buckets.map(b => {
+            const pct = Math.round((m[b] || 0) * 100);
+            const col = BEST_COLORS[b];
+            const h   = Math.round((m[b] || 0) * 32);   // max 32px height
+            return `<div class="mini-score-bar">
+              <div class="msb-track"><div class="msb-fill" style="height:${h}px;background:${col}40;border-top:1.5px solid ${col};"></div></div>
+              <div class="msb-label">${b[0].toUpperCase()}</div>
+              <div class="msb-val">${pct}</div>
+            </div>`;
+          }).join('');
+
+          const tier = _modelTier(m.model, m.side);
+          const tierColor = tier.includes('Local') ? 'var(--lime)' : tier.includes('Free') ? 'var(--green)' : '#FF8B42';
+          return `<tr>
+            <td><span class="model-name-cell" title="${m.model}">${short}</span></td>
+            <td><span style="font-size:9px;padding:2px 6px;border-radius:3px;background:${tierColor}18;color:${tierColor};white-space:nowrap">${tier}</span></td>
+            <td style="font-family:monospace;font-size:12px;font-weight:700;color:var(--text-2)">${overall}%</td>
+            <td><div class="mini-scores">${bars}</div></td>
+            <td>
+              <span class="best-badge" style="background:${bestCol}15;color:${bestCol};border:1px solid ${bestCol}40;">
+                ${m.best_bucket || '—'}
+              </span>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    ${sorted.length > 60 ? `<div style="text-align:center;padding:12px;font-size:11px;color:var(--text-3)">Showing top 60 of ${sorted.length} models</div>` : ''}
+  `;
+
+  document.getElementById('ratings-content').innerHTML = tableHtml;
+}
+
+/* ── Nav (updated to load ratings on tab switch) ──────────────────────────── */
+
 /* ── Boot ─────────────────────────────────────────────────────────────────── */
 initCharts();
 fetchAll();
+fetchProviders();       // populate Overview tier-status cards + active provider names
+loadRatingsDisplay();   // pre-load if ratings already fetched
 setInterval(fetchAll, 5000);
 </script>
 </body>

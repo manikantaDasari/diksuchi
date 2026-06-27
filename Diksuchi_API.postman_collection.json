@@ -1,0 +1,4737 @@
+{
+  "info": {
+    "name": "Diksuchi AI Router \u2014 v3",
+    "description": "Complete API test collection for Diksuchi \u2014 Local-First AI Router.\n\nBase URL: {{baseUrl}}\n  Dev mode (make dev):   http://localhost:8081\n  Docker mode (make up): http://localhost:8080\n\nFolder order = recommended testing sequence:\n  1. Health & Connectivity\n  2. Routing Preview (dry-run)\n  3. Chat Completions\n  4. Provider Management\n  5. Preferences (model pins + allowed-tiers)\n  6. Ratings\n  7. Stats & Logs\n  8. Centroid Classifier (all 5 buckets)\n  9. Error Cases",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "diksuchi-ai-router-v3"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081",
+      "type": "string",
+      "description": "8081 for 'make dev', 8080 for 'make up' (Docker)"
+    }
+  ],
+  "item": [
+    {
+      "name": "\ud83d\udfe2 1 \u2014 Health & Connectivity",
+      "description": "Basic liveness checks. All should return 200 when the server is running.",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('status=ok', () => pm.expect(pm.response.json().status).to.equal('ok'));",
+                  "pm.test('Has active_local + active_cloud', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property('active_local');",
+                  "    pm.expect(b).to.have.property('active_cloud');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Root \u2014 endpoint index",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has endpoints map', () => pm.expect(pm.response.json()).to.have.property('endpoints'));",
+                  "pm.test('Has routing.buckets', () => pm.expect(pm.response.json().routing.buckets).to.include('reasoning'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Dashboard HTML",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns HTML', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('text/html'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Config \u2014 active YAML",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/config",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "config"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has providers + routing', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property('providers');",
+                  "    pm.expect(b).to.have.property('routing');",
+                  "});",
+                  "pm.test('API keys stripped', () => pm.expect(pm.response.text()).to.not.include('api_key_env'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udd00 2 \u2014 Routing Preview (dry-run)",
+      "description": "POST /v1/route/preview \u2014 routing decisions without hitting any LLM.\nResponse: backend, provider, rule_name, reason, token_count, model_requested, prompt_preview, bucket, bucket_confidence",
+      "item": [
+        {
+          "name": "Preview \u2014 Simple prompt (\u2192 local)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What is 2+2?\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has required fields', () => {",
+                  "    ['backend','provider','rule_name','reason','token_count','prompt_preview'].forEach(f =>",
+                  "        pm.expect(pm.response.json(), 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('Routes to local', () => pm.expect(pm.response.json().backend).to.equal('local'));",
+                  "pm.test('Has bucket+confidence when centroid fired', () => {",
+                  "    const b = pm.response.json();",
+                  "    if (b.rule_name && b.rule_name.startsWith('centroid:')) {",
+                  "        pm.expect(b.bucket).to.be.a('string').and.not.empty;",
+                  "        pm.expect(b.bucket_confidence).to.be.a('number');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Preview \u2014 Complex reasoning (\u2192 cloud)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Step by step, prove that there are infinitely many prime numbers using contradiction, explaining why each step is logically necessary.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Routes to cloud', () => pm.expect(pm.response.json().backend).to.equal('cloud'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Preview \u2014 Force local via X-Route-To header",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Route-To",
+                "value": "local"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Analyze deeply and do a comprehensive architecture review.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Header override \u2192 local', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.backend).to.equal('local');",
+                  "    pm.expect(b.rule_name).to.include('header');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Preview \u2014 Force cloud via X-Route-To header",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Route-To",
+                "value": "cloud"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What is 1+1?\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Header override \u2192 cloud', () => pm.expect(pm.response.json().backend).to.equal('cloud'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Preview \u2014 GPT model hint (\u2192 cloud)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"gpt-4o\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello!\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('GPT model \u2192 cloud', () => pm.expect(pm.response.json().backend).to.equal('cloud'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Preview \u2014 Llama model hint (\u2192 local)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"llama3.2\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Tell me a joke.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Llama model \u2192 local', () => pm.expect(pm.response.json().backend).to.equal('local'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Preview \u2014 Stack trace (\u2192 cloud)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Help me fix:\\\\n\\\\nTraceback (most recent call last):\\\\n  File app.py line 42\\\\nTypeError: unsupported operand type\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Stack trace \u2192 cloud', () => pm.expect(pm.response.json().backend).to.equal('cloud'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Preview \u2014 Git diff (\u2192 local)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"diff --git a/main.py b/main.py\\\\n--- a/main.py\\\\n+++ b/main.py\\\\n@@ -1,3 +1,4 @@\\\\n+import os\\\\n import sys\\\\n\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Git diff \u2192 local', () => pm.expect(pm.response.json().backend).to.equal('local'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Preview \u2014 provider field + bucket_confidence",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a Python function to reverse a linked list with full type hints.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has non-empty provider field', () => {",
+                  "    pm.expect(pm.response.json().provider).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('bucket is valid name if centroid fired', () => {",
+                  "    const b = pm.response.json();",
+                  "    if (b.bucket) {",
+                  "        pm.expect(b.bucket).to.be.oneOf(['simple','coding','reasoning','creative','critical']);",
+                  "        pm.expect(b.bucket_confidence).to.be.a('number').and.within(0,1);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udcac 3 \u2014 Chat Completions",
+      "description": "35 test cases covering every routing path:\n\u2022 Routing rules: headers, model hints, keywords, regex patterns, token count\n\u2022 Parameters: temperature, max_tokens, system messages, multi-turn\n\u2022 x_router assertions: backend, rule, model_used, bucket, fallback\n\u2022 Response envelope: id, object, created, choices, usage, finish_reason\n\u2022 Edge cases: unicode, JSON output, empty messages, nested content",
+      "item": [
+        {
+          "name": "\u2705 Auto \u2014 Simple greeting",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Say hello in one sentence.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Short, simple prompt \u2192 'one sentence' keyword triggers simple_keywords_local \u2192 local."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes local (simple greeting)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('local');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2705 System message \u2014 persona + user turn",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a pirate. Respond only in pirate dialect.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"What is Python?\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "System message tests correct extraction before sending to local/cloud."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Has content', () => pm.expect(b.choices[0].message.content.length).to.be.greaterThan(5));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2705 Multi-turn \u2014 context retention",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"My favourite language is Python.\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Great choice! Python is versatile and readable.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"What language did I just mention?\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "3-turn thread \u2014 verifies the router passes full history upstream."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Mentions Python in reply', () => {",
+                  "    pm.expect(b.choices[0].message.content.toLowerCase()).to.include('python');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2705 Temperature 0 \u2014 deterministic output",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What is 2 + 2? Reply with only the number.\"\n    }\n  ],\n  \"temperature\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "temperature=0 \u2192 most deterministic answer. Router must pass param through."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Answer contains 4', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.match(/4/);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2705 Temperature 1.0 \u2014 creative output",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a one-sentence story about a robot.\"\n    }\n  ],\n  \"temperature\": 1.0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "temperature=1.0 \u2014 ensures parameter is forwarded and response still returns."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Content non-empty', () => pm.expect(b.choices[0].message.content.length).to.be.greaterThan(10));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2705 max_tokens=20 \u2014 short reply enforced",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Explain quantum computing in detail.\"\n    }\n  ],\n  \"max_tokens\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "max_tokens=20 caps the completion. Verifies the param reaches the provider."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Usage total_tokens near cap', () => {",
+                  "    const usage = b.usage;",
+                  "    if (usage) pm.expect(usage.completion_tokens).to.be.at.most(30);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83c\udfe0 X-Route-To: local \u2014 header override (complex prompt)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Route-To",
+                "value": "local"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Design a full microservices architecture for a fintech platform with CQRS, event sourcing, and Kubernetes.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Complex prompt that would normally go cloud \u2014 header forces local anyway."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('backend=local via header', () => pm.expect(b.x_router.backend).to.equal('local'));",
+                  "pm.test('rule contains header', () => pm.expect(b.x_router.rule).to.include('header'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2601\ufe0f X-Route-To: cloud \u2014 header override (trivial prompt)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Route-To",
+                "value": "cloud"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What is 1+1?\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Trivial prompt that would normally stay local \u2014 header forces cloud."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('backend=cloud via header', () => pm.expect(b.x_router.backend).to.equal('cloud'));",
+                  "pm.test('rule contains header', () => pm.expect(b.x_router.rule).to.include('header'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2601\ufe0f Keyword: 'architecture' \u2192 cloud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Explain the architecture of a distributed database.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "'architecture' is in complexity_keywords_cloud \u2192 cloud even without header."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to cloud (architecture keyword)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('cloud');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2601\ufe0f Keyword: 'security audit' \u2192 cloud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Do a comprehensive security audit of this login function: def login(user, pw): return db.check(user, pw)\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "'security audit' and 'comprehensive' both fire complexity_keywords_cloud."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to cloud (security audit keyword)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('cloud');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83c\udfe0 Keyword: 'what is' \u2192 local",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"what is a REST API?\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "'what is' fires simple_keywords_local \u2192 local."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to local (what is keyword)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('local');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83c\udfe0 Keyword: 'translate' \u2192 local",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"translate 'Good morning' to Japanese\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "'translate' in simple_keywords_local \u2192 local."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to local (translate keyword)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('local');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2601\ufe0f Regex: stack trace \u2192 cloud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Help me fix this error:\\n\\nTraceback (most recent call last):\\n  File \\\"app.py\\\", line 42, in process\\n    result = db.query(sql)\\nAttributeError: 'NoneType' object has no attribute 'query'\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Traceback pattern triggers stack_trace_cloud regex rule \u2192 cloud."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to cloud (stack trace regex)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('cloud');",
+                  "});",
+                  "pm.test('Rule is stack_trace_cloud', () => {",
+                  "    pm.expect(b.x_router.rule).to.equal('stack_trace_cloud');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83c\udfe0 Regex: git diff \u2192 local",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Review this change:\\n\\ndiff --git a/main.py b/main.py\\n--- a/main.py\\n+++ b/main.py\\n@@ -10,6 +10,7 @@\\n+    validate_input(data)\\n     return process(data)\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "'diff --git' pattern triggers git_diff_local regex rule \u2192 local."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to local (git diff regex)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('local');",
+                  "});",
+                  "pm.test('Rule is git_diff_local', () => {",
+                  "    pm.expect(b.x_router.rule).to.equal('git_diff_local');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83c\udfe0 Token rule: short prompt (\u2264300 tokens) \u2192 local",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hi!\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Single-word prompt \u2192 well under 300 tokens \u2192 short_prompt_local rule fires."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to local (short prompt)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('local');",
+                  "});",
+                  "pm.test('token count \u2264 300', () => {",
+                  "    pm.expect(b.x_router.tokens).to.be.at.most(300);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2601\ufe0f Token rule: long prompt (\u2265800 tokens) \u2192 cloud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights. Analyze this text thoroughly and provide detailed insights.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Repeated text padded to 800+ tokens \u2192 long_prompt_cloud rule fires."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to cloud (long prompt)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('cloud');",
+                  "});",
+                  "pm.test('token count \u2265 800', () => {",
+                  "    pm.expect(b.x_router.tokens).to.be.at.least(800);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2601\ufe0f Model hint: gpt-4o-mini \u2192 cloud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"gpt-4o-mini\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What is 2+2?\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "model=gpt-4o-mini \u2192 model_hint_cloud rule \u2192 cloud, ignores prompt simplicity."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to cloud (gpt model hint)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('cloud');",
+                  "});",
+                  "pm.test('rule=model_hint_cloud', () => pm.expect(b.x_router.rule).to.equal('model_hint_cloud'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83c\udfe0 Model hint: llama3.2 \u2192 local",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"llama3.2\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write me a 2000-word essay on AI ethics.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "model=llama3.2 \u2192 model_hint_local rule \u2192 local, ignores prompt complexity."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to local (llama model hint)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('local');",
+                  "});",
+                  "pm.test('rule=model_hint_local', () => pm.expect(b.x_router.rule).to.equal('model_hint_local'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2601\ufe0f Model hint: deepseek/deepseek-r1:free \u2192 cloud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"deepseek/deepseek-r1:free\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What is 1+1?\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "deepseek/ prefix \u2192 model_hint_cloud \u2192 cloud via openrouter_free."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to cloud (deepseek/ prefix)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('cloud');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83e\udde0 x_router: bucket + bucket_confidence in response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Implement a thread-safe LRU cache in Python with full type hints and docstrings.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Coding prompt \u2192 centroid:coding fires \u2192 x_router.bucket='coding', bucket_confidence \u2208 (0,1)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('x_router has bucket when centroid fired', () => {",
+                  "    const xr = b.x_router;",
+                  "    if (xr.rule && xr.rule.startsWith('centroid:')) {",
+                  "        pm.expect(xr.bucket).to.be.oneOf(['simple','coding','reasoning','creative','critical']);",
+                  "        pm.expect(xr.bucket_confidence).to.be.a('number').and.within(0,1);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83d\udd01 x_router: fallback=false on first-try success",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Define recursion in one sentence.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Simple prompt \u2192 local succeeds first try \u2192 x_router.fallback must be false."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('fallback=false on first-try success', () => {",
+                  "    pm.expect(b.x_router.fallback).to.equal(false);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83c\udf0f Unicode + emoji in prompt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What does this mean? \\u4f60\\u597d \\ud83c\\udf1f \\u0645\\u0631\\u062d\\u0628\\u0627 \\u3053\\u3093\\u306b\\u3061\\u306f\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Multi-script Unicode + emoji \u2014 verifies no encoding issues in the proxy layer."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Response is non-empty string', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83d\udce6 Prompt requesting JSON output",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You always respond with valid JSON only. No prose, no markdown.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Give me a JSON object with fields: name (string), age (number), active (boolean).\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "JSON-output prompt \u2014 tests that the proxy passes system instruction correctly."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Response looks like JSON', () => {",
+                  "    const content = b.choices[0].message.content.trim();",
+                  "    try { JSON.parse(content); pm.expect(true).to.be.true; }",
+                  "    catch(e) { pm.expect.fail('Response is not valid JSON: ' + content.slice(0,100)); }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83d\udcbb Code snippet \u2014 explain function",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What does this function do?\\n\\n```python\\ndef fib(n):\\n    if n < 2: return n\\n    return fib(n-1) + fib(n-2)\\n```\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "'what does' keyword \u2192 local. Tests code block passthrough in message body."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to local (what does keyword)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('local');",
+                  "});",
+                  "pm.test('Response mentions fibonacci or recursion', () => {",
+                  "    const c = b.choices[0].message.content.toLowerCase();",
+                  "    pm.expect(c.match(/fib|recur|sequence/)).to.not.be.null;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2601\ufe0f Keyword: 'refactor this' \u2192 cloud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Please refactor this module to use async/await throughout and add proper error handling.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "'refactor this' is in complexity_keywords_cloud \u2192 cloud."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to cloud (refactor this keyword)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('cloud');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83c\udfe0 Keyword: 'add type hints' \u2192 local",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"add type hints to this function:\\ndef add(a, b):\\n    return a + b\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "'add type hints' fires simple_keywords_local \u2192 local."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to local (add type hints keyword)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('local');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2601\ufe0f Regex: credential pattern \u2192 cloud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"I have this in my config: api_key = 'sk-proj-aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890abcdef'. Is this format correct?\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "api_key = 'sk-...' matches credentials_in_prompt_cloud regex \u2192 cloud (never cache locally)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to cloud (credentials regex)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('cloud');",
+                  "});",
+                  "pm.test('Rule is credentials_in_prompt_cloud', () => {",
+                  "    pm.expect(b.x_router.rule).to.equal('credentials_in_prompt_cloud');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83d\udcca Usage object \u2014 prompt + completion + total tokens",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Say exactly: hello world\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Verifies usage.total_tokens = prompt_tokens + completion_tokens (Ollama + cloud both return this)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Has usage object with token counts', () => {",
+                  "    const u = b.usage;",
+                  "    pm.expect(u).to.be.an('object');",
+                  "    pm.expect(u.prompt_tokens).to.be.a('number').and.greaterThan(0);",
+                  "    pm.expect(u.completion_tokens).to.be.a('number').and.greaterThan(0);",
+                  "    pm.expect(u.total_tokens).to.equal(u.prompt_tokens + u.completion_tokens);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83c\udfc1 finish_reason=stop on normal completion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What is the speed of light?\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Normal completion \u2192 finish_reason must be 'stop', not null or 'length'."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('finish_reason=stop', () => {",
+                  "    pm.expect(b.choices[0].finish_reason).to.equal('stop');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83c\udd94 Response ID starts with chatcmpl-",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Ping.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Verifies the OpenAI envelope shape: id, object, created, choices[0].message."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('id starts with chatcmpl-', () => {",
+                  "    pm.expect(b.id).to.be.a('string').and.match(/^chatcmpl-/);",
+                  "});",
+                  "pm.test('object=chat.completion', () => pm.expect(b.object).to.equal('chat.completion'));",
+                  "pm.test('created is unix timestamp', () => pm.expect(b.created).to.be.a('number').and.greaterThan(0));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u2601\ufe0f Keyword: 'code review' \u2192 cloud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Please do a code review of this entire service before we ship it.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "'code review' fires complexity_keywords_cloud \u2192 cloud."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to cloud (code review keyword)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('cloud');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83c\udfe0 Specific model: gemma3:1b \u2192 local",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"gemma3:1b\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a haiku about debugging.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Explicit gemma3:1b \u2192 model_hint_local \u2192 model_used must be gemma3:1b exactly."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Routes to local (gemma3 model)', () => {",
+                  "    pm.expect(b.x_router.backend).to.equal('local');",
+                  "});",
+                  "pm.test('model_used=gemma3:1b', () => pm.expect(b.x_router.model_used).to.equal('gemma3:1b'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u274c Missing messages \u2192 4xx",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "No messages field \u2192 422 Unprocessable Entity from FastAPI."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 4xx for missing messages', () => pm.expect(pm.response.code).to.be.at.least(400));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\u274c Empty messages array \u2192 4xx or empty",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "[] messages \u2014 provider-dependent: some return 400, some return empty completion."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Handles empty messages array', () => {",
+                  "    pm.expect([200, 400, 422, 500]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "\ud83e\uddf1 Nested content \u2014 list-of-parts format (vision style)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"What is Python?\"\n        }\n      ]\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "content as array-of-parts (vision/multimodal format) \u2014 router must handle this for centroid classification."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has choices[0].message.content', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('Has x_router with required fields', () => {",
+                  "    const xr = b.x_router;",
+                  "    ['backend','provider','rule','model_used'].forEach(f =>",
+                  "        pm.expect(xr, 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('model_used is not \"auto\"', () => {",
+                  "    if (b.x_router.model_used) pm.expect(b.x_router.model_used).to.not.equal('auto');",
+                  "});",
+                  "pm.test('Handles list-content message', () => {",
+                  "    pm.expect(b.choices[0].message.content).to.be.a('string').and.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\u2699\ufe0f 4 \u2014 Provider Management",
+      "description": "GET /v1/providers response shape:\n  { local: {active, providers:[{name,type,base_url,default_model,models,model_count,enabled,active,side,has_key,api_key_env}]}, cloud: {...}, discovery: {last_run,next_run_in_h,counts} }",
+      "item": [
+        {
+          "name": "List All Providers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has local + cloud keys', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property('local');",
+                  "    pm.expect(b).to.have.property('cloud');",
+                  "});",
+                  "pm.test('Local has active + providers list', () => {",
+                  "    const l = pm.response.json().local;",
+                  "    pm.expect(l).to.have.property('active');",
+                  "    pm.expect(l.providers).to.be.an('array').that.is.not.empty;",
+                  "});",
+                  "pm.test('Providers have has_key + api_key_env + model_count', () => {",
+                  "    const b = pm.response.json();",
+                  "    [...b.local.providers, ...b.cloud.providers].forEach(p => {",
+                  "        pm.expect(p, p.name+' missing has_key').to.have.property('has_key');",
+                  "        pm.expect(p, p.name+' missing api_key_env').to.have.property('api_key_env');",
+                  "        pm.expect(p, p.name+' missing model_count').to.have.property('model_count');",
+                  "    });",
+                  "});",
+                  "pm.test('Local providers have has_key=true', () => {",
+                  "    pm.response.json().local.providers.forEach(p => pm.expect(p.has_key, p.name).to.be.true);",
+                  "});",
+                  "pm.test('Has discovery metadata', () => pm.expect(pm.response.json()).to.have.property('discovery'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Refresh Provider Models",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "refresh"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('ok=true + counts + discovered_at', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.ok).to.be.true;",
+                  "    pm.expect(b).to.have.property('counts');",
+                  "    pm.expect(b).to.have.property('discovered_at');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Activate Cloud \u2014 openai",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/cloud/activate/openai",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "cloud",
+                "activate",
+                "openai"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('active_cloud=openai', () => pm.expect(pm.response.json().active_cloud).to.equal('openai'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Activate Cloud \u2014 anthropic",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/cloud/activate/anthropic",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "cloud",
+                "activate",
+                "anthropic"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('active_cloud=anthropic', () => pm.expect(pm.response.json().active_cloud).to.equal('anthropic'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Activate Cloud \u2014 groq",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/cloud/activate/groq",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "cloud",
+                "activate",
+                "groq"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('active_cloud=groq', () => pm.expect(pm.response.json().active_cloud).to.equal('groq'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Activate Cloud \u2014 openrouter_free",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/cloud/activate/openrouter_free",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "cloud",
+                "activate",
+                "openrouter_free"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('active_cloud=openrouter_free', () => pm.expect(pm.response.json().active_cloud).to.equal('openrouter_free'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Activate Cloud \u2014 non-existent (\u2192 404)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/cloud/activate/nonexistent",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "cloud",
+                "activate",
+                "nonexistent"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 404', () => pm.response.to.have.status(404));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Activate Local \u2014 ollama",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/local/activate/ollama",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "local",
+                "activate",
+                "ollama"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('active_local=ollama', () => pm.expect(pm.response.json().active_local).to.equal('ollama'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Activate Local \u2014 lmstudio",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/local/activate/lmstudio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "local",
+                "activate",
+                "lmstudio"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('active_local=lmstudio', () => pm.expect(pm.response.json().active_local).to.equal('lmstudio'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "OpenRouter Mode \u2014 GET state",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/openrouter-mode",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "openrouter-mode"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has enabled + active_cloud + fallback_chain', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property('enabled');",
+                  "    pm.expect(b).to.have.property('active_cloud');",
+                  "    pm.expect(b.fallback_chain).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "OpenRouter Mode \u2014 ENABLE",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/openrouter-mode",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "openrouter-mode"
+              ]
+            },
+            "description": "Returns 400 if OPENROUTER_API_KEY not set in .env",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"enabled\": true}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const code = pm.response.code;",
+                  "if (code === 200) {",
+                  "    pm.test('Enabled: active_cloud=openrouter_paid', () => {",
+                  "        const b = pm.response.json();",
+                  "        pm.expect(b.enabled).to.be.true;",
+                  "        pm.expect(b.active_cloud).to.equal('openrouter_paid');",
+                  "    });",
+                  "} else {",
+                  "    pm.test('400 if OPENROUTER_API_KEY missing', () => pm.expect(code).to.equal(400));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "OpenRouter Mode \u2014 DISABLE",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/openrouter-mode",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "openrouter-mode"
+              ]
+            },
+            "description": "Restores previous active_cloud and fallback_chain from config.yaml",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"enabled\": false}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('enabled=false', () => pm.expect(pm.response.json().enabled).to.be.false);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83c\udfaf 5 \u2014 Preferences",
+      "description": "Per-bucket model pins + allowed-tiers routing policy.\nBuckets: simple | coding | reasoning | creative | critical\nTiers: 0=local | 1=openrouter_free | 2=paid cloud",
+      "item": [
+        {
+          "name": "GET Preferences",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has all top-level keys', () => {",
+                  "    ['preferences','min_tiers','allowed_tiers','config_tiers','available_models'].forEach(k =>",
+                  "        pm.expect(pm.response.json(), 'missing: '+k).to.have.property(k));",
+                  "});",
+                  "pm.test('All 5 buckets in preferences', () => {",
+                  "    const p = pm.response.json().preferences;",
+                  "    ['simple','coding','reasoning','creative','critical'].forEach(b =>",
+                  "        pm.expect(p, 'missing: '+b).to.have.property(b));",
+                  "});",
+                  "pm.test('allowed_tiers values are arrays of valid ints', () => {",
+                  "    Object.entries(pm.response.json().allowed_tiers).forEach(([k,v]) => {",
+                  "        pm.expect(v, k+' not array').to.be.an('array');",
+                  "        v.forEach(t => pm.expect(t).to.be.oneOf([0,1,2]));",
+                  "    });",
+                  "});",
+                  "pm.test('available_models has has_key', () => {",
+                  "    const m = pm.response.json().available_models;",
+                  "    if (m.length > 0) pm.expect(m[0]).to.have.property('has_key');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST \u2014 pin reasoning to deepseek-r1:free",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reasoning\": \"deepseek/deepseek-r1:free\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Pin saved', () => pm.expect(pm.response.json().preferences.reasoning).to.equal('deepseek/deepseek-r1:free'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST \u2014 pin multiple buckets",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coding\": \"deepseek/deepseek-coder-v2:free\",\n  \"simple\": \"gemma3:1b\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('ok=true', () => pm.expect(pm.response.json().ok).to.be.true);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST \u2014 reset pin via empty string",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            },
+            "description": "Empty string = reset to auto-select",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reasoning\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('reasoning cleared', () => pm.expect(pm.response.json().preferences.reasoning).to.be.empty);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST \u2014 allowed_tiers: skip local for reasoning [1,2]",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"allowed_tiers\": {\n    \"reasoning\": [\n      1,\n      2\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('reasoning=[1,2]', () => pm.expect(pm.response.json().allowed_tiers.reasoning).to.deep.equal([1,2]));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST \u2014 allowed_tiers: paid-only for critical [2]",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"allowed_tiers\": {\n    \"critical\": [\n      2\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('critical=[2]', () => pm.expect(pm.response.json().allowed_tiers.critical).to.deep.equal([2]));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST \u2014 allowed_tiers: local-only for simple [0]",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            },
+            "description": "Simple tasks always stay local \u2014 never spend cloud quota on them.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"allowed_tiers\": {\n    \"simple\": [\n      0\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('simple=[0]', () => pm.expect(pm.response.json().allowed_tiers.simple).to.deep.equal([0]));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST \u2014 allowed_tiers: reset all to default [0,1,2]",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            },
+            "description": "Server removes [0,1,2] overrides from prefs file to keep it clean",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"allowed_tiers\": {\n    \"simple\": [\n      0,\n      1,\n      2\n    ],\n    \"coding\": [\n      0,\n      1,\n      2\n    ],\n    \"reasoning\": [\n      0,\n      1,\n      2\n    ],\n    \"creative\": [\n      0,\n      1,\n      2\n    ],\n    \"critical\": [\n      0,\n      1,\n      2\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('ok=true', () => pm.expect(pm.response.json().ok).to.be.true);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST \u2014 invalid bucket (\u2192 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"basketball\": \"gpt-4o\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400', () => pm.response.to.have.status(400));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST \u2014 invalid tier value (\u2192 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"allowed_tiers\": {\n    \"coding\": [\n      0,\n      1,\n      99\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400', () => pm.response.to.have.status(400));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Resolve \u2014 coding bucket",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences/resolve/coding",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences",
+                "resolve",
+                "coding"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns bucket + model + provider + source', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.bucket).to.equal('coding');",
+                  "    pm.expect(b).to.have.property('model');",
+                  "    pm.expect(b).to.have.property('provider');",
+                  "    pm.expect(b.source).to.be.oneOf(['user_preference','auto_rating']);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Resolve \u2014 reasoning bucket",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences/resolve/reasoning",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences",
+                "resolve",
+                "reasoning"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('bucket=reasoning', () => pm.expect(pm.response.json().bucket).to.equal('reasoning'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Resolve \u2014 invalid bucket (\u2192 400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences/resolve/fantasy",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences",
+                "resolve",
+                "fantasy"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400', () => pm.response.to.have.status(400));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "DELETE \u2014 reset single bucket (coding)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences/coding",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences",
+                "coding"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('ok=true + bucket=coding + reset field', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.ok).to.be.true;",
+                  "    pm.expect(b.bucket).to.equal('coding');",
+                  "    pm.expect(b).to.have.property('reset');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "DELETE \u2014 reset ALL preferences",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('ok=true', () => pm.expect(pm.response.json().ok).to.be.true);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\u2b50 6 \u2014 Ratings",
+      "description": "Model quality scores: HF LB v2 (0.55) + Bundled baseline (0.35) + Self-benchmark (0.10) + OR catalog (gap-fill)",
+      "item": [
+        {
+          "name": "GET Ratings \u2014 all cached scores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/ratings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "ratings"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('Has status field', () => pm.expect(b).to.have.property('status'));",
+                  "if (b.status === 'ok') {",
+                  "    pm.test('model_count > 0 + has models', () => {",
+                  "        pm.expect(b.model_count).to.be.a('number').and.greaterThan(0);",
+                  "        pm.expect(b).to.have.property('models');",
+                  "    });",
+                  "} else {",
+                  "    pm.test('not_fetched status', () => pm.expect(b.status).to.equal('not_fetched'));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "POST Ratings \u2014 trigger refresh",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/ratings/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "ratings",
+                "refresh"
+              ]
+            },
+            "description": "Fetches from HF LB v2 + OR catalog + bundled baseline. Takes 10-60s."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('status=ok + model_count + sources + updated_at', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.status).to.equal('ok');",
+                  "    pm.expect(b.model_count).to.be.a('number').and.greaterThan(0);",
+                  "    pm.expect(b).to.have.property('sources');",
+                  "    pm.expect(b).to.have.property('updated_at');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET Ratings \u2014 best/coding (openrouter_free)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/ratings/best/coding?provider=openrouter_free",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "ratings",
+                "best",
+                "coding"
+              ],
+              "query": [
+                {
+                  "key": "provider",
+                  "value": "openrouter_free"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('bucket=coding', () => pm.expect(pm.response.json().bucket).to.equal('coding'));",
+                  "pm.test('Has best_model + available', () => {",
+                  "    pm.expect(pm.response.json()).to.have.property('best_model');",
+                  "    pm.expect(pm.response.json().available).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET Ratings \u2014 best/reasoning (openrouter_free)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/ratings/best/reasoning?provider=openrouter_free",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "ratings",
+                "best",
+                "reasoning"
+              ],
+              "query": [
+                {
+                  "key": "provider",
+                  "value": "openrouter_free"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('bucket=reasoning', () => pm.expect(pm.response.json().bucket).to.equal('reasoning'));",
+                  "pm.test('Has best_model + available', () => {",
+                  "    pm.expect(pm.response.json()).to.have.property('best_model');",
+                  "    pm.expect(pm.response.json().available).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET Ratings \u2014 best/critical (openrouter_free)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/ratings/best/critical?provider=openrouter_free",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "ratings",
+                "best",
+                "critical"
+              ],
+              "query": [
+                {
+                  "key": "provider",
+                  "value": "openrouter_free"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('bucket=critical', () => pm.expect(pm.response.json().bucket).to.equal('critical'));",
+                  "pm.test('Has best_model + available', () => {",
+                  "    pm.expect(pm.response.json()).to.have.property('best_model');",
+                  "    pm.expect(pm.response.json().available).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET Ratings \u2014 invalid bucket (\u2192 400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/ratings/best/basketball",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "ratings",
+                "best",
+                "basketball"
+              ],
+              "query": [
+                {
+                  "key": "provider",
+                  "value": "openrouter_free"
+                }
+              ]
+            },
+            "description": "Unknown bucket \u2192 400"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400', () => pm.response.to.have.status(400));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udcca 7 \u2014 Stats & Logs",
+      "description": "Runtime counters and routing decision audit log.",
+      "item": [
+        {
+          "name": "Stats \u2014 full counters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "stats"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has all counter fields', () => {",
+                  "    ['total','local','cloud','errors','fallbacks','local_pct','cloud_pct','started_at','active_local','active_cloud']",
+                  "    .forEach(f => pm.expect(pm.response.json(), 'missing: '+f).to.have.property(f));",
+                  "});",
+                  "pm.test('local + cloud <= total', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.local + b.cloud).to.be.at.most(b.total + 1);",
+                  "});",
+                  "pm.test('No negative counts', () => {",
+                  "    const b = pm.response.json();",
+                  "    ['total','local','cloud'].forEach(f => pm.expect(b[f]).to.be.at.least(0));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Request Log (last 50)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/log?limit=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "log"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Returns {entries:[...]}. Each entry: id, ts, backend, provider, rule, reason, tokens, model_requested, model_used, bucket, bucket_confidence, preview, duration_ms, status, error, fallback."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response wrapped in {entries:[...]}', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property('entries');",
+                  "    pm.expect(b.entries).to.be.an('array');",
+                  "});",
+                  "pm.test('Respects limit=50', () => pm.expect(pm.response.json().entries.length).to.be.at.most(50));",
+                  "pm.test('Entries have model_requested AND model_used', () => {",
+                  "    const entries = pm.response.json().entries;",
+                  "    if (entries.length > 0) {",
+                  "        ['model_requested','model_used','backend','provider','rule','duration_ms'].forEach(f =>",
+                  "            pm.expect(entries[0], 'missing: '+f).to.have.property(f));",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Request Log (last 10)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/log?limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "log"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('At most 10 entries', () => pm.expect(pm.response.json().entries.length).to.be.at.most(10));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83e\udde0 8 \u2014 Centroid Classifier (all 5 buckets)",
+      "description": "One route/preview per bucket \u2014 confirms the centroid classifier (all-MiniLM-L6-v2) is working.\nIf confidence < 0.35, fires centroid:low_confidence \u2192 local.",
+      "item": [
+        {
+          "name": "Bucket \u2014 simple (Factual lookup)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What is the capital of France?\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Factual lookup \u2192 simple bucket \u2192 Tier 0 (local)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('bucket=simple if centroid fired', () => {",
+                  "    const b = pm.response.json();",
+                  "    if (b.bucket) pm.expect(b.bucket).to.equal('simple');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Bucket \u2014 coding (Implementation task)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a Python function implementing merge sort with type hints, docstring, and O(n log n) complexity analysis.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Implementation task \u2192 coding bucket."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('bucket=coding if centroid fired', () => {",
+                  "    const b = pm.response.json();",
+                  "    if (b.bucket) pm.expect(b.bucket).to.equal('coding');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Bucket \u2014 reasoning (Multi-step cognitive bias problem)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"A bat and ball cost $1.10. The bat costs $1.00 more than the ball. How much does the ball cost? Show full reasoning and explain why the intuitive answer is wrong.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Multi-step cognitive bias problem \u2192 reasoning bucket \u2192 cloud."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('bucket=reasoning if centroid fired', () => {",
+                  "    const b = pm.response.json();",
+                  "    if (b.bucket) pm.expect(b.bucket).to.equal('reasoning');",
+                  "});",
+                  "pm.test('Routes to cloud', () => pm.expect(pm.response.json().backend).to.equal('cloud'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Bucket \u2014 creative (Stylistic creative writing)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a short poem about watching the last light of sunset disappear behind a mountain, in the style of Pablo Neruda.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Stylistic creative writing \u2192 creative bucket."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('bucket=creative if centroid fired', () => {",
+                  "    const b = pm.response.json();",
+                  "    if (b.bucket) pm.expect(b.bucket).to.equal('creative');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Bucket \u2014 critical (Argument evaluation)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"auto\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Critically evaluate this argument: AI systems should be banned from medical diagnosis because they cannot be held legally accountable. Identify fallacies, counterarguments, and give a nuanced conclusion.\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Argument evaluation \u2192 critical bucket \u2192 highest tier."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('bucket=critical if centroid fired', () => {",
+                  "    const b = pm.response.json();",
+                  "    if (b.bucket) pm.expect(b.bucket).to.equal('critical');",
+                  "});",
+                  "pm.test('Routes to cloud', () => pm.expect(pm.response.json().backend).to.equal('cloud'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Bucket \u2014 low confidence \u2192 local",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/route/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "route",
+                "preview"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"model\":\"auto\",\"messages\":[{\"role\":\"user\",\"content\":\"ok\"}]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Single word \u2014 confidence < 0.35 \u2192 centroid:low_confidence \u2192 local."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Low confidence \u2192 local', () => pm.expect(pm.response.json().backend).to.equal('local'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\u274c 9 \u2014 Error Cases",
+      "description": "Validation failures and edge cases.",
+      "item": [
+        {
+          "name": "Chat \u2014 Invalid JSON (\u2192 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ this is not valid json }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400 for invalid JSON', () => pm.expect(pm.response.code).to.be.oneOf([400, 422]));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Preferences \u2014 unknown bucket in allowed_tiers (\u2192 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"allowed_tiers\": {\n    \"superduper\": [\n      0,\n      1\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400', () => pm.response.to.have.status(400));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Preferences \u2014 non-list value in allowed_tiers (\u2192 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"allowed_tiers\": {\n    \"coding\": 1\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400', () => pm.response.to.have.status(400));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "DELETE Preference \u2014 invalid bucket (\u2192 400)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences/basketball",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences",
+                "basketball"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400', () => pm.response.to.have.status(400));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Activate Cloud \u2014 non-existent (\u2192 404)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/cloud/activate/does_not_exist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "cloud",
+                "activate",
+                "does_not_exist"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 404', () => pm.response.to.have.status(404));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Resolve \u2014 invalid bucket (\u2192 400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/preferences/resolve/fantasy",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "preferences",
+                "resolve",
+                "fantasy"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400', () => pm.response.to.have.status(400));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "OpenRouter Mode enable \u2014 key-dependent outcome",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/providers/openrouter-mode",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "providers",
+                "openrouter-mode"
+              ]
+            },
+            "description": "200 if OPENROUTER_API_KEY in .env, 400 if not. Both are valid.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"enabled\": true}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('200 (key set) or 400 (key missing)', () => pm.expect(pm.response.code).to.be.oneOf([200, 400]));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    }
+  ]
+}

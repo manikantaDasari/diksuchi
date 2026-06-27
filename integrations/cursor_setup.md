@@ -1,4 +1,4 @@
-# Cursor → AI Router Setup
+# Cursor → Diksuchi Setup
 
 Cursor (cursor.sh) is an AI-first code editor built on VS Code.
 It supports custom OpenAI-compatible API endpoints.

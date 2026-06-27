@@ -1,9 +1,9 @@
-name: AI Router
+name: Diksuchi
 version: 1.0.0
 schema: v1
 
 # ─── Models ──────────────────────────────────────────────────────────────────
-# All four profiles point at your local AI Router (http://localhost:8080).
+# All four profiles point at your local Diksuchi router (http://localhost:8081).
 # The router then forwards to Ollama (local) or OpenAI/cloud based on your rules.
 #
 # INSTALL:  Copy this file to  ~/.continue/config.yaml

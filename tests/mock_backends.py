@@ -1,7 +1,7 @@
 """
 mock_backends.py
 ─────────────────────────────────────────────────────────────────────────────
-Fake local (Ollama) + cloud (OpenAI) backends for testing the AI Router
+Fake local (Ollama) + cloud (OpenAI) backends for testing Diksuchi
 without needing real LLMs or API keys.
 
 Run this BEFORE starting the router, then update config.yaml:

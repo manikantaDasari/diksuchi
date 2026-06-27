@@ -1,0 +1,23 @@
+{
+  "allowed_tiers": {
+    "critical": [
+      2
+    ],
+    "creative": [
+      1,
+      2
+    ],
+    "reasoning": [
+      1
+    ],
+    "coding": [
+      0,
+      1
+    ],
+    "simple": [
+      1
+    ]
+  },
+  "simple": "llama3.2:3b",
+  "coding": "llama3.2:3b"
+}

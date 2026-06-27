@@ -1,9 +1,9 @@
 # ─────────────────────────────────────────────────────────────────────────────
-#  AI Router — Docker multi-arch build + publish to GitHub Container Registry
+#  Diksuchi — Docker multi-arch build + publish to GitHub Container Registry
 #
 #  Triggers:
-#    • Push to main     → ghcr.io/<owner>/ai-router:latest
-#    • Semver tag push  → ghcr.io/<owner>/ai-router:1.2.3  +  :1.2  +  :1
+#    • Push to main     → ghcr.io/<owner>/diksuchi:latest
+#    • Semver tag push  → ghcr.io/<owner>/diksuchi:1.2.3  +  :1.2  +  :1
 #    • Pull request     → build only (no push), verifies image builds cleanly
 #
 #  Required:
@@ -26,7 +26,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}   # e.g. your-username/ai-router
+  IMAGE_NAME: ${{ github.repository }}   # e.g. your-username/diksuchi
 
 jobs:
   build-and-push:

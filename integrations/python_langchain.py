@@ -1,7 +1,7 @@
 """
 python_langchain.py
 ────────────────────
-Connect LangChain to your AI Router.
+Connect LangChain to your local Diksuchi router.
 pip install langchain langchain-openai
 """
 

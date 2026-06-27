@@ -26,8 +26,8 @@
 **Diksuchi** (Sanskrit: दिक्सूची — *direction needle*) is a local-first AI API router. Drop it between your code and your AI providers — it automatically picks the right model for each request based on complexity, task type, time of day, token count, and 13 other rules. Zero code changes required in your app.
 
 ```
-Your App  →  Diksuchi  →  Local (Ollama / llama3.2)   [fast, free, private]
-                       →  Cloud (GPT-4o / Claude / Gemini)  [powerful, when needed]
+Your App  →  Diksuchi  →  Local (Ollama / gemma3:1b)  [fast, free, private]
+                       →  Cloud (GPT-4o / Claude / Groq)  [powerful, when needed]
 ```
 
 ---
@@ -45,41 +45,43 @@ Your App  →  Diksuchi  →  Local (Ollama / llama3.2)   [fast, free, private]
 
 ## Quick Start
 
-### Option A — Docker (recommended, one command)
+### Option A — Development (no Docker, one command)
+
+```bash
+git clone https://github.com/manikantaDasari/diksuchi
+cd diksuchi/ai-router
+make dev
+```
+
+`make dev` handles everything automatically: creates a Python virtual environment, installs all dependencies, copies `.env.example` if no `.env` exists, and starts the server. Ready in ~5 seconds at `http://localhost:8080`.
+
+> **Ollama for local models:** `make dev` connects to Ollama at `localhost:11434`. If you have the [Ollama app](https://ollama.com) installed and running, local routing works out of the box. Without it, the router automatically falls back to cloud.
+
+### Option B — Full Docker stack (Ollama + Router, self-contained)
+
+```bash
+git clone https://github.com/manikantaDasari/diksuchi
+cd diksuchi/ai-router
+cp .env.example .env   # add your API keys
+make up
+```
+
+`make up` builds the router image, starts an Ollama container, waits for it to be healthy, then pulls all configured models automatically. Everything runs in Docker — no local Ollama install needed.
+
+```bash
+# Pull additional models any time
+make models OLLAMA_MODELS="gemma3:4b llama3.2"
+```
+
+### Option C — Docker image only (cloud-only mode)
 
 ```bash
 docker run -p 8080:8080 \
   -e OPENAI_API_KEY=sk-... \
-  -e ANTHROPIC_API_KEY=sk-ant-... \
   ghcr.io/manikantaDasari/diksuchi:latest
 ```
 
-Your router is live at `http://localhost:8080/v1/chat/completions` — fully OpenAI-compatible.
-
-### Option B — With local Ollama (full local+cloud stack)
-
-```bash
-# 1. Clone
-git clone https://github.com/manikantaDasari/diksuchi
-cd diksuchi/ai-router
-
-# 2. Configure
-cp .env.example .env
-# Edit .env and add your API keys
-
-# 3. Launch
-make up
-```
-
-That's it. Ollama pulls automatically. Point your app at `http://localhost:8080`.
-
-### Option C — Python directly
-
-```bash
-pip install -r requirements.txt
-cp .env.example .env  # add your keys
-python main.py
-```
+No Ollama, cloud fallback always active. Point your app at `http://localhost:8080/v1/chat/completions`.
 
 ---
 
@@ -209,26 +211,32 @@ Full config in [`integrations/continue_dev_config.yaml`](integrations/continue_d
 
 ---
 
-## Docker Reference
+## Makefile Reference
 
 ```bash
-# Start (Ollama + Router)
-make up
+# ── Development (no Docker) ──────────────────────────────
+make dev             # install everything + start server (one command)
 
-# GPU acceleration (NVIDIA)
-make gpu
+# ── Docker full stack ────────────────────────────────────
+make up              # start Ollama + router, auto-pull all models
+make down            # stop and remove containers
+make restart         # restart router only (after config.yaml changes)
+make gpu             # start with NVIDIA GPU support
 
-# View router logs
-make logs
+# ── Models ──────────────────────────────────────────────
+make models                              # pull/refresh default OLLAMA_MODELS
+make models OLLAMA_MODELS="gemma3:4b"   # pull a specific model
+make model-list                          # list models currently in Ollama
 
-# Stop everything
-make down
+# ── Observability ────────────────────────────────────────
+make logs            # tail router logs
+make logs-all        # tail all container logs
 
-# Run tests
-make test
-
-# Build & push to GHCR
-make push
+# ── Build & release ──────────────────────────────────────
+make build           # build router Docker image locally
+make push            # build multi-arch + push to GHCR
+make test            # run test suite
+make clean           # remove stopped containers & dangling images
 ```
 
 **Environment variables:**
@@ -237,9 +245,9 @@ make push
 |---|---|---|
 | `OPENAI_API_KEY` | — | OpenAI API key |
 | `ANTHROPIC_API_KEY` | — | Anthropic API key |
-| `GEMINI_API_KEY` | — | Google Gemini API key |
 | `GROQ_API_KEY` | — | Groq API key |
-| `OLLAMA_MODEL` | `llama3.2` | Local model to pull and use |
+| `GOOGLE_API_KEY` | — | Google Gemini API key |
+| `OLLAMA_MODELS` | `gemma3:1b` | Space-separated list of models to pull |
 | `ROUTER_PORT` | `8080` | Port to expose |
 
 Copy `.env.example` → `.env` and fill in keys.
@@ -250,7 +258,7 @@ Copy `.env.example` → `.env` and fill in keys.
 
 | Provider | Type | Notes |
 |---|---|---|
-| **Ollama** | 🟡 Local | Any model: llama3.2, mistral, phi3, gemma2 |
+| **Ollama** | 🟡 Local | Default: `gemma3:1b` (815 MB, CPU-only). Also: llama3.2, mistral, phi4 |
 | **OpenAI** | ☁️ Cloud | GPT-4o, GPT-4o-mini, o1, o3-mini |
 | **Anthropic** | ☁️ Cloud | Claude Opus, Sonnet, Haiku |
 | **Google Gemini** | ☁️ Cloud | Gemini 1.5 Pro, Flash |

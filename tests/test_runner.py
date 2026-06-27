@@ -1,7 +1,7 @@
 """
 test_runner.py
 ──────────────────────────────────────────────────────────────────────────────
-Automated test suite for the AI Router.
+Automated test suite for Diksuchi.
 No pytest required — plain Python. Prints a colour-coded report.
 
 Usage:

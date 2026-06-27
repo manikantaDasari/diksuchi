@@ -1,12 +1,12 @@
 # ─────────────────────────────────────────────────────────────────────────────
-#  Local-First AI API Router — Production Dockerfile
+#  Diksuchi — Local-First AI Router — Production Dockerfile
 #
 #  Multi-stage build:
 #    Stage 1 (builder) — install Python deps into an isolated venv
 #    Stage 2 (runtime) — copy only the venv + source, run as non-root user
 #
-#  Build:  docker build -t ai-router .
-#  Run:    docker run -d -p 8080:8080 -e OPENAI_API_KEY=sk-xxx ai-router
+#  Build:  docker build -t diksuchi .
+#  Run:    docker run -d -p 8081:8081 -e OPENAI_API_KEY=sk-xxx diksuchi
 # ─────────────────────────────────────────────────────────────────────────────
 
 # ── Stage 1: dependency builder ──────────────────────────────────────────────

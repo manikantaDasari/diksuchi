@@ -1,7 +1,7 @@
 """
 python_llamaindex.py
 ─────────────────────
-Connect LlamaIndex to your AI Router.
+Connect LlamaIndex to your local Diksuchi router.
 pip install llama-index llama-index-llms-openai
 """
 
@@ -33,7 +33,7 @@ def basic_chat():
 def rag_example(docs_path: str = "./docs"):
     """
     Build a RAG pipeline over a local folder of documents.
-    All LLM calls are routed through your AI Router.
+    All LLM calls are routed through your local Diksuchi router.
     """
     import os
     if not os.path.exists(docs_path):
