@@ -5,8 +5,12 @@ pyyaml>=6.0.1
 tiktoken>=0.7.0
 python-dotenv>=1.0.1
 pydantic>=2.7.0
-aiofiles>=23.2.1          # Required by FastAPI's FileResponse (dashboard serving)
-# Centroid classifier — 22MB model, CPU-only, ~8ms inference
-# Install once: pip install sentence-transformers
-# Router runs without it (falls back to keyword matching)
+aiofiles>=23.2.1
 sentence-transformers>=2.7.0
+
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-timeout>=2.1.0
+respx>=0.20.0
+freezegun>=1.2.0
